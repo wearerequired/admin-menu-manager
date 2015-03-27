@@ -1,0 +1,18 @@
+{
+  "name": "wearerequired/Manage the WordPress admin menu using a simple drag & drop interface.",
+  "description": "Manage the WordPress admin menu using a simple drag & drop interface.",
+  "version": "1.0.0",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0+",
+  "authors": [
+    {
+      "name": "Pascal Birchler",
+      "email": "pascal@required.ch",
+      "homepage": "http://required.ch",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+  }
+}
+

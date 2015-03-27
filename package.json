@@ -1,0 +1,21 @@
+{
+  "name": "admin-menu-manager",
+  "version": "1.0.0",
+  "description": "Manage the WordPress admin menu using a simple drag & drop interface.",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:wearerequired/admin-menu-manager.git"
+  },
+  "devDependencies": {
+    "grunt": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-wp-i18n": "*",
+    "grunt-wp-readme-to-markdown": "*",
+    "load-grunt-config": "*",
+    "time-grunt": "*"
+  },
+  "dependencies": {
+    "time-grunt": "*"
+  }
+}
