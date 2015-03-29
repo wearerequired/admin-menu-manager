@@ -38,10 +38,10 @@ Developed by [required+](http://required.ch/ "Team of experienced web profession
 ## Screenshots ##
 
 ### 1. The plugin adds an unobtrusive edit button to the admin menu ###
-![The plugin adds an unobtrusive edit button to the admin menu](http://s.wordpress.org/extend/plugins/admin-menu-manager/screenshot-1.png)
+![The plugin adds an unobtrusive edit button to the admin menu](https://raw.githubusercontent.com/wearerequired/admin-menu-manager/develop/assets/screenshot-1.png)
 
 ### 2. Drag menu items and separators anywhere you want — even from sub menus to the top level and vice-versa! ###
-![Drag menu items and separators anywhere you want — even from sub menus to the top level and vice-versa!](http://s.wordpress.org/extend/plugins/admin-menu-manager/screenshot-2.png)
+![Drag menu items and separators anywhere you want — even from sub menus to the top level and vice-versa!](https://raw.githubusercontent.com/wearerequired/admin-menu-manager/develop/assets/screenshot-2.png)
 
 
 ## Changelog ##
