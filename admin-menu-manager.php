@@ -141,8 +141,11 @@ final class Admin_Menu_Manager {
 
 		global $menu, $submenu;
 
+		// Iterate on the top level items
 		foreach ( $amm_menu as &$item ) {
 			$match = false;
+
+			// It was originally a top level item as well. It's a match!
 			foreach ( $menu as $m_item ) {
 				if ( $item[2] === $m_item[2] ) {
 					$item  = $m_item;
@@ -151,7 +154,7 @@ final class Admin_Menu_Manager {
 				}
 			}
 
-			// It is a submenu item moved to the top level
+			// It must be a submenu item moved to the top level
 			if ( ! $match ) {
 				foreach ( $submenu as $key => &$parent ) {
 					foreach ( $parent as &$sub_item ) {
@@ -171,10 +174,28 @@ final class Admin_Menu_Manager {
 					}
 				}
 			}
+		}
 
-			if ( isset( $submenu[ $item[2] ] ) ) {
-				foreach ( $submenu[ $item[2] ] as &$sub_item ) {
-					$sub_item[0] = wp_unslash( $sub_item[0] );
+		// Iterate on all submenu items
+		foreach ( $amm_submenu as $parent_page => &$page ) {
+			foreach ( $page as $priority => &$item ) {
+				foreach ( $submenu as $s_parent_page => $s_page ) {
+					foreach ( $s_page as $s_priority => &$s_item ) {
+						if ( $item[2] === $s_item[2] ) {
+							$item  = $s_item;
+							$match = true;
+							break;
+						}
+					}
+				}
+
+				// It must be a top level item moved to submenu
+				if ( ! $match ) {
+					foreach ( $menu as &$m_item ) {
+						if ( $item[2] === $m_item[2] ) {
+							$item = $m_item;
+						}
+					}
 				}
 			}
 		}
