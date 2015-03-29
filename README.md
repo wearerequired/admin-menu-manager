@@ -16,13 +16,13 @@ At [required+](http://required.ch/ "Team of experienced web professionals from S
 
 This is our take on a simple, lightweight and unobtrusive WordPress admin menu manager. It works like a charm, doesn't get in your way and doesn't even require yet another settings page. So if you want a custom tailored admin menu for you or your clients, this plugin is perfect.
 
-**Pro tip:** Admin Menu Manager works perfectly to get Jetpack out of the way.  
+**Pro tip:** Admin Menu Manager works perfectly to get Jetpack out of the way.
 
-** Demo **
+**Demo**
 
 Check out this quick [demo video](https://cloudup.com/cJM_wnxhlJo) of the plugin in action.
 
-** Contributions **
+**Contributions**
 
 If you would like to contribute to this plugin, report an issue or anything like that, please note that we develop this plugin on [GitHub](https://github.com/wearerequired/WP-Widget-Disable). Please submit pull requests to the `develop` branch.
 
