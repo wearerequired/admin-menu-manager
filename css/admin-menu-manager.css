@@ -19,13 +19,17 @@
 	margin-right: 6px;
 }
 
-#admin-menu-manager-edit .wp-menu-name {
+#admin-menu-manager-edit .menu-top {
 	color: #aaa;
-	font-size: 13px;
+	font-size: 13px !important;
 	cursor: pointer !important;
 }
 
-#admin-menu-manager-edit .wp-menu-name:hover {
+#admin-menu-manager-edit .wp-menu-name {
+	cursor: pointer !important;
+}
+
+#admin-menu-manager-edit .menu-top:hover {
 	color: #eee;
 }
 
@@ -38,4 +42,13 @@
 	border: 2px dashed;
 	margin: 0;
 	cursor: move !important;
+
+}
+
+#adminmenu .wp-menu-separator.ui-sortable-handle {
+	transition: height .5s ease-in-out, border .5s ease-in-out, margin .5s ease-in-out;
+}
+
+#adminmenu:not(.ui-sortable-disabled) .wp-has-submenu.ui-sortable-handle .wp-submenu {
+	/*top: -1px !important;*/
 }

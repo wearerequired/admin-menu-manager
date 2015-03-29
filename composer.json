@@ -1,5 +1,5 @@
 {
-  "name": "wearerequired/Manage the WordPress admin menu using a simple drag & drop interface.",
+  "name": "wearerequired/admin-menu-manager",
   "description": "Manage the WordPress admin menu using a simple drag & drop interface.",
   "version": "1.0.0",
   "type": "wordpress-plugin",

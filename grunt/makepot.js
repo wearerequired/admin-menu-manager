@@ -7,7 +7,7 @@ module.exports = {
       include        : [],
       mainFile       : '',
       potComments    : '',
-      potFilename    : 'admin-menu-manager',
+      potFilename    : 'admin-menu-manager.pot',
       potHeaders     : {
         poedit                 : true,
         'x-poedit-keywordslist': true,

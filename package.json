@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "grunt": "*",
+    "grunt-contrib-uglify": "*",
     "grunt-contrib-watch": "*",
     "grunt-wp-i18n": "*",
     "grunt-wp-readme-to-markdown": "*",
