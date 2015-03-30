@@ -7,17 +7,12 @@
 }
 
 #admin-menu-manager-edit .menu-top {
-	color: #aaa;
 	font-size: 13px !important;
 	cursor: pointer !important;
 }
 
 #admin-menu-manager-edit .wp-menu-name {
 	cursor: pointer !important;
-}
-
-#admin-menu-manager-edit .menu-top:hover {
-	color: #eee;
 }
 
 #adminmenu:not(.ui-sortable-disabled) .ui-sortable-handle a {
