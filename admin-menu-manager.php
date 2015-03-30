@@ -80,17 +80,17 @@ final class Admin_Menu_Manager {
 
 		$current_color = get_user_option( 'admin_color' );
 		if ( isset( $_wp_admin_css_colors[ $current_color ] ) ) {
-			$border     = $_wp_admin_css_colors[ $current_color ]->colors[2];
-			$background = $_wp_admin_css_colors[ $current_color ]->colors[1];
+			$border     = $_wp_admin_css_colors[ $current_color ]->icon_colors['base'];
+			$background = $_wp_admin_css_colors[ $current_color ]->colors[0];
 			$base       = $_wp_admin_css_colors[ $current_color ]->icon_colors['base'];
 			$focus      = $_wp_admin_css_colors[ $current_color ]->icon_colors['focus'];
 			$current    = $_wp_admin_css_colors[ $current_color ]->icon_colors['current'];
 			$inline_css = "
 			#adminmenu:not(.ui-sortable-disabled) .wp-menu-separator.ui-sortable-handle { background-color: $background; border-color: $border !important; }
 			#admin-menu-manager-edit .menu-top { color: $base; }
-			#admin-menu-manager-edit a:focus,
-			#admin-menu-manager-edit a:focus div.wp-menu-image:before { color: $focus !important; }
-			#admin-menu-manager-edit:hover,
+			#admin-menu-manager-edit .menu-top:focus,
+			#admin-menu-manager-edit .menu-top:focus div.wp-menu-image:before { color: $focus !important; }
+			#admin-menu-manager-edit:hover .menu-top,
 			#admin-menu-manager-edit:hover div.wp-menu-image:before { color: $current !important; }
 			";
 			wp_add_inline_style( 'admin-menu-manager', $inline_css );
