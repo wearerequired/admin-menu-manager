@@ -163,45 +163,38 @@ final class Admin_Menu_Manager {
 
 		// Iterate on the top level items
 		foreach ( $amm_menu as $priority => &$item ) {
-			$match = false;
-
 			// It was originally a top level item as well. It's a match!
 			foreach ( $menu as $key => $m_item ) {
 				if ( $item[2] === $m_item[2] ) {
 					$item = $m_item;
 					unset( $menu[ $key ] ); // Remove from the array
-					$match = true;
-					break;
+					continue 2;
 				}
 			}
 
 			// It must be a submenu item moved to the top level
-			if ( ! $match ) {
-				foreach ( $submenu as $key => &$parent ) {
-					foreach ( $parent as $sub_key => &$sub_item ) {
-						if ( $item[2] === $sub_item[2] ) {
-							$n4 = esc_attr( $item[4] ); // class attribute, e.g. 'menu-top'
-							$n6 = esc_attr( $item[6] ); // Dashicon, e.g. 'dashicons-admin-generic'
+			foreach ( $submenu as $key => &$parent ) {
+				foreach ( $parent as $sub_key => &$sub_item ) {
+					if ( $item[2] === $sub_item[2] ) {
+						$n4 = esc_attr( $item[4] ); // class attribute, e.g. 'menu-top'
+						$n6 = esc_attr( $item[6] ); // Dashicon, e.g. 'dashicons-admin-generic'
 
-							$item = $sub_item;
+						$item = $sub_item;
+						unset( $submenu[ $key ][ $sub_key ] ); // Remove from the array
 
-							unset( $submenu[ $key ][ $sub_key ] ); // Remove from the array
+						// Some fields aren't set in the original
+						$item[3] = '';
+						$item[4] = $n4;
+						$item[5] = '';
+						$item[6] = $n6;
 
-							// Some fields aren't set in the original
-							$item[3] = '';
-							$item[4] = $n4;
-							$item[5] = '';
-							$item[6] = $n6;
-
-							$match = true;
-							break 2;
-						}
+						continue 3;
 					}
 				}
-
-				// Still no match, menu item must have been removed.
-				unset( $amm_menu[ $priority ] );
 			}
+
+			// Still no match, menu item must have been removed.
+			unset( $amm_menu[ $priority ] );
 		}
 
 		// Store submenu items in a new array because the $priority isn't always numeric
@@ -210,32 +203,27 @@ final class Admin_Menu_Manager {
 		// Iterate on all submenu items
 		foreach ( $amm_submenu as $parent_page => &$page ) {
 			foreach ( $page as $priority => &$item ) {
-				$match = false;
 
 				foreach ( $submenu as $s_parent_page => &$s_page ) {
 					foreach ( $s_page as $s_priority => &$s_item ) {
 						if ( $item[2] === $s_item[2] ) {
 							$clean_submenu[ $parent_page ][] = $s_item;
 							unset( $submenu[ $s_parent_page ][ $s_priority ] ); // Remove from the array
-							$match = true;
-							break 2;
+							continue 3;
 						}
 					}
 				}
 
 				// It must be a top level item moved to submenu
-				if ( ! $match ) {
-					foreach ( $menu as &$m_item ) {
-						if ( $item[2] === $m_item[2] ) {
-							$item  = $m_item;
-							$match = true;
-							break;
-						}
+				foreach ( $menu as &$m_item ) {
+					if ( $item[2] === $m_item[2] ) {
+						$item = $m_item;
+						continue 2;
 					}
-
-					// Still no match, menu item must have been removed.
-					unset( $amm_submenu[ $parent_page ][ $priority ] );
 				}
+
+				// Still no match, menu item must have been removed.
+				unset( $amm_submenu[ $parent_page ][ $priority ] );
 			}
 		}
 
