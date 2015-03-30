@@ -1,17 +1,12 @@
 #adminmenu #admin-menu-manager-edit {
 	margin-top: 20px;
-}
-
-#admin-menu-manager-edit .menu-top {
-	background: transparent !important;
-}
-
-#admin-menu-manager-edit .menu-top {
-	font-size: 13px !important;
 	cursor: pointer !important;
 }
 
-#admin-menu-manager-edit .wp-menu-name {
+#adminmenu:not(.ui-sortable-disabled) #admin-menu-manager-edit .menu-top,
+#admin-menu-manager-edit .menu-top {
+	background: transparent !important;
+	font-size: 13px !important;
 	cursor: pointer !important;
 }
 
