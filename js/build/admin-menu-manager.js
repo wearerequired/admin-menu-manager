@@ -104,10 +104,6 @@
           currentPosition = [ui.item.index()],
           oldItem;
 
-      if (itemHref) {
-        itemHref = itemHref.replace('jetpack_modules', 'jetpack');
-      }
-
       // It's a submenu item
       if (ui.item.parent('.wp-submenu').length > 0) {
         newPosition = newPosition > 0 ? --newPosition : 0;
@@ -120,42 +116,6 @@
         ui.item.removeClass('wp-first-item');
       }
 
-      // Was this item moved to the top level?
-      if (ui.item.parent('#adminmenu').length) {
-        // Is this a separator or not?
-        if (!isSeparator) {
-          // Is this originally a top level item or not?
-          if (!ui.item.attr('data-amm-parent')) {
-            ui.item.removeClass().addClass(ui.item.attr('data-amm-class')).addClass('ui-sortable-handle');
-            ui.item.find('.amm-wp-menu-name').removeClass('amm-wp-menu-name').addClass('wp-menu-name');
-          } else {
-            ui.item.addClass('menu-top');
-            ui.item.find('a').addClass('menu-top');
-          }
-
-          // Item doesn't yet have the structure that is needed for a top level item
-          if (ui.item.find('a div').length == 0) {
-            ui.item.find('a').wrapInner('<div class="wp-menu-name"></div>');
-            ui.item.find('a').prepend('<div class="wp-menu-image dashicons-before dashicons-admin-generic"><br></div>');
-          }
-
-          // Showtime!
-          ui.item.find('.wp-menu-arrow').show();
-          ui.item.find('.wp-menu-image').show();
-          ui.item.find('.wp-submenu').show();
-        }
-      } else {
-        // Submenu item, hide stuff that isn't needed
-        ui.item.removeClass('menu-top');
-        ui.item.find('.menu-top').removeClass('menu-top');
-        ui.item.find('.wp-menu-arrow').hide();
-        ui.item.find('.wp-menu-image').hide();
-        ui.item.find('.wp-submenu').hide();
-        if (ui.item.find('.wp-menu-name').length > 0) {
-          ui.item.find('.wp-menu-name').removeClass('wp-menu-name').addClass('amm-wp-menu-name');
-        }
-      }
-
       /**
        * Iterate through the admin menu object.
        *
@@ -163,7 +123,7 @@
        */
       _.each(AdminMenuManager.adminMenu, function (value, index) {
         if (
-            ( value[2] && itemHref && value[2] == itemHref.split('=')[1] )
+            ( value[2] && itemHref && value[2] == itemHref.split('=').pop() )
             || ( isSeparator && value[4] == 'wp-menu-separator' && value[2] == separator )) {
           oldItem = [index];
           return false;
@@ -171,7 +131,7 @@
 
         _.each(value[7], function (v, k) {
           if (
-              ( v[2] && itemHref && v[2] == itemHref.split('=')[1] )
+              ( v[2] && itemHref && v[2] == itemHref.split('=').pop() )
               || ( isSeparator && value[4] == 'wp-menu-separator' && value[2] == separator )) {
             oldItem = [index, k];
             return false;
@@ -182,19 +142,17 @@
       // Get the item object from the old position
       if (oldItem && oldItem.length == 1) {
         var item = AdminMenuManager.adminMenu[oldItem[0]];
-        AdminMenuManager.adminMenu.splice(oldItem[0], 1);
       } else if (oldItem && oldItem.length == 2) {
         var item = AdminMenuManager.adminMenu[oldItem[0]][7][oldItem[1]];
-        AdminMenuManager.adminMenu[oldItem[0]][7].splice(oldItem[1], 1);
       }
 
       // Move it to the new position. Add icon if not existing
       if (currentPosition.length == 1) {
-        if (item.length == 4) {
-          item[4] = 'menu-top';
-          item[5] = '';
-          item[6] = 'dashicons-admin-generic';
-        }
+        item[4] = 'menu-top';
+
+        // Copy from the parent item if available
+        item[5] = item[5] ? item[5] : (!!oldItem ? AdminMenuManager.adminMenu[oldItem[0]][5] : '');
+        item[6] = !!oldItem ? AdminMenuManager.adminMenu[oldItem[0]][6] : 'dashicons-admin-generic';
         AdminMenuManager.adminMenu.splice(currentPosition[0], 0, item);
       } else if (currentPosition.length == 2) {
         item[4] = '';
@@ -205,6 +163,60 @@
           // This means the menu item hasn't had any children before.
           AdminMenuManager.adminMenu[currentPosition[0]][7].push(item);
         }
+      }
+
+      // Was this item moved to the top level?
+      if (ui.item.parent('#adminmenu').length > 0) {
+        // Is this a separator or not?
+        if (!isSeparator) {
+          // Is this originally a top level item or not?
+          if (!ui.item.attr('data-amm-parent')) {
+            ui.item.removeClass().addClass(ui.item.attr('data-amm-class')).addClass('ui-sortable-handle');
+          } else {
+            ui.item.addClass('menu-top');
+            ui.item.find('a').addClass('menu-top');
+          }
+
+          ui.item.addClass(item[5]);
+          ui.item.find('.amm-wp-menu-name').removeClass('amm-wp-menu-name').addClass('wp-menu-name');
+
+          // Item doesn't yet have the structure that is needed for a top level item
+          if (ui.item.find('a div').length == 0) {
+            ui.item.find('a').wrapInner('<div class="wp-menu-name"></div>');
+
+            // Add the menu icon depending on context (dashicon/svg/div)
+            if (item[6].indexOf('dashicons') > -1) {
+              ui.item.find('a').prepend('<div class="wp-menu-image dashicons-before ' + item[6] + '"><br></div>');
+            } else if (item[6].indexOf('image/svg') > -1 || item[6].indexOf('http') > -1) {
+              ui.item.find('a').prepend('<div class="wp-menu-image svg" style="background-image:url(' + item[6] + ') !important;"><br></div>');
+            } else if ('div' == item[6] || 'none' == item[6]) {
+              ui.item.find('a').prepend('<div class="wp-menu-image dashicons-before"><br></div>');
+            } else {
+              ui.item.find('a').prepend('<div class="wp-menu-image dashicons-before dashicons-admin-generic"><br></div>');
+            }
+          }
+
+          // Showtime!
+          ui.item.find('.wp-menu-arrow').show();
+          ui.item.find('.wp-menu-image').show();
+          ui.item.find('.wp-submenu').show();
+        }
+      } else {
+        // Submenu item, hide stuff that isn't needed
+        ui.item.removeClass('menu-top').removeClass(ui.item.attr("class").match(/toplevel_[\w-]*\b/));
+        ui.item.find('.menu-top').removeClass('menu-top');
+        ui.item.find('.wp-menu-arrow').hide();
+        ui.item.find('.wp-menu-image').hide();
+        ui.item.find('.wp-submenu').hide();
+        if (ui.item.find('.wp-menu-name').length > 0) {
+          ui.item.find('.wp-menu-name').removeClass('wp-menu-name').addClass('amm-wp-menu-name');
+        }
+      }
+
+      if (oldItem && oldItem.length == 1) {
+        AdminMenuManager.adminMenu.splice(oldItem[0], 1);
+      } else if (oldItem && oldItem.length == 2) {
+        AdminMenuManager.adminMenu[oldItem[0]][7].splice(oldItem[1], 1);
       }
     }
   });
