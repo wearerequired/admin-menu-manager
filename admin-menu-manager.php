@@ -96,10 +96,17 @@ final class Admin_Menu_Manager {
 			wp_add_inline_style( 'admin-menu-manager', $inline_css );
 		}
 
-		wp_enqueue_script( 'admin-menu-manager', plugins_url( 'js/build/admin-menu-manager.min.js', __FILE__ ), array(
-			'jquery-ui-sortable',
-			'underscore'
-		), self::VERSION, true );
+		// Use minified libraries if SCRIPT_DEBUG is turned off
+		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
+
+		wp_enqueue_script(
+			'admin-menu-manager',
+			plugins_url( 'js/build/admin-menu-manager' . $suffix . '.js', __FILE__ ),
+			array(
+				'jquery-ui-sortable',
+				'underscore'
+			),
+			self::VERSION, true );
 
 		wp_localize_script( 'admin-menu-manager', 'AdminMenuManager', array(
 			'buttonEdit'   => __( 'Edit Menu', 'admin-menu-manager' ),
