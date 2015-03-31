@@ -6,11 +6,6 @@
   $(function () {
     var isEditing = false, separatorIndex = 0;
 
-    // Add submenu <ul> to all elements so we could add items to every menu if we want
-    _.each($('#adminmenu > .menu-top:not(.wp-has-submenu)'), function (el) {
-      $(el).append('<ul class="wp-submenu wp-submenu-wrap"><li class="wp-submenu-head">' + $(el).find('.wp-menu-name').html() + '</li></ul>');
-    });
-
     // On init, store each menu item's initial state
     $('#adminmenu li:not(.wp-submenu-head)').each(function (index) {
       $(this).attr('data-amm-class', $(this).attr('class'));
@@ -34,6 +29,24 @@
       var label = $(this).find('.wp-menu-name');
 
       isEditing = !isEditing;
+
+      if (isEditing) {
+        // Add submenu <ul> to all elements so we could add items to every menu if we want
+        _.each($('#adminmenu > .menu-top:not(.wp-has-submenu)'), function (el) {
+          $(el).addClass('wp-has-submenu');
+          if ($(el).hasClass('current')) {
+            $(el).addClass('wp-has-current-submenu');
+          }
+          $(el).append('<ul class="wp-submenu wp-submenu-wrap"><li class="wp-submenu-head">' + $(el).find('.wp-menu-name').html() + '</li></ul>');
+        });
+      } else {
+        // Remove unneccessary classes again from the menu items
+        _.each($('#adminmenu > .menu-top.wp-has-submenu'), function (el) {
+          if ($(el).find('li').length <= 1) {
+            $(el).removeClass('wp-has-current-submenu wp-has-submenu');
+          }
+        });
+      }
 
       $('#adminmenuwrap ul').sortable({
         disabled   : !isEditing,
@@ -84,7 +97,7 @@
 
       // It's a submenu item
       if (ui.item.parent('.wp-submenu').length > 0) {
-        newPosition -= 1;
+        newPosition = newPosition > 0 ? --newPosition : 0;
         var parentPosition = $('#adminmenu > li').index(ui.item.parents('li'));
         currentPosition = [parentPosition, newPosition]
       }
@@ -137,7 +150,7 @@
        */
       _.each(AdminMenuManager.adminMenu, function (value, index) {
         if (
-            (value[2] && itemHref && value[2] == itemHref.replace('admin.php?page=', ''))
+            ( value[2] && itemHref && value[2] == itemHref.split('=')[1] )
             || ( isSeparator && value[4] == 'wp-menu-separator' && value[2] == separator )) {
           oldItem = [index];
           return false;
@@ -145,7 +158,7 @@
 
         _.each(value[7], function (v, k) {
           if (
-              ( v[2] && itemHref && v[2] == itemHref.replace('admin.php?page=', '') )
+              ( v[2] && itemHref && v[2] == itemHref.split('=')[1] )
               || ( isSeparator && value[4] == 'wp-menu-separator' && value[2] == separator )) {
             oldItem = [index, k];
             return false;
@@ -172,7 +185,13 @@
         AdminMenuManager.adminMenu.splice(currentPosition[0], 0, item);
       } else if (currentPosition.length == 2) {
         item[4] = '';
-        AdminMenuManager.adminMenu[currentPosition[0]][7].splice(currentPosition[1], 0, item);
+
+        if (AdminMenuManager.adminMenu[currentPosition[0]][7].length > 0) {
+          AdminMenuManager.adminMenu[currentPosition[0]][7].splice(currentPosition[1], 0, item);
+        } else {
+          // This means the menu item hasn't had any children before.
+          AdminMenuManager.adminMenu[currentPosition[0]][7].push(item);
+        }
       }
     }
   });

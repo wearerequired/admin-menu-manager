@@ -126,10 +126,9 @@ final class Admin_Menu_Manager {
 			if ( isset( $item[7] ) ) {
 				$submenu[ $item[2] ] = array();
 				foreach ( $item[7] as $subitem ) {
-					$subitem[0] = wp_unslash( $subitem[0] );
-					$pos        = $subitem[3];
-					unset( $subitem[3] );
-					$submenu[ $item[2] ][ $pos ] = $subitem;
+					$subitem[0]            = wp_unslash( $subitem[0] );
+					$subitem               = array_slice( $subitem, 0, 4 );
+					$submenu[ $item[2] ][] = $subitem;
 				}
 				unset( $item[7] );
 			}
@@ -200,24 +199,25 @@ final class Admin_Menu_Manager {
 		// Store submenu items in a new array because the $priority isn't always numeric
 		$clean_submenu = array();
 
-		// Iterate on all submenu items
+		// Iterate on all our submenu items
 		foreach ( $amm_submenu as $parent_page => &$page ) {
 			foreach ( $page as $priority => &$item ) {
-
+				// Iterate on original submenu items
 				foreach ( $submenu as $s_parent_page => &$s_page ) {
 					foreach ( $s_page as $s_priority => &$s_item ) {
-						if ( $item[2] === $s_item[2] ) {
+						if ( $item[2] === $s_item[2] && $parent_page == $s_parent_page ) {
 							$clean_submenu[ $parent_page ][] = $s_item;
 							unset( $submenu[ $s_parent_page ][ $s_priority ] ); // Remove from the array
-							continue 3;
+							continue 2;
 						}
 					}
 				}
 
 				// It must be a top level item moved to submenu
-				foreach ( $menu as &$m_item ) {
+				foreach ( $menu as $m_key => &$m_item ) {
 					if ( $item[2] === $m_item[2] ) {
-						$item = $m_item;
+						$clean_submenu[ $parent_page ][] = array_slice( $m_item, 0, 4 );
+						unset( $menu[ $m_key ] );
 						continue 2;
 					}
 				}
@@ -312,6 +312,8 @@ final class Admin_Menu_Manager {
 					$value[] = $key;
 				}
 				$menu_item[] = array_values( $submenu[ $menu_item[2] ] );
+			} else {
+				$menu_item[] = array();
 			}
 
 			$menu_items[] = $menu_item;
