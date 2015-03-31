@@ -7,15 +7,20 @@
     var isEditing = false, separatorIndex = 0;
 
     // On init, store each menu item's initial state
-    $('#adminmenu li:not(.wp-submenu-head)').each(function (index) {
-      $(this).attr('data-amm-class', $(this).attr('class'));
-      $(this).attr('data-amm-index', index);
-      if (!$(this).hasClass('menu-top'))
-        $(this).attr('data-amm-parent', $(this).parents('li').find('a').attr('href'));
+    _.each($('#adminmenu li:not(.wp-submenu-head)'), function (el, index) {
+      var $el = $(el);
+
+      $el.attr('data-amm-class', $el.attr('class'));
+      if ($el.hasClass('menu-top')) {
+        $el.attr('data-amm-index', $el.index());
+      } else {
+        $el.attr('data-amm-parent', $el.parents('li').find('a').attr('href'));
+        $el.attr('data-amm-index', index);
+      }
 
       // Add this data attribute to separators to make things easier when sorting
-      if ($(this).hasClass('wp-menu-separator'))
-        $(this).attr('data-amm-separator', 'separator' + (++separatorIndex));
+      if ($el.hasClass('wp-menu-separator'))
+        $el.attr('data-amm-separator', 'separator' + (++separatorIndex));
     });
 
     // Not sure if this is working properly...
@@ -35,17 +40,19 @@
       if (isEditing) {
         // Add submenu <ul> to all elements so we could add items to every menu if we want
         _.each($('#adminmenu > .menu-top:not(.wp-has-submenu)'), function (el) {
-          $(el).addClass('wp-has-submenu');
-          if ($(el).hasClass('current')) {
-            $(el).addClass('wp-has-current-submenu');
+          var $el = $(el);
+          $el.addClass('wp-has-submenu');
+          if ($el.hasClass('current')) {
+            $el.addClass('wp-has-current-submenu');
           }
-          $(el).append('<ul class="wp-submenu wp-submenu-wrap"><li class="wp-submenu-head">' + $(el).find('.wp-menu-name').html() + '</li></ul>');
+          $el.append('<ul class="wp-submenu wp-submenu-wrap"><li class="wp-submenu-head">' + $(el).find('.wp-menu-name').html() + '</li></ul>');
         });
       } else {
         // Remove unneccessary classes again from the menu items
         _.each($('#adminmenu > .menu-top.wp-has-submenu'), function (el) {
-          if ($(el).find('li').length <= 1) {
-            $(el).removeClass('wp-has-current-submenu wp-has-submenu');
+          var $el = $(el);
+          if ($el.find('li').length <= 1) {
+            $el.removeClass('wp-has-current-submenu wp-has-submenu');
           }
         });
       }
