@@ -291,7 +291,7 @@ final class Admin_Menu_Manager {
 		}
 		?>
 		<li id="admin-menu-manager-edit" class="hide-if-no-js">
-			<a href="#" class="menu-top">
+			<a href="#" class="menu-top" title="<?php esc_attr_e( 'Edit Menu', 'admin-menu-manager' ); ?>">
 				<div class="wp-menu-image dashicons-before dashicons-edit"></div>
 				<div class="wp-menu-name"><?php _e( 'Edit Menu', 'admin-menu-manager' ); ?></div>
 			</a>

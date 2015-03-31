@@ -26,7 +26,9 @@
     $('#admin-menu-manager-edit').click(function (e) {
       e.preventDefault();
 
-      var label = $(this).find('.wp-menu-name');
+      var button = $(this).find('.menu-top'),
+          buttonLabel = $(this).find('.wp-menu-name'),
+          buttonIcon = $(this).find('.wp-menu-image');
 
       isEditing = !isEditing;
 
@@ -63,7 +65,9 @@
       });
 
       if (isEditing) {
-        label.text(AdminMenuManager.buttonSave);
+        buttonIcon.removeClass('dashicons-edit').addClass('dashicons-yes');
+        buttonLabel.text(AdminMenuManager.buttonSave);
+        button.attr('title', AdminMenuManager.buttonSave);
       } else {
         var data = {
           action   : 'amm_update_menu',
@@ -71,7 +75,8 @@
         };
 
         $.post(ajaxurl, data, function () {
-          label.text(AdminMenuManager.buttonSaving).fadeOut(1000, function () {
+          buttonIcon.removeClass('dashicons-yes').addClass('dashicons-edit');
+          buttonLabel.text(AdminMenuManager.buttonSaving).fadeOut(1000, function () {
             $(this).text(AdminMenuManager.buttonSaved)
                 .fadeIn()
                 .delay(1000)

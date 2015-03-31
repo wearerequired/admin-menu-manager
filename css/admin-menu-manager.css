@@ -1,6 +1,14 @@
+#collapse-menu {
+	overflow: hidden;
+}
+
 #adminmenu #admin-menu-manager-edit {
 	margin-top: 20px;
 	cursor: pointer !important;
+}
+
+.folded #adminmenu #admin-menu-manager-edit .wp-menu-name {
+	display: none !important;
 }
 
 #adminmenu:not(.ui-sortable-disabled) #admin-menu-manager-edit .menu-top,
