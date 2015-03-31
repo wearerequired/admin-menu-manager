@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Admin Menu Manager 1.0.0\n"
 "Report-Msgid-Bugs-To: http://required.ch\n"
-"POT-Creation-Date: 2015-03-29 11:41:31+00:00\n"
+"POT-Creation-Date: 2015-03-31 08:05:16+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -24,19 +24,20 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: admin-menu-manager.php:85 admin-menu-manager.php:222
+#: admin-menu-manager.php:112 admin-menu-manager.php:294
+#: admin-menu-manager.php:296
 msgid "Edit Menu"
 msgstr ""
 
-#: admin-menu-manager.php:86
+#: admin-menu-manager.php:113
 msgid "Save"
 msgstr ""
 
-#: admin-menu-manager.php:87
+#: admin-menu-manager.php:114
 msgid "Saving&hellip;"
 msgstr ""
 
-#: admin-menu-manager.php:88
+#: admin-menu-manager.php:115
 msgid "Saved!"
 msgstr ""
 
