@@ -128,8 +128,12 @@ final class Admin_Menu_Manager {
 		$items   = array();
 		$submenu = array();
 
-		foreach ( $menu as $item ) {
+		$separatorIndex = 1;
+		$lastSeparator  = null;
+
+		foreach ( $menu as $index => $item ) {
 			$item[0] = wp_unslash( $item[0] );
+
 			if ( isset( $item[7] ) ) {
 				$submenu[ $item[2] ] = array();
 				foreach ( $item[7] as $subitem ) {
@@ -140,8 +144,17 @@ final class Admin_Menu_Manager {
 				unset( $item[7] );
 			}
 
+			// Store separators in correct order
+			if ( false !== strpos( $item[2], 'separator' ) ) {
+				$item[2]       = 'separator' . $separatorIndex ++;
+				$item[4]       = 'wp-menu-separator';
+				$lastSeparator = count( $items );
+			}
+
 			$items[] = $item;
 		}
+
+		$items[ $lastSeparator ][2] = 'separator-last';
 
 		// Note: The third autoload parameter was introduced in WordPress 4.2.0
 		update_option( 'amm_menu', $items, false );
