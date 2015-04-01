@@ -133,8 +133,13 @@
         }
 
         _.find(value[7], function (v, k) {
+          // Acommodate for different structures
+          var isSame = ( v[2] && itemHref && v[2] == itemHref );
+          if (!isSame && v[2].indexOf('.') == -1 && v[2] && itemHref)
+            isSame = 'admin.php?page=' + v[2] == itemHref;
+
           if (
-              ( v[2] && itemHref && v[2] == itemHref )
+              isSame
               || ( isSeparator && v[4] == 'wp-menu-separator' && v[2] == separator )
           ) {
             oldItem = [index, k];
