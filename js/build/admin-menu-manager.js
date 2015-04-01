@@ -121,23 +121,25 @@
        *
        * Find the item's last position and move it to the new one.
        */
-      _.each(AdminMenuManager.adminMenu, function (value, index) {
+      _.find(AdminMenuManager.adminMenu, function (value, index) {
         if (
             ( value[2] && itemHref && value[2].split('=').pop() == itemHref.split('=').pop() )
-            || ( isSeparator && value[4] == 'wp-menu-separator' && value[2] == separator )) {
+            || ( isSeparator && value[4] == 'wp-menu-separator' && value[2] == separator )
+        ) {
           oldItem = [index];
-          return false;
+          return true;
         }
 
-        _.each(value[7], function (v, k) {
+        _.find(value[7], function (v, k) {
           if (
               ( v[2] && itemHref && v[2].split('=').pop() == itemHref.split('=').pop() )
-              || ( isSeparator && value[4] == 'wp-menu-separator' && value[2] == separator )) {
+              || ( isSeparator && v[4] == 'wp-menu-separator' && v[2] == separator )
+          ) {
             oldItem = [index, k];
-            return false;
+            return true;
           }
-        }, {ui: this.ui});
-      }, {ui: ui});
+        });
+      });
 
       // Get the item object from the old position
       if (oldItem) {
@@ -154,7 +156,8 @@
 
       // Move it to the new position. Add icon if not existing
       if (currentPosition.length == 1) {
-        item[4] = 'menu-top';
+        if (!isSeparator)
+          item[4] = 'menu-top';
 
         // Copy from the parent item if available
         item[5] = item[5] ? item[5] : (!!oldItem ? AdminMenuManager.adminMenu[oldItem[0]][5] : '');
