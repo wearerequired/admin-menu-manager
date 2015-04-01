@@ -122,7 +122,7 @@
        */
       _.each(AdminMenuManager.adminMenu, function (value, index) {
         if (
-            ( value[2] && itemHref && value[2] == itemHref.split('=').pop() )
+            ( value[2] && itemHref && value[2].split('=').pop() == itemHref.split('=').pop() )
             || ( isSeparator && value[4] == 'wp-menu-separator' && value[2] == separator )) {
           oldItem = [index];
           return false;
@@ -130,7 +130,7 @@
 
         _.each(value[7], function (v, k) {
           if (
-              ( v[2] && itemHref && v[2] == itemHref.split('=').pop() )
+              ( v[2] && itemHref && v[2].split('=').pop() == itemHref.split('=').pop() )
               || ( isSeparator && value[4] == 'wp-menu-separator' && value[2] == separator )) {
             oldItem = [index, k];
             return false;
