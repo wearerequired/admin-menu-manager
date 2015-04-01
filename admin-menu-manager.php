@@ -53,6 +53,9 @@ final class Admin_Menu_Manager {
 		// Add our filter way late, after other plugins have defiled the menu
 		add_filter( 'menu_order', array( __CLASS__, 'alter_admin_menu_order' ), 9999 );
 
+		// Filter the parent file of an admin menu sub-menu item
+		add_filter( 'parent_file', array( __CLASS__, 'filter_parent_file' ) );
+
 		// Add edit button to menu
 		add_action( 'adminmenu', array( __CLASS__, 'add_adminmenu_button' ) );
 	}
@@ -169,6 +172,8 @@ final class Admin_Menu_Manager {
 	 * Compare our menu structure with the original.
 	 * Essentially it uses the new order but with the original values,
 	 * so translated strings and icons still work.
+	 *
+	 * 0 = menu_title, 1 = capability, 2 = menu_slug, 3 = page_title, 4 = classes
 	 */
 	public static function alter_admin_menu() {
 		$amm_menu    = get_option( 'amm_menu', array() );
@@ -340,6 +345,39 @@ final class Admin_Menu_Manager {
 		}
 
 		return $menu_items;
+	}
+
+	/**
+	 * Filter the parent file of an admin menu sub-menu item.
+	 *
+	 * Allows plugins to move sub-menu items around.
+	 *
+	 * @param string $parent_file The parent file.
+	 *
+	 * @return string
+	 */
+	public static function filter_parent_file( $parent_file ) {
+		global $menu, $submenu, $typenow, $self;
+
+		foreach ( $menu as $key => $item ) {
+			if ( $item[2] === $self ) {
+				$parent_file = $self;
+				break;
+			}
+
+			if ( empty( $submenu[ $item[2] ] ) ) {
+				continue;
+			}
+
+			foreach ( $submenu[ $item[2] ] as $sub_key => $sub_item ) {
+				if ( $sub_item[2] === $self ) {
+					$parent_file = $item[2];
+					break;
+				}
+			}
+		}
+
+		return $parent_file;
 	}
 
 }
