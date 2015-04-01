@@ -139,10 +139,16 @@
       }, {ui: ui});
 
       // Get the item object from the old position
-      if (oldItem && oldItem.length == 1) {
-        var item = AdminMenuManager.adminMenu[oldItem[0]];
-      } else if (oldItem && oldItem.length == 2) {
-        var item = AdminMenuManager.adminMenu[oldItem[0]][7][oldItem[1]];
+      if (oldItem) {
+        var oldIcon = AdminMenuManager.adminMenu[oldItem[0]][6];
+
+        if (oldItem.length == 1) {
+          var item = AdminMenuManager.adminMenu[oldItem[0]];
+          AdminMenuManager.adminMenu.splice(oldItem[0], 1);
+        } else if (oldItem.length == 2) {
+          var item = AdminMenuManager.adminMenu[oldItem[0]][7][oldItem[1]];
+          AdminMenuManager.adminMenu[oldItem[0]][7].splice(oldItem[1], 1);
+        }
       }
 
       // Move it to the new position. Add icon if not existing
@@ -151,7 +157,7 @@
 
         // Copy from the parent item if available
         item[5] = item[5] ? item[5] : (!!oldItem ? AdminMenuManager.adminMenu[oldItem[0]][5] : '');
-        item[6] = !!oldItem ? AdminMenuManager.adminMenu[oldItem[0]][6] : 'dashicons-admin-generic';
+        item[6] = oldIcon ? oldIcon : 'dashicons-admin-generic';
         AdminMenuManager.adminMenu.splice(currentPosition[0], 0, item);
       } else if (currentPosition.length == 2) {
         item[4] = '';
@@ -210,12 +216,6 @@
         if (ui.item.find('.wp-menu-name').length > 0) {
           ui.item.find('.wp-menu-name').removeClass('wp-menu-name').addClass('amm-wp-menu-name');
         }
-      }
-
-      if (oldItem && oldItem.length == 1) {
-        AdminMenuManager.adminMenu.splice(oldItem[0], 1);
-      } else if (oldItem && oldItem.length == 2) {
-        AdminMenuManager.adminMenu[oldItem[0]][7].splice(oldItem[1], 1);
       }
     }
   });
