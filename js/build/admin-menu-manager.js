@@ -24,9 +24,7 @@
         $el.attr('data-amm-separator', 'separator' + (++separatorIndex));
     });
 
-    // Not sure if this is working properly...
-    if (separatorIndex > 2)
-      $('[data-amm-separator=separator' + separatorIndex + ']').attr('data-amm-separator', 'separator-last');
+    $('[data-amm-separator=separator' + separatorIndex + ']').attr('data-amm-separator', 'separator-last');
 
     // Edit Button
     $('#admin-menu-manager-edit').click(function (e) {
@@ -122,8 +120,13 @@
        * Find the item's last position and move it to the new one.
        */
       _.find(AdminMenuManager.adminMenu, function (value, index) {
+        // Acommodate for different structures
+        var isSame = ( value[2] && itemHref && value[2] == itemHref );
+        if (!isSame && value[2].indexOf('.') == -1 && value[2] && itemHref)
+          isSame = 'admin.php?page=' + value[2] == itemHref;
+
         if (
-            ( value[2] && itemHref && value[2].split('=').pop() == itemHref.split('=').pop() )
+            isSame
             || ( isSeparator && value[4] == 'wp-menu-separator' && value[2] == separator )
         ) {
           oldItem = [index];
@@ -132,7 +135,7 @@
 
         _.find(value[7], function (v, k) {
           if (
-              ( v[2] && itemHref && v[2].split('=').pop() == itemHref.split('=').pop() )
+              ( v[2] && itemHref && v[2] == itemHref )
               || ( isSeparator && v[4] == 'wp-menu-separator' && v[2] == separator )
           ) {
             oldItem = [index, k];
