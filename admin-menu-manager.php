@@ -183,34 +183,94 @@ final class Admin_Menu_Manager {
 			return;
 		}
 
-		global $menu, $submenu;
+		global $menu, $submenu, $wp_filter;;
+
+		$temp_menu    = $menu;
+		$temp_submenu = $submenu;
+
+		$menu    = null;
+		$submenu = null;
 
 		// Iterate on the top level items
 		foreach ( $amm_menu as $priority => &$item ) {
 			// It was originally a top level item as well. It's a match!
-			foreach ( $menu as $key => $m_item ) {
+			foreach ( $temp_menu as $key => $m_item ) {
 				if ( $item[2] === $m_item[2] ) {
-					$item = $m_item;
-					unset( $menu[ $key ] ); // Remove from the array
+					if ( 'wp-menu-separator' == $m_item[4] ) {
+						$menu[ $priority ] = $m_item;
+					} else {
+						add_menu_page(
+							$m_item[3], // Page title
+							$m_item[0], // Menu title
+							$m_item[1], // Capability
+							$m_item[2], // Slug
+							'', // Function
+							$m_item[6], // Icon
+							$priority // Position
+						);
+					}
+
+					unset( $temp_menu[ $key ] );
 					continue 2;
 				}
 			}
 
 			// It must be a submenu item moved to the top level
-			foreach ( $submenu as $key => &$parent ) {
+			foreach ( $temp_submenu as $key => &$parent ) {
 				foreach ( $parent as $sub_key => &$sub_item ) {
 					if ( $item[2] === $sub_item[2] ) {
-						$n4 = esc_attr( $item[4] ); // class attribute, e.g. 'menu-top'
-						$n6 = esc_attr( $item[6] ); // Dashicon, e.g. 'dashicons-admin-generic'
+						$hookname = get_plugin_page_hookname( $sub_item[2], $key );
 
-						$item = $sub_item;
-						unset( $submenu[ $key ][ $sub_key ] ); // Remove from the array
+						if ( has_action( $hookname ) ) {
+							$menu_hooks = array();
+							foreach ( $wp_filter[ $hookname ][10] as $hook ) {
+								$menu_hooks[] = $hook['function'];
+							}
+						}
 
-						// Some fields aren't set in the original
-						$item[3] = '';
-						$item[4] = $n4;
-						$item[5] = '';
-						$item[6] = $n6;
+						if ( has_action( 'admin_print_styles-' . $hookname ) ) {
+							$styles_hooks = array();
+							foreach ( $wp_filter[ 'admin_print_styles-' . $hookname ][10] as $hook ) {
+								$styles_hooks[] = $hook['function'];
+							}
+						}
+
+						if ( has_action( 'admin_print_scripts-' . $hookname ) ) {
+							$scripts_hooks = array();
+							foreach ( $wp_filter[ 'admin_print_scripts-' . $hookname ][10] as $hook ) {
+								$scripts_hooks[] = $hook['function'];
+							}
+						}
+
+						$new_page = add_menu_page(
+							$sub_item[3], // Page title
+							$sub_item[0], // Menu title
+							$sub_item[1], // Capability
+							$sub_item[2], // Slug
+							'', // Function
+							$item[6], // Icon
+							$priority // Position
+						);
+
+						if ( isset( $menu_hooks ) ) {
+							foreach ( $menu_hooks as $hook ) {
+								add_action( $new_page, $hook );
+							}
+						}
+
+						if ( isset( $styles_hooks ) ) {
+							foreach ( $styles_hooks as $hook ) {
+								add_action( 'admin_print_styles-' . $new_page, $hook );
+							}
+						}
+
+						if ( isset( $scripts_hooks ) ) {
+							foreach ( $scripts_hooks as $hook ) {
+								add_action( 'admin_print_scripts-' . $new_page, $hook );
+							}
+						}
+
+						unset( $temp_submenu[ $key ][ $sub_key ] );
 
 						continue 3;
 					}
@@ -218,37 +278,94 @@ final class Admin_Menu_Manager {
 			}
 
 			// Still no match, menu item must have been removed.
-			unset( $amm_menu[ $priority ] );
+			unset( $temp_menu[ $priority ] );
 		}
-
-		// Store submenu items in a new array because the $priority isn't always numeric
-		$clean_submenu = array();
 
 		// Iterate on all our submenu items
 		foreach ( $amm_submenu as $parent_page => &$page ) {
 			foreach ( $page as $priority => &$item ) {
 				// Iterate on original submenu items
-				foreach ( $submenu as $s_parent_page => &$s_page ) {
+				foreach ( $temp_submenu as $s_parent_page => &$s_page ) {
 					foreach ( $s_page as $s_priority => &$s_item ) {
 						if ( $item[2] === $s_item[2] && $parent_page == $s_parent_page ) {
-							$clean_submenu[ $parent_page ][] = $s_item;
-							unset( $submenu[ $s_parent_page ][ $s_priority ] ); // Remove from the array
+							add_submenu_page(
+								$s_parent_page, // Parent Slug
+								isset( $s_item[3] ) ? $s_item[3] : $s_item[0], // Page title
+								$s_item[0], // Menu title
+								$s_item[1], // Capability
+								$s_item[2] // SLug
+							);
+
+							unset( $temp_submenu[ $s_parent_page ][ $s_priority ] );
+
 							continue 2;
 						}
 					}
 				}
 
 				// It must be a top level item moved to submenu
-				foreach ( $menu as $m_key => &$m_item ) {
+				foreach ( $temp_menu as $m_key => &$m_item ) {
 					if ( $item[2] === $m_item[2] ) {
-						$clean_submenu[ $parent_page ][] = array_slice( $m_item, 0, 4 );
-						unset( $menu[ $m_key ] );
+						$hookname = get_plugin_page_hookname( $m_item[2], '' );
+
+						if ( has_action( $hookname ) ) {
+							$menu_hooks = array();
+							foreach ( $wp_filter[ $hookname ][10] as $hook ) {
+								$menu_hooks[] = $hook['function'];
+							}
+						}
+
+						if ( has_action( 'admin_print_styles-' . $hookname ) ) {
+							$styles_hooks = array();
+							foreach ( $wp_filter[ 'admin_print_styles-' . $hookname ][10] as $hook ) {
+								$styles_hooks[] = $hook['function'];
+							}
+						}
+
+						if ( has_action( 'admin_print_scripts-' . $hookname ) ) {
+							$scripts_hooks = array();
+							foreach ( $wp_filter[ 'admin_print_scripts-' . $hookname ][10] as $hook ) {
+								$scripts_hooks[] = $hook['function'];
+							}
+						}
+
+						$new_page = add_submenu_page(
+							$parent_page, // Parent Slug
+							$m_item[0], // Page title
+							$m_item[0], // Menu title
+							$m_item[1], // Capability
+							$m_item[2] // Slug
+						);
+
+						if ( isset( $menu_hook ) ) {
+							add_action( $new_page, $menu_hook );
+						}
+
+						if ( isset( $menu_hooks ) ) {
+							foreach ( $menu_hooks as $hook ) {
+								add_action( $new_page, $hook );
+							}
+						}
+
+						if ( isset( $styles_hooks ) ) {
+							foreach ( $styles_hooks as $hook ) {
+								add_action( 'admin_print_styles-' . $new_page, $hook );
+							}
+						}
+
+						if ( isset( $scripts_hooks ) ) {
+							foreach ( $scripts_hooks as $hook ) {
+								add_action( 'admin_print_scripts-' . $new_page, $hook );
+							}
+						}
+
+						unset( $temp_menu[ $m_key ] );
+
 						continue 2;
 					}
 				}
 
 				// Still no match, menu item must have been removed.
-				unset( $amm_submenu[ $parent_page ][ $priority ] );
 			}
 		}
 
@@ -257,22 +374,7 @@ final class Admin_Menu_Manager {
 		 *
 		 * This happens when installing a new plugin for example.
 		 */
-		$amm_menu = array_merge( $amm_menu, $menu );
-
-		foreach ( $submenu as $parent => $item ) {
-			if ( '' === $parent || empty( $item ) || ! is_array( $item ) ) {
-				continue;
-			}
-
-			if ( isset( $clean_submenu[ $parent ] ) ) {
-				$clean_submenu[ $parent ] = array_merge( $clean_submenu[ $parent ], $item );
-			} else {
-				$clean_submenu[ $parent ] = $item;
-			}
-		}
-
-		$menu    = $amm_menu;
-		$submenu = $clean_submenu;
+		$menu = array_merge( $menu, $temp_menu );
 	}
 
 	/**
