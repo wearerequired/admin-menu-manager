@@ -51,7 +51,7 @@
             $el.attr('data-amm-class', $el.attr('class'));
             $el.attr('data-amm-index', $el.index());
 
-            if (!$el.hasClass('menu-top')) {
+            if ($el.parent('.wp-submenu').length > 0) {
               $el.attr('data-amm-parent', $el.parents('li').find('a').attr('href'));
               $el.attr('data-amm-index', $el.index() - 1);
             }
@@ -71,6 +71,10 @@
         },
         change     : function (event, ui) {
           // show the submenu items of an element close to the current item so we could move it there
+
+          // Items can't be moved after the collapse and edit buttons
+          var $fixed = $('#admin-menu-manager-edit, #collapse-menu', this).detach();
+          $(this).append($fixed);
         }
       });
 
