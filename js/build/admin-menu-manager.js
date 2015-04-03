@@ -214,17 +214,17 @@
           }
 
           // Showtime!
-          ui.item.find('.wp-menu-arrow').show();
-          ui.item.find('.wp-menu-image').show();
-          ui.item.find('.wp-submenu').show();
+          ui.item.find('.wp-menu-arrow').removeClass('hidden');
+          ui.item.find('.wp-menu-image').removeClass('hidden');
+          ui.item.find('.wp-submenu').removeClass('hidden');
         }
       } else {
         // Submenu item, hide stuff that isn't needed
         ui.item.removeClass('menu-top').removeClass(ui.item.attr("class").match(/toplevel_[\w-]*\b/));
         ui.item.find('.menu-top').removeClass('menu-top');
-        ui.item.find('.wp-menu-arrow').hide();
-        ui.item.find('.wp-menu-image').hide();
-        ui.item.find('.wp-submenu').hide();
+        ui.item.find('.wp-menu-arrow').addClass('hidden');
+        ui.item.find('.wp-menu-image').addClass('hidden');
+        ui.item.find('.wp-submenu').addClass('hidden');
         if (ui.item.find('.wp-menu-name').length > 0) {
           ui.item.find('.wp-menu-name').removeClass('wp-menu-name').addClass('amm-wp-menu-name');
         }
