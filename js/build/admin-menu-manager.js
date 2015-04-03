@@ -5,26 +5,7 @@
 (function ($) {
 
   $(function () {
-    var isEditing = false, separatorIndex = 0;
-
-    // On init, store each menu item's initial state
-    _.each($('#adminmenu li:not(.wp-submenu-head)'), function (el, index) {
-      var $el = $(el);
-
-      $el.attr('data-amm-class', $el.attr('class'));
-      if ($el.hasClass('menu-top')) {
-        $el.attr('data-amm-index', $el.index());
-      } else {
-        $el.attr('data-amm-parent', $el.parents('li').find('a').attr('href'));
-        $el.attr('data-amm-index', index);
-      }
-
-      // Add this data attribute to separators to make things easier when sorting
-      if ($el.hasClass('wp-menu-separator'))
-        $el.attr('data-amm-separator', 'separator' + (++separatorIndex));
-    });
-
-    $('[data-amm-separator=separator' + separatorIndex + ']').attr('data-amm-separator', 'separator-last');
+    var isEditing = false;
 
     // Edit Button
     $('#admin-menu-manager-edit').click(function (e) {
@@ -60,6 +41,30 @@
         disabled   : !isEditing,
         cancel     : '#admin-menu-manager-edit, #collapse-menu',
         connectWith: '#adminmenuwrap ul',
+        // This event is triggered when (surprise) sortable starts
+        create     : function (event, ui) {
+          // On init, store each menu item's initial state
+          var separatorIndex = 0;
+
+          _.each($('#adminmenu li:not(.wp-submenu-head)'), function (el, index) {
+            var $el = $(el);
+
+            $el.attr('data-amm-class', $el.attr('class'));
+            $el.attr('data-amm-index', $el.index());
+
+            if (!$el.hasClass('menu-top')) {
+              $el.attr('data-amm-parent', $el.parents('li').find('a').attr('href'));
+              $el.attr('data-amm-index', $el.index() - 1);
+            }
+
+            // Add this data attribute to separators to make things easier when sorting
+            if ($el.hasClass('wp-menu-separator'))
+              $el.attr('data-amm-separator', 'separator' + (++separatorIndex));
+          });
+
+          $('[data-amm-separator=separator' + separatorIndex + ']').attr('data-amm-separator', 'separator-last');
+
+        },
         // This event is triggered when the user stopped sorting and the DOM position has changed.
         update     : changeMenu,
         beforeStop : function (event, ui) {
