@@ -145,7 +145,7 @@
           // Acommodate for different structures
           var isSame = ( v[2] && itemHref && v[2] == itemHref );
           if (!isSame && v[2].indexOf('.') == -1 && v[2] && itemHref)
-            isSame = 'admin.php?page=' + v[2] == itemHref;
+            isSame = 'admin.php?page=' + v[2] == itemHref || this.parent[2] + '?page=' + v[2] == itemHref;
 
           if (
               isSame
@@ -154,7 +154,7 @@
             oldItem = [index, k];
             return true;
           }
-        });
+        }, {parent: value});
       });
 
       // Get the item object from the old position
