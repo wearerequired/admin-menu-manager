@@ -372,6 +372,18 @@ final class Admin_Menu_Manager {
 		 * This happens when installing a new plugin for example.
 		 */
 		$menu = array_merge( $menu, $temp_menu );
+
+		foreach ( $temp_submenu as $parent => $item ) {
+			if ( '' === $parent || empty( $item ) || ! is_array( $item ) ) {
+				continue;
+			}
+
+			if ( isset( $submenu[ $parent ] ) ) {
+				$submenu[ $parent ] = array_merge( $submenu[ $parent ], $item );
+			} else {
+				$submenu[ $parent ] = $item;
+			}
+		}
 	}
 
 	/**
