@@ -9,9 +9,11 @@
   },
   "devDependencies": {
     "grunt": "*",
+    "grunt-checktextdomain": "^1.0.0",
     "grunt-contrib-concat": "*",
     "grunt-contrib-uglify": "*",
     "grunt-contrib-watch": "*",
+    "grunt-wp-deploy": "^1.0.3",
     "grunt-wp-i18n": "*",
     "grunt-wp-readme-to-markdown": "*",
     "load-grunt-config": "*",
