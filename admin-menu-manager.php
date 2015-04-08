@@ -218,24 +218,12 @@ final class Admin_Menu_Manager {
 					if ( $item[2] === $sub_item[2] ) {
 						$hookname = get_plugin_page_hookname( $sub_item[2], $key );
 
-						if ( has_action( $hookname ) ) {
-							$menu_hooks = array();
-							foreach ( $wp_filter[ $hookname ][10] as $hook ) {
-								$menu_hooks[] = $hook['function'];
-							}
-						}
+						$old_filters = array();
 
-						if ( has_action( 'admin_print_styles-' . $hookname ) ) {
-							$styles_hooks = array();
-							foreach ( $wp_filter[ 'admin_print_styles-' . $hookname ][10] as $hook ) {
-								$styles_hooks[] = $hook['function'];
-							}
-						}
-
-						if ( has_action( 'admin_print_scripts-' . $hookname ) ) {
-							$scripts_hooks = array();
-							foreach ( $wp_filter[ 'admin_print_scripts-' . $hookname ][10] as $hook ) {
-								$scripts_hooks[] = $hook['function'];
+						foreach ( $wp_filter as $filter => $value ) {
+							if ( false !== strpos( $filter, $hookname ) ) {
+								$old_filters[ $filter ] = $value;
+								unset( $wp_filter[ $filter ] );
 							}
 						}
 
@@ -249,22 +237,8 @@ final class Admin_Menu_Manager {
 							$priority // Position
 						);
 
-						if ( isset( $menu_hooks ) ) {
-							foreach ( $menu_hooks as $hook ) {
-								add_action( $new_page, $hook );
-							}
-						}
-
-						if ( isset( $styles_hooks ) ) {
-							foreach ( $styles_hooks as $hook ) {
-								add_action( 'admin_print_styles-' . $new_page, $hook );
-							}
-						}
-
-						if ( isset( $scripts_hooks ) ) {
-							foreach ( $scripts_hooks as $hook ) {
-								add_action( 'admin_print_scripts-' . $new_page, $hook );
-							}
+						foreach ( $old_filters as $filter => $value ) {
+							$wp_filter[ str_replace( $hookname, $new_page, $filter ) ] = $value;
 						}
 
 						unset( $temp_submenu[ $key ][ $sub_key ] );
@@ -303,26 +277,14 @@ final class Admin_Menu_Manager {
 				// It must be a top level item moved to submenu
 				foreach ( $temp_menu as $m_key => &$m_item ) {
 					if ( $item[2] === $m_item[2] ) {
-						$hookname = get_plugin_page_hookname( $m_item[2], '' );
+						$hookname = get_plugin_page_hookname( $m_item[2] );
 
-						if ( has_action( $hookname ) ) {
-							$menu_hooks = array();
-							foreach ( $wp_filter[ $hookname ][10] as $hook ) {
-								$menu_hooks[] = $hook['function'];
-							}
-						}
+						$old_filters = array();
 
-						if ( has_action( 'admin_print_styles-' . $hookname ) ) {
-							$styles_hooks = array();
-							foreach ( $wp_filter[ 'admin_print_styles-' . $hookname ][10] as $hook ) {
-								$styles_hooks[] = $hook['function'];
-							}
-						}
-
-						if ( has_action( 'admin_print_scripts-' . $hookname ) ) {
-							$scripts_hooks = array();
-							foreach ( $wp_filter[ 'admin_print_scripts-' . $hookname ][10] as $hook ) {
-								$scripts_hooks[] = $hook['function'];
+						foreach ( $wp_filter as $filter => $value ) {
+							if ( false !== strpos( $filter, $hookname ) ) {
+								$old_filters[ $filter ] = $value;
+								unset( $wp_filter[ $filter ] );
 							}
 						}
 
@@ -334,26 +296,8 @@ final class Admin_Menu_Manager {
 							$m_item[2] // Slug
 						);
 
-						if ( isset( $menu_hook ) ) {
-							add_action( $new_page, $menu_hook );
-						}
-
-						if ( isset( $menu_hooks ) ) {
-							foreach ( $menu_hooks as $hook ) {
-								add_action( $new_page, $hook );
-							}
-						}
-
-						if ( isset( $styles_hooks ) ) {
-							foreach ( $styles_hooks as $hook ) {
-								add_action( 'admin_print_styles-' . $new_page, $hook );
-							}
-						}
-
-						if ( isset( $scripts_hooks ) ) {
-							foreach ( $scripts_hooks as $hook ) {
-								add_action( 'admin_print_scripts-' . $new_page, $hook );
-							}
+						foreach ( $old_filters as $filter => $value ) {
+							$wp_filter[ str_replace( $hookname, $new_page, $filter ) ] = $value;
 						}
 
 						unset( $temp_menu[ $m_key ] );
