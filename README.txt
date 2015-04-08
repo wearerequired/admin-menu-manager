@@ -18,9 +18,19 @@ This is our take on a simple, lightweight and unobtrusive WordPress admin menu m
 
 **Pro tip:** Admin Menu Manager works perfectly to get Jetpack out of the way.
 
+You can drag menu items anywhere you want, even from the top level to a sub menu item and vice-versa. Isn't that awesome?!
+
 **Demo**
 
 Check out this quick [demo video](https://cloudup.com/cJM_wnxhlJo) of the plugin in action.
+
+**Coming Soon**
+
+We're already working on version 2.0.0 of this plugin, which will ship with many more features. Soon you'll be able to:
+
+* Completely remove (and restore) menu items
+* Edit existing menu items and their icons
+* Add custom items to the admin menu
 
 **Contributions**
 
