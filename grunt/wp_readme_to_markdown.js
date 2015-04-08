@@ -4,4 +4,4 @@ module.exports = {
       'README.md': 'readme.txt'
     }
   }
-};
+}

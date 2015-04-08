@@ -21,4 +21,4 @@ module.exports = {
       'js/build/admin-menu-manager.min.js': ['js/src/admin-menu-manager.js']
     }
   }
-};
+}

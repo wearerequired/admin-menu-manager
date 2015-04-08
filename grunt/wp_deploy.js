@@ -7,4 +7,4 @@ module.exports = {
       assets_dir : 'assets'
     }
   }
-};
+}

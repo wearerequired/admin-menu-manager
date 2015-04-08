@@ -11,4 +11,4 @@ module.exports = {
     files: 'js/src/**/*.*',
     tasks: ['concat', 'uglify']
   }
-};
+}
