@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Admin Menu Manager 1.0.0\n"
 "Report-Msgid-Bugs-To: http://required.ch\n"
-"POT-Creation-Date: 2015-03-29 11:41:31+00:00\n"
-"PO-Revision-Date: 2015-03-29 13:41+0100\n"
+"POT-Creation-Date: 2015-04-08 06:58:47+00:00\n"
+"PO-Revision-Date: 2015-04-08 08:59+0100\n"
 "Last-Translator: Pascal Birchler <pascal@required.ch>\n"
 "Language-Team: required+\n"
 "Language: de_DE\n"
@@ -22,19 +22,20 @@ msgstr ""
 "X-Textdomain-Support: yes\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: admin-menu-manager.php:85 admin-menu-manager.php:222
+#: admin-menu-manager.php:112 admin-menu-manager.php:367
+#: admin-menu-manager.php:369
 msgid "Edit Menu"
 msgstr "Menü bearbeiten"
 
-#: admin-menu-manager.php:86
+#: admin-menu-manager.php:113
 msgid "Save"
 msgstr "Speichern"
 
-#: admin-menu-manager.php:87
+#: admin-menu-manager.php:114
 msgid "Saving&hellip;"
 msgstr "Speichert&hellip;"
 
-#: admin-menu-manager.php:88
+#: admin-menu-manager.php:115
 msgid "Saved!"
 msgstr "Fertig!"
 
