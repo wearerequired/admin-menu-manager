@@ -1,8 +1,36 @@
+# Default task
 default:
-  - 'i18n'
-  - 'readme'
-i18n:
-  - 'addtextdomain'
-  - 'makepot'
-readme:
-  - 'wp_readme_to_markdown'
+- 'checktextdomain'
+- 'makepot'
+- 'replace:header'
+- 'replace:plugin'
+- 'jshint'
+- 'concat'
+- 'uglify'
+- 'sass'
+- 'autoprefixer'
+- 'cssmin'
+- 'clean:js'
+
+# Build task
+build:
+- 'default'
+- 'clean'
+- 'copy:main'
+- 'compress' # Can comment this out for WordPress.org plugins
+
+# Prepare a WordPress.org release
+release:prepare:
+- 'build'
+- 'copy:svn'
+- 'replace:svn_readme'
+- 'clean:svn_readme_md'
+
+# Deploy out a WordPress.org release
+release:deploy:
+- 'wp_deploy'
+
+# WordPress.org release task
+release:
+- 'release:prepare'
+- 'release:deploy'

@@ -1,3 +1,11 @@
+/**
+ * Admin Menu Manager
+ * http://required.ch
+ *
+ * Copyright (c) 2015 required+
+ * Licensed under the GPLv2+ license.
+ */
+
 #collapse-menu {
 	overflow: hidden;
 }
@@ -31,8 +39,4 @@
 
 #adminmenu .wp-menu-separator.ui-sortable-handle {
 	transition: height .5s ease-in-out, border .5s ease-in-out, margin .5s ease-in-out;
-}
-
-#adminmenu:not(.ui-sortable-disabled) .wp-has-submenu.ui-sortable-handle .wp-submenu {
-	/*top: -1px !important;*/
 }

@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: Admin Menu Manager 1.0.0\n"
 "Report-Msgid-Bugs-To: http://required.ch\n"
 "POT-Creation-Date: 2015-04-08 06:58:47+00:00\n"
-"PO-Revision-Date: 2015-04-08 08:59+0100\n"
+"PO-Revision-Date: 2015-04-25 15:46+0100\n"
 "Last-Translator: Pascal Birchler <pascal@required.ch>\n"
 "Language-Team: required+\n"
 "Language: de_DE\n"
@@ -22,20 +22,19 @@ msgstr ""
 "X-Textdomain-Support: yes\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: admin-menu-manager.php:112 admin-menu-manager.php:367
-#: admin-menu-manager.php:369
+#: classes/plugin.php:97 classes/plugin.php:382 classes/plugin.php:384
 msgid "Edit Menu"
 msgstr "Menü bearbeiten"
 
-#: admin-menu-manager.php:113
+#: classes/plugin.php:98
 msgid "Save"
 msgstr "Speichern"
 
-#: admin-menu-manager.php:114
+#: classes/plugin.php:99
 msgid "Saving&hellip;"
 msgstr "Speichert&hellip;"
 
-#: admin-menu-manager.php:115
+#: classes/plugin.php:100
 msgid "Saved!"
 msgstr "Fertig!"
 
@@ -43,9 +42,9 @@ msgstr "Fertig!"
 msgid "Admin Menu Manager"
 msgstr "Admin Menü Manager"
 
-#. Plugin URI of the plugin/theme
-msgid "https://github.com/wearerequired/admin-menu-manager"
-msgstr "https://github.com/wearerequired/admin-menu-manager"
+#. Author URI of the plugin/theme
+msgid "http://required.ch"
+msgstr "http://required.ch"
 
 #. Description of the plugin/theme
 msgid "Manage the WordPress admin menu using a simple drag & drop interface."
@@ -55,6 +54,5 @@ msgstr "Verwalte das WordPress Admin-Menü ganz einfach mittels Drag & Drop"
 msgid "required+"
 msgstr "required+"
 
-#. Author URI of the plugin/theme
-msgid "http://required.ch"
-msgstr "http://required.ch"
+#~ msgid "https://github.com/wearerequired/admin-menu-manager"
+#~ msgstr "https://github.com/wearerequired/admin-menu-manager"

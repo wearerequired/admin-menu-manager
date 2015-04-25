@@ -1,5 +1,5 @@
 # Copyright (C) 2015 required+
-# This file is distributed under the GPL-2.0+.
+# This file is distributed under the GPLv2+.
 msgid ""
 msgstr ""
 "Project-Id-Version: Admin Menu Manager 1.0.0\n"
@@ -10,34 +10,33 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "PO-Revision-Date: 2015-MO-DA HO:MI+ZONE\n"
 "Last-Translator: required+\n"
-"Language-Team: required+\n"
-"X-Generator: grunt-wp-i18n 0.5.0\n"
+"Language-Team: required+ <support@required.ch>\n"
+"X-Generator: grunt-wp-i18n 0.5.2\n"
 "X-Poedit-KeywordsList: "
 "__;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_"
 "attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-Country: United States\n"
+"X-Poedit-Country: Switzerland\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-Basepath: ../\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: admin-menu-manager.php:112 admin-menu-manager.php:367
-#: admin-menu-manager.php:369
+#: classes/plugin.php:97 classes/plugin.php:389 classes/plugin.php:391
 msgid "Edit Menu"
 msgstr ""
 
-#: admin-menu-manager.php:113
+#: classes/plugin.php:98
 msgid "Save"
 msgstr ""
 
-#: admin-menu-manager.php:114
+#: classes/plugin.php:99
 msgid "Saving&hellip;"
 msgstr ""
 
-#: admin-menu-manager.php:115
+#: classes/plugin.php:100
 msgid "Saved!"
 msgstr ""
 
@@ -45,8 +44,8 @@ msgstr ""
 msgid "Admin Menu Manager"
 msgstr ""
 
-#. Plugin URI of the plugin/theme
-msgid "https://github.com/wearerequired/admin-menu-manager"
+#. Author URI of the plugin/theme
+msgid "http://required.ch"
 msgstr ""
 
 #. Description of the plugin/theme
@@ -55,8 +54,4 @@ msgstr ""
 
 #. Author of the plugin/theme
 msgid "required+"
-msgstr ""
-
-#. Author URI of the plugin/theme
-msgid "http://required.ch"
 msgstr ""

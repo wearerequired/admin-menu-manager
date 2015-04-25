@@ -1,7 +1,13 @@
-/* global AdminMenuManager */
-"use strict";
+/* global _, jQuery, ajaxurl, AdminMenuManager */
+/**
+ * Admin Menu Manager
+ *
+ * Copyright (c) 2015 required+
+ * Licensed under the GPLv2+ license.
+ */
 
 (function ($) {
+  'use strict';
 
   $(function () {
     var isEditing = false;
@@ -57,8 +63,9 @@
             }
 
             // Add this data attribute to separators to make things easier when sorting
-            if ($el.hasClass('wp-menu-separator'))
+            if ($el.hasClass('wp-menu-separator')) {
               $el.attr('data-amm-separator', 'separator' + (++separatorIndex));
+            }
           });
 
           $('[data-amm-separator=separator' + separatorIndex + ']').attr('data-amm-separator', 'separator-last');
@@ -66,10 +73,10 @@
         },
         // This event is triggered when the user stopped sorting and the DOM position has changed.
         update     : changeMenu,
-        beforeStop : function (event, ui) {
+        beforeStop : function (e, ui) {
           // return false if this is an element that shouldn't be dragged to a specific location
         },
-        change     : function (event, ui) {
+        change     : function (e, ui) {
           // show the submenu items of an element close to the current item so we could move it there
 
           // Items can't be moved after the collapse and edit buttons
@@ -108,13 +115,15 @@
           isSeparator = ui.item.is('.wp-menu-separator'),
           separator = ui.item.attr('data-amm-separator'),
           currentPosition = [ui.item.index()],
-          oldItem;
+          item,
+          oldItem,
+          oldIcon;
 
       // It's a submenu item
       if (ui.item.parent('.wp-submenu').length > 0) {
         newPosition = newPosition > 0 ? --newPosition : 0;
         var parentPosition = $('#adminmenu > li').index(ui.item.parents('li'));
-        currentPosition = [parentPosition, newPosition]
+        currentPosition = [parentPosition, newPosition];
       }
 
       // Add CSS classes
@@ -129,28 +138,25 @@
        */
       _.find(AdminMenuManager.adminMenu, function (value, index) {
         // Acommodate for different structures
-        var isSame = ( value[2] && itemHref && value[2] == itemHref );
-        if (!isSame && value[2].indexOf('.') == -1 && value[2] && itemHref)
-          isSame = 'admin.php?page=' + value[2] == itemHref;
+        var isSame = ( value[2] && itemHref && value[2] === itemHref );
+        if (!isSame && value[2].indexOf('.') === -1 && value[2] && itemHref) {
+          isSame = 'admin.php?page=' + value[2] === itemHref;
+        }
 
-        if (
-            isSame
-            || ( isSeparator && value[4] == 'wp-menu-separator' && value[2] == separator )
-        ) {
+        if (isSame || ( isSeparator && value[4] === 'wp-menu-separator' && value[2] === separator )) {
           oldItem = [index];
           return true;
         }
 
+        // Iterate on sub menu items
         _.find(value[7], function (v, k) {
           // Acommodate for different structures
-          var isSame = ( v[2] && itemHref && v[2] == itemHref );
-          if (!isSame && v[2].indexOf('.') == -1 && v[2] && itemHref)
-            isSame = 'admin.php?page=' + v[2] == itemHref || this.parent[2] + '?page=' + v[2] == itemHref;
+          var isSame = ( v[2] && itemHref && v[2] === itemHref );
+          if (!isSame && v[2].indexOf('.') === -1 && v[2] && itemHref) {
+            isSame = 'admin.php?page=' + v[2] === itemHref || this.parent[2] + '?page=' + v[2] === itemHref;
+          }
 
-          if (
-              isSame
-              || ( isSeparator && v[4] == 'wp-menu-separator' && v[2] == separator )
-          ) {
+          if (isSame || ( isSeparator && v[4] === 'wp-menu-separator' && v[2] === separator )) {
             oldItem = [index, k];
             return true;
           }
@@ -159,27 +165,28 @@
 
       // Get the item object from the old position
       if (oldItem) {
-        var oldIcon = AdminMenuManager.adminMenu[oldItem[0]][6];
+        oldIcon = AdminMenuManager.adminMenu[oldItem[0]][6];
 
-        if (oldItem.length == 1) {
-          var item = AdminMenuManager.adminMenu[oldItem[0]];
+        if (oldItem.length === 1) {
+          item = AdminMenuManager.adminMenu[oldItem[0]];
           AdminMenuManager.adminMenu.splice(oldItem[0], 1);
-        } else if (oldItem.length == 2) {
-          var item = AdminMenuManager.adminMenu[oldItem[0]][7][oldItem[1]];
+        } else if (oldItem.length === 2) {
+          item = AdminMenuManager.adminMenu[oldItem[0]][7][oldItem[1]];
           AdminMenuManager.adminMenu[oldItem[0]][7].splice(oldItem[1], 1);
         }
       }
 
       // Move it to the new position. Add icon if not existing
-      if (currentPosition.length == 1) {
-        if (!isSeparator)
+      if (currentPosition.length === 1) {
+        if (!isSeparator) {
           item[4] = 'menu-top';
+        }
 
         // Copy from the parent item if available
         item[5] = item[5] ? item[5] : (!!oldItem ? AdminMenuManager.adminMenu[oldItem[0]][5] : '');
         item[6] = oldIcon ? oldIcon : 'dashicons-admin-generic';
         AdminMenuManager.adminMenu.splice(currentPosition[0], 0, item);
-      } else if (currentPosition.length == 2) {
+      } else if (currentPosition.length === 2) {
         item[4] = '';
 
         if (AdminMenuManager.adminMenu[currentPosition[0]][7].length > 0) {
@@ -206,7 +213,7 @@
           ui.item.find('.amm-wp-menu-name').removeClass('amm-wp-menu-name').addClass('wp-menu-name');
 
           // Item doesn't yet have the structure that is needed for a top level item
-          if (ui.item.find('a div').length == 0) {
+          if (ui.item.find('a div').length === 0) {
             ui.item.find('a').wrapInner('<div class="wp-menu-name"></div>');
 
             // Add the menu icon depending on context (dashicon/svg/div)
@@ -214,7 +221,7 @@
               ui.item.find('a').prepend('<div class="wp-menu-image dashicons-before ' + item[6] + '"><br></div>');
             } else if (item[6].indexOf('image/svg') > -1 || item[6].indexOf('http') > -1) {
               ui.item.find('a').prepend('<div class="wp-menu-image svg" style="background-image:url(' + item[6] + ') !important;"><br></div>');
-            } else if ('div' == item[6] || 'none' == item[6]) {
+            } else if ('div' === item[6] || 'none' === item[6]) {
               ui.item.find('a').prepend('<div class="wp-menu-image dashicons-before"><br></div>');
             } else {
               ui.item.find('a').prepend('<div class="wp-menu-image dashicons-before dashicons-admin-generic"><br></div>');
@@ -228,7 +235,7 @@
         }
       } else {
         // Submenu item, hide stuff that isn't needed
-        ui.item.removeClass('menu-top').removeClass(ui.item.attr("class").match(/toplevel_[\w-]*\b/));
+        ui.item.removeClass('menu-top').removeClass(ui.item.attr('class').match(/toplevel_[\w-]*\b/));
         ui.item.find('.menu-top').removeClass('menu-top');
         ui.item.find('.wp-menu-arrow').addClass('hidden');
         ui.item.find('.wp-menu-image').addClass('hidden');
