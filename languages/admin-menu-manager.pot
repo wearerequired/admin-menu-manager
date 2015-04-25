@@ -24,19 +24,19 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: classes/plugin.php:97 classes/plugin.php:389 classes/plugin.php:391
+#: classes/plugin.php:98 classes/plugin.php:115 classes/plugin.php:117
 msgid "Edit Menu"
 msgstr ""
 
-#: classes/plugin.php:98
+#: classes/plugin.php:99
 msgid "Save"
 msgstr ""
 
-#: classes/plugin.php:99
+#: classes/plugin.php:100
 msgid "Saving&hellip;"
 msgstr ""
 
-#: classes/plugin.php:100
+#: classes/plugin.php:101
 msgid "Saved!"
 msgstr ""
 
