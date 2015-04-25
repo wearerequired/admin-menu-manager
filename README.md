@@ -60,10 +60,10 @@ Developed by [required+](http://required.ch/ "Team of experienced web profession
 
 ## Changelog ##
 
-### 0.1 ###
+### 1.0.0 ###
 * First release
 
 ## Upgrade Notice ##
 
-### 0.1.0 ###
+### 1.0.0 ###
 First release
