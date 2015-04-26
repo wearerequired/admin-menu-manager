@@ -128,6 +128,10 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	public function get_admin_menu() {
 		global $menu, $submenu;
 
+		if ( null === $menu ) {
+			$menu = array();
+		}
+
 		$menu_items = array();
 
 		foreach ( $menu as $menu_item ) {
