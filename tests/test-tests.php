@@ -16,10 +16,4 @@ class Admin_Menu_Manager_Test_Utils extends Admin_Menu_Manager_TestCase {
 		$this->assertEquals( "Unit tests are sweet!", $string );
 		$this->assertNotEquals( "Unit tests suck!", $string );
 	}
-	function test_get_admin_menu() {
-
-		$menu_items = $this->plugin()->get_admin_menu();
-		$this->assertInternalType( 'array' , $menu_items );
-
-	}
 }
