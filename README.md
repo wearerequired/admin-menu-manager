@@ -60,10 +60,16 @@ Developed by [required+](http://required.ch/ "Team of experienced web profession
 
 ## Changelog ##
 
+### 1.0.1 ###
+* Fix JS URL that made the plugin un-usable
+
 ### 1.0.0 ###
 * First release
 
 ## Upgrade Notice ##
+
+### 1.0.1 ###
+Fix JS URL that made the plugin un-usable. Sorry!
 
 ### 1.0.0 ###
 First release
