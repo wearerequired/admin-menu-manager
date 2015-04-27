@@ -11,7 +11,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	/**
 	 * Plugin version.
 	 */
-	const VERSION = '1.0.0';
+	const VERSION = '1.0.1';
 
 	/**
 	 * Constructs the object, hooks in to `plugins_loaded`.
@@ -87,7 +87,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 
 		wp_enqueue_script(
 			'admin-menu-manager',
-			$this->get_url() . 'js/build/admin-menu-manager' . $suffix . '.js',
+			$this->get_url() . 'js/admin-menu-manager' . $suffix . '.js',
 			array(
 				'jquery-ui-sortable',
 				'underscore'
