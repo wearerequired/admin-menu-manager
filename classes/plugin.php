@@ -29,9 +29,6 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		// Load admin style sheet and JavaScript.
 		$this->hook( 'admin_enqueue_scripts' );
 
-		// Add edit button to menu
-		$this->hook( 'adminmenu', 'add_admin_menu_button' );
-
 		// Handle form submissions
 		$this->hook( 'wp_ajax_amm_update_menu', 'update_menu' );
 
@@ -90,34 +87,22 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			$this->get_url() . 'js/admin-menu-manager' . $suffix . '.js',
 			array(
 				'jquery-ui-sortable',
-				'underscore'
+				'underscore',
+				'backbone'
 			),
 			self::VERSION, true );
 
 		wp_localize_script( 'admin-menu-manager', 'AdminMenuManager', array(
-			'buttonEdit'   => __( 'Edit Menu', 'admin-menu-manager' ),
-			'buttonSave'   => __( 'Save', 'admin-menu-manager' ),
-			'buttonSaving' => __( 'Saving&hellip;', 'admin-menu-manager' ),
-			'buttonSaved'  => __( 'Saved!', 'admin-menu-manager' ),
-			'adminMenu'    => self::get_admin_menu(),
+			'templates' => array(
+				'editButton' => array(
+					'labelEdit'   => __( 'Edit Menu', 'admin-menu-manager' ),
+					'labelSave'   => __( 'Save', 'admin-menu-manager' ),
+					'labelSaving' => __( 'Saving&hellip;', 'admin-menu-manager' ),
+					'labelSaved'  => __( 'Saved!', 'admin-menu-manager' ),
+				)
+			),
+			'adminMenu' => self::get_admin_menu(),
 		) );
-	}
-
-	/**
-	 * Add our edit button to the menu.
-	 */
-	public function add_admin_menu_button() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-		?>
-		<li id="admin-menu-manager-edit" class="hide-if-no-js">
-			<a href="#" class="menu-top" title="<?php esc_attr_e( 'Edit Menu', 'admin-menu-manager' ); ?>">
-				<div class="wp-menu-image dashicons-before dashicons-edit"></div>
-				<div class="wp-menu-name"><?php _e( 'Edit Menu', 'admin-menu-manager' ); ?></div>
-			</a>
-		</li>
-	<?php
 	}
 
 	/**

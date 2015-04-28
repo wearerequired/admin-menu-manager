@@ -5,7 +5,7 @@ default:
 - 'replace:header'
 - 'replace:plugin'
 - 'jshint'
-- 'concat'
+- 'browserify'
 - 'uglify'
 - 'sass'
 - 'autoprefixer'
