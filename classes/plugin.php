@@ -27,7 +27,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		$this->hook( 'init' );
 
 		// Load admin style sheet and JavaScript.
-		$this->hook( 'admin_enqueue_scripts' );
+		$this->hook( 'admin_enqueue_scripts', 5 );
 
 		// Handle form submissions
 		$this->hook( 'wp_ajax_amm_update_menu', 'update_menu' );
@@ -90,7 +90,8 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				'underscore',
 				'backbone'
 			),
-			self::VERSION, true );
+			self::VERSION
+		);
 
 		wp_localize_script( 'admin-menu-manager', 'AdminMenuManager', array(
 			'templates' => array(
@@ -101,7 +102,8 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 					'labelSaved'  => __( 'Saved!', 'admin-menu-manager' ),
 				)
 			),
-			'adminMenu' => self::get_admin_menu(),
+			'menu'      => self::get_admin_menu(),
+			'submenu'   => self::get_admin_submenu(),
 		) );
 	}
 
@@ -111,32 +113,28 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * @since 1.0.0
 	 */
 	public function get_admin_menu() {
-		global $menu, $submenu;
+		global $menu;
 
 		if ( null === $menu ) {
 			$menu = array();
 		}
 
-		$menu_items = array();
+		return $menu;
+	}
 
-		foreach ( $menu as $menu_item ) {
-			if ( ! empty( $submenu[ $menu_item[2] ] ) ) {
-				foreach ( $submenu[ $menu_item[2] ] as $key => &$value ) {
-					if ( '' === $key && '' === $value[0] ) {
-						unset( $submenu[ $menu_item[2] ][ $key ] );
-						continue;
-					}
-					$value[] = $key;
-				}
-				$menu_item[] = array_values( $submenu[ $menu_item[2] ] );
-			} else {
-				$menu_item[] = array();
-			}
+	/**
+	 * Grab a list of all registered admin pages.
+	 *
+	 * @since 1.0.0
+	 */
+	public function get_admin_submenu() {
+		global $submenu;
 
-			$menu_items[] = $menu_item;
+		if ( null === $submenu ) {
+			$submenu = array();
 		}
 
-		return $menu_items;
+		return (array) $submenu;
 	}
 
 	/**
@@ -153,14 +151,29 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		$separatorIndex = 1;
 		$lastSeparator  = null;
 
-		foreach ( $menu as $index => $item ) {
-			$item[0] = wp_unslash( $item[0] );
+		foreach ( $menu as $item ) {
+			$item = array(
+				wp_unslash( $item['label'] ),
+				$item['capability'],
+				$item['href'],
+				$item['pageTitle'],
+				$item['classes'],
+				$item['id'],
+				$item['icon'],
+				isset( $item['children'] ) ? $item['children'] : array(),
+			);
 
-			if ( isset( $item[7] ) ) {
+			if ( ! empty( $item[7] ) ) {
 				$submenu[ $item[2] ] = array();
 				foreach ( $item[7] as $subitem ) {
-					$subitem[0]            = wp_unslash( $subitem[0] );
-					$subitem               = array_slice( $subitem, 0, 4 );
+					$subitem = array(
+						wp_unslash( $subitem['label'] ),
+						$subitem['capability'],
+						$subitem['href'],
+						$subitem['pageTitle'],
+						$subitem['classes'],
+					);
+
 					$submenu[ $item[2] ][] = $subitem;
 				}
 				unset( $item[7] );

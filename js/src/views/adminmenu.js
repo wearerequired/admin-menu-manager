@@ -1,235 +1,188 @@
 var EditButtonModel = require('models/edit-button');
 var EditButtonView = require('views/edit-button');
+var MenuItem = require('models/menu-item');
+var MenuItemView = require('views/menu-item');
 
 var AdminMenu = Backbone.View.extend({
-  el       : '#adminmenuwrap',
-  tagName  : 'div',
-  className: 'amm-adminmenu-view',
+	el       : '#adminmenuwrap',
+	tagName  : 'div',
+	className: 'amm-adminmenu-view',
 
-  initialize: function () {
-    this.editButton = new EditButtonView({model: new EditButtonModel()});
+	initialize: function () {
+		this.editButton = new EditButtonView({model: new EditButtonModel()});
 
-    // Add listeners
-    this.listenTo(this.editButton, 'isActive', this.toggleSortable);
+		// Initialize menu items
 
-    this.addMenuMetaData();
+		var Menu = Backbone.Collection.extend({
+			model: MenuItem,
+		});
 
-    // Initialize sortable
-    this.$el.find('> ul').sortable({
-      disabled   : true,
-      cancel     : '#admin-menu-manager-edit, #collapse-menu',
-      connectWith: '#adminmenuwrap ul',
-      // This event is triggered when (surprise) sortable starts
-      create     : this.sortableCreate,
-      // This event is triggered when the user stopped sorting and the DOM position has changed.
-      update     : this.sortableUpdate,
-      change     : this.sortableChange
-    }).addClass('ui-sortable-disabled'); // somehow it doesn't apply this class even if it's initially disabled
-  },
+		this.menu = new Menu();
 
-  render: function () {
-    this.$el.find('#adminmenu').append(this.editButton.render().el);
-    return this;
-  },
+		var count = 0;
+		_.each(AdminMenuManager.menu, function (el) {
+			el[4] = this.$el.find('#adminmenu > li')[count].className + ' ui-sortable-handle';
+			var menuItem = new MenuItem(el);
+			menuItem.set('children', new Menu());
+			this.menu.add(menuItem);
+			if (AdminMenuManager.submenu[menuItem.get(2)]) {
+				var subCount = 0;
+				_.each(AdminMenuManager.submenu[menuItem.get(2)], function (el) {
+					el[4] = this.$el.find('#adminmenu > li')[count].className;
+					el[4] += jQuery(this.$el.find('#adminmenu > li')[count]).find('li:not(.wp-submenu-head)')[subCount].className;
+					el[4] += ' ui-sortable-handle ';
+					el[4] += menuItem.get(5);
+					el[6] = menuItem.get(6);
+					menuItem.attributes.children.add(new MenuItem(el));
 
-  events: {},
+					subCount++;
+				}, this);
+			}
 
-  toggleSortable: function (isActive) {
-    this.$el.find('> ul').sortable('option', 'disabled', !isActive);
-  },
+			count++;
+		}, this);
+	},
 
-  addMenuMetaData: function () {
-    // Add submenu <ul> to all elements so we could add items to every menu if we want
-    _.each(this.$el.find('#adminmenu > .menu-top:not(.wp-has-submenu)'), function (el) {
-      var $el = jQuery(el);
-      $el.addClass('wp-has-submenu');
-      if ($el.hasClass('current')) {
-        $el.addClass('wp-has-current-submenu');
-      }
-      $el.append('<ul class="wp-submenu wp-submenu-wrap"><li class="wp-submenu-head">' + $el.find('.wp-menu-name').html() + '</li></ul>');
-    });
-  },
+	render: function () {
+		this.$el.find('#adminmenu').append(this.editButton.render().el);
 
-  removeMenuClasses: function () {
-    // Remove unneccessary classes again from the menu items
-    _.each(this.$el.find('#adminmenu > .menu-top.wp-has-submenu'), function (el) {
-      var $el = jQuery(el);
-      if ($el.find('li').length <= 1) {
-        $el.removeClass('wp-has-current-submenu wp-has-submenu');
-      }
-    });
-  },
+		// Initialize sortable
+		this.$el.find('ul').sortable({
+			disabled   : true,
+			cancel     : '#admin-menu-manager-edit, #collapse-menu',
+			connectWith: '#adminmenuwrap ul',
+			// This event is triggered when (surprise) sortable starts
+			create     : jQuery.proxy(this.sortableCreate, this),
+			// This event is triggered when the user stopped sorting and the DOM position has changed.
+			update     : jQuery.proxy(this.sortableUpdate, this),
+			change     : jQuery.proxy(this.sortableChange, this)
+		}).addClass('ui-sortable-disabled'); // somehow it doesn't apply this class even if it's initially disabled
 
-  sortableCreate: function (e, ui) {
-    // On init, store each menu item's initial state
-    var separatorIndex = 0;
+		// Add listeners
+		this.listenTo(this.editButton, 'isActive', this.toggleSortable);
 
-    _.each(jQuery('#adminmenu li:not(.wp-submenu-head)'), function (el, index) {
-      var $el = jQuery(el);
+		return this;
+	},
 
-      $el.attr('data-amm-class', $el.attr('class'));
-      $el.attr('data-amm-index', $el.index());
+	events: {},
 
-      if ($el.parent('.wp-submenu').length > 0) {
-        $el.attr('data-amm-parent', $el.parents('li').find('a').attr('href'));
-        $el.attr('data-amm-index', $el.index() - 1);
-      }
+	toggleSortable: function (isActive) {
+		this.$el.find('ul').sortable('option', 'disabled', !isActive);
+	},
 
-      // Add this data attribute to separators to make things easier when sorting
-      if ($el.hasClass('wp-menu-separator')) {
-        $el.attr('data-amm-separator', 'separator' + (++separatorIndex));
-      }
-    });
+	removeMenuClasses: function () {
+		// Remove unneccessary classes again from the menu items
+		_.each(this.$el.find('#adminmenu > .menu-top.wp-has-submenu'), function (el) {
+			var $el = jQuery(el);
+			if ($el.find('li').length <= 1) {
+				$el.removeClass('wp-has-current-submenu wp-has-submenu');
+			}
+		});
+	},
 
-    jQuery('[data-amm-separator=separator' + separatorIndex + ']').attr('data-amm-separator', 'separator-last');
+	sortableCreate: function (e, ui) {
+		// On init, store each menu item's initial state
+		var separatorIndex = 0;
 
-  },
+		_.each(jQuery('#adminmenu li:not(.wp-submenu-head)'), function (el, index) {
+			var $el = jQuery(el);
+			// Add this data attribute to separators to make things easier when sorting
+			if ($el.hasClass('wp-menu-separator')) {
+				$el.attr('data-amm-separator', 'separator' + (++separatorIndex));
+			}
+		});
 
-  sortableUpdate: function (e, ui) {
-    var itemHref = ui.item.find('a').attr('href'),
-        newPosition = ui.item.index(),
-        isSeparator = ui.item.is('.wp-menu-separator'),
-        separator = ui.item.attr('data-amm-separator'),
-        currentPosition = [ui.item.index()],
-        item,
-        oldItem,
-        oldIcon;
+		jQuery('[data-amm-separator=separator' + separatorIndex + ']').attr('data-amm-separator', 'separator-last');
 
-    // It's a submenu item
-    if (ui.item.parent('.wp-submenu').length > 0) {
-      newPosition = newPosition > 0 ? --newPosition : 0;
-      var parentPosition = jQuery('#adminmenu > li').index(ui.item.parents('li'));
-      currentPosition = [parentPosition, newPosition];
-    }
+	},
 
-    // Add CSS classes
-    if (ui.item.index() > 0) {
-      ui.item.removeClass('wp-first-item');
-    }
+	sortableUpdate: function (e, ui) {
+		var itemHref = ui.item.find('a').attr('href'),
+				newPosition = ui.item.index(),
+				isSeparator = ui.item.is('.wp-menu-separator'),
+				separator = ui.item.attr('data-amm-separator'),
+				currentPosition = [ui.item.index()];
 
-    /**
-     * Iterate through the admin menu object.
-     *
-     * Find the item's last position and move it to the new one.
-     */
-    _.find(AdminMenuManager.adminMenu, function (value, index) {
-      // Acommodate for different structures
-      var isSame = ( value[2] && itemHref && value[2] === itemHref );
-      if (!isSame && value[2].indexOf('.') === -1 && value[2] && itemHref) {
-        isSame = 'admin.php?page=' + value[2] === itemHref;
-      }
+		// It's a submenu item
+		if (ui.item.parent('.wp-submenu').length > 0) {
+			newPosition = newPosition > 0 ? --newPosition : 0;
+			var parentPosition = jQuery('#adminmenu > li').index(ui.item.parents('li'));
+			currentPosition = [parentPosition, newPosition];
+		}
 
-      if (isSame || ( isSeparator && value[4] === 'wp-menu-separator' && value[2] === separator )) {
-        oldItem = [index];
-        return true;
-      }
+		/**
+		 * Iterate through the admin menu object.
+		 *
+		 * Find the item's last position and move it to the new one.
+		 */
 
-      // Iterate on sub menu items
-      _.find(value[7], function (v, k) {
-        // Acommodate for different structures
-        var isSame = ( v[2] && itemHref && v[2] === itemHref );
-        if (!isSame && v[2].indexOf('.') === -1 && v[2] && itemHref) {
-          isSame = 'admin.php?page=' + v[2] === itemHref || this.parent[2] + '?page=' + v[2] === itemHref;
-        }
+		// Iterate on menu items
+		var item = this.findInMenu(itemHref, this.menu, separator);
 
-        if (isSame || ( isSeparator && v[4] === 'wp-menu-separator' && v[2] === separator )) {
-          oldItem = [index, k];
-          return true;
-        }
-      }, {parent: value});
-    });
+		if (item === undefined) {
+			return;
+		}
 
-    // Get the item object from the old position
-    if (oldItem) {
-      oldIcon = AdminMenuManager.adminMenu[oldItem[0]][6];
+		// Get the item object from the old position
+		item.collection.remove(item);
 
-      if (oldItem.length === 1) {
-        item = AdminMenuManager.adminMenu[oldItem[0]];
-        AdminMenuManager.adminMenu.splice(oldItem[0], 1);
-      } else if (oldItem.length === 2) {
-        item = AdminMenuManager.adminMenu[oldItem[0]][7][oldItem[1]];
-        AdminMenuManager.adminMenu[oldItem[0]][7].splice(oldItem[1], 1);
-      }
-    }
+		// Move it to the new position
+		if (currentPosition.length === 1) {
+			this.menu.add(item, {at: currentPosition[0]});
+		} else if (currentPosition.length === 2) {
+			this.menu.at(currentPosition[0]).add(item, {at: currentPosition[1]});
+			item = this.menu.at(currentPosition[0]);
+		}
 
-    // Move it to the new position. Add icon if not existing
-    if (currentPosition.length === 1) {
-      if (!isSeparator) {
-        item[4] = 'menu-top';
-      }
+		// Re-render the current item
+		var menuItemView = new MenuItemView({model: item});
+		var newItem = menuItemView.render().$el;
 
-      // Copy from the parent item if available
-      item[5] = item[5] ? item[5] : (!!oldItem ? AdminMenuManager.adminMenu[oldItem[0]][5] : '');
-      item[6] = oldIcon ? oldIcon : 'dashicons-admin-generic';
-      AdminMenuManager.adminMenu.splice(currentPosition[0], 0, item);
-    } else if (currentPosition.length === 2) {
-      item[4] = '';
+		_.each(['class', 'id', 'aria-hidden', 'aria-haspopup'], function (attr) {
+			ui.item.attr(attr, newItem.attr(attr));
+			ui.item.find('> a').attr(attr, newItem.attr(attr));
+		});
+		ui.item.find('> a').replaceWith(newItem.find('> a'));
+		ui.item.find('ul').replaceWith(newItem.find('ul'));
+	},
 
-      if (AdminMenuManager.adminMenu[currentPosition[0]][7].length > 0) {
-        AdminMenuManager.adminMenu[currentPosition[0]][7].splice(currentPosition[1], 0, item);
-      } else {
-        // This means the menu item hasn't had any children before.
-        AdminMenuManager.adminMenu[currentPosition[0]][7].push(item);
-      }
-    }
+	sortableChange: function (e, ui) {
+		// todo: show the submenu items of an element close to the current item so we could move it there
 
-    // Was this item moved to the top level?
-    if (ui.item.parent('#adminmenu').length > 0) {
-      // Is this a separator or not?
-      if (!isSeparator) {
-        // Is this originally a top level item or not?
-        if (!ui.item.attr('data-amm-parent')) {
-          ui.item.removeClass().addClass(ui.item.attr('data-amm-class')).addClass('ui-sortable-handle');
-        } else {
-          ui.item.addClass('menu-top');
-          ui.item.find('a').addClass('menu-top');
-        }
+		// Items can't be moved after the collapse and edit buttons
+		var $fixed = this.$el.find('#admin-menu-manager-edit, #collapse-menu').detach();
+		this.$el.find('#adminmenu').append($fixed);
+	},
 
-        ui.item.addClass(item[5]);
-        ui.item.find('.amm-wp-menu-name').removeClass('amm-wp-menu-name').addClass('wp-menu-name');
+	findInMenu: function (itemHref, collection, separator) {
+		var result;
 
-        // Item doesn't yet have the structure that is needed for a top level item
-        if (ui.item.find('a div').length === 0) {
-          ui.item.find('a').wrapInner('<div class="wp-menu-name"></div>');
+		collection.find(function (menuItem, index) {
+			// Accommodate for different structures
+			var isSame = ( menuItem.get(2) && itemHref && menuItem.get(2) === itemHref );
+			if (!isSame && menuItem.get(2).indexOf('.') === -1 && menuItem.get(2) && itemHref) {
+				isSame = 'admin.php?page=' + menuItem.get(2) === itemHref || menuItem.get('parent') + '?page=' + menuItem.get(2) === itemHref;
+			}
 
-          // Add the menu icon depending on context (dashicon/svg/div)
-          if (item[6].indexOf('dashicons') > -1) {
-            ui.item.find('a').prepend('<div class="wp-menu-image dashicons-before ' + item[6] + '"><br></div>');
-          } else if (item[6].indexOf('image/svg') > -1 || item[6].indexOf('http') > -1) {
-            ui.item.find('a').prepend('<div class="wp-menu-image svg" style="background-image:url(' + item[6] + ') !important;"><br></div>');
-          } else if ('div' === item[6] || 'none' === item[6]) {
-            ui.item.find('a').prepend('<div class="wp-menu-image dashicons-before"><br></div>');
-          } else {
-            ui.item.find('a').prepend('<div class="wp-menu-image dashicons-before dashicons-admin-generic"><br></div>');
-          }
-        }
+			if (isSame || ( menuItem.get(4).indexOf('wp-menu-separator') > -1 && menuItem.get(2) === separator )) {
+				result = menuItem;
+				return true;
+			}
 
-        // Showtime!
-        ui.item.find('.wp-menu-arrow').removeClass('hidden');
-        ui.item.find('.wp-menu-image').removeClass('hidden');
-        ui.item.find('.wp-submenu').removeClass('hidden');
-      }
-    } else {
-      // Submenu item, hide stuff that isn't needed
-      ui.item.removeClass('menu-top').removeClass(ui.item.attr('class').match(/toplevel_[\w-]*\b/));
-      ui.item.find('.menu-top').removeClass('menu-top');
-      ui.item.find('.wp-menu-arrow').addClass('hidden');
-      ui.item.find('.wp-menu-image').addClass('hidden');
-      ui.item.find('.wp-submenu').addClass('hidden');
-      if (ui.item.find('.wp-menu-name').length > 0) {
-        ui.item.find('.wp-menu-name').removeClass('wp-menu-name').addClass('amm-wp-menu-name');
-      }
-    }
-  },
+			if (menuItem.get('children').length === 0) {
+				return false;
+			}
 
-  sortableChange: function (e, ui) {
-    // todo: show the submenu items of an element close to the current item so we could move it there
+			// Loop through sub menu items
+			var item = this.findInMenu(itemHref, menuItem.get('children'), separator);
+			if (item !== undefined) {
+				result = item;
+				return true;
+			}
+		}, this);
 
-    // Items can't be moved after the collapse and edit buttons
-    var $fixed = jQuery('#admin-menu-manager-edit, #collapse-menu', this).detach();
-    jQuery(this).append($fixed);
-  }
-
+		return result;
+	}
 });
 
 module.exports = AdminMenu;
