@@ -31,6 +31,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 
 		// Handle form submissions
 		$this->hook( 'wp_ajax_amm_update_menu', 'update_menu' );
+		$this->hook( 'wp_ajax_amm_reset_menu', 'reset_menu' );
 
 		// Modify admin menu
 		$this->hook( 'admin_menu', 'alter_admin_menu', 999 );
@@ -82,13 +83,20 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			wp_add_inline_style( 'admin-menu-manager', $inline_css );
 		}
 
+		wp_register_script(
+			'backbone-undo',
+			$this->get_url() . 'js/vendor/backbone.undo.min.js',
+			array( 'backbone' ),
+			self::VERSION
+		);
+
 		wp_enqueue_script(
 			'admin-menu-manager',
 			$this->get_url() . 'js/admin-menu-manager' . $suffix . '.js',
 			array(
 				'jquery-ui-sortable',
-				'underscore',
-				'backbone'
+				'backbone',
+				'backbone-undo'
 			),
 			self::VERSION
 		);
@@ -96,10 +104,17 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		wp_localize_script( 'admin-menu-manager', 'AdminMenuManager', array(
 			'templates' => array(
 				'editButton' => array(
-					'labelEdit'   => __( 'Edit Menu', 'admin-menu-manager' ),
-					'labelSave'   => __( 'Save', 'admin-menu-manager' ),
+					'label'       => __( 'Edit Menu', 'admin-menu-manager' ),
 					'labelSaving' => __( 'Saving&hellip;', 'admin-menu-manager' ),
 					'labelSaved'  => __( 'Saved!', 'admin-menu-manager' ),
+					'ays'         => __( 'Are you sure? This will reset the whole menu!', 'admin-menu-manager' ),
+					'options'     => array(
+						'save'  => __( 'Save changes', 'admin-menu-manager' ),
+						'add'   => __( 'Add new item', 'admin-menu-manager' ),
+						'undo'  => __( 'Undo change', 'admin-menu-manager' ),
+						'redo'  => __( 'Redo change', 'admin-menu-manager' ),
+						'reset' => __( 'Reset menu', 'admin-menu-manager' ),
+					)
 				)
 			),
 			'menu'      => self::get_admin_menu(),
@@ -144,6 +159,10 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * just like WordPress uses it in the backend.
 	 */
 	public function update_menu() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		$menu    = $_REQUEST['adminMenu'];
 		$items   = array();
 		$submenu = array();
@@ -194,6 +213,20 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		// Note: The third autoload parameter was introduced in WordPress 4.2.0
 		update_option( 'amm_menu', $items, false );
 		update_option( 'amm_submenu', $submenu, false );
+
+		die( 1 );
+	}
+
+	/**
+	 * Ajax Handler to reset the menu.
+	 */
+	public function reset_menu() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		delete_option( 'amm_menu' );
+		delete_option( 'amm_submenu' );
 
 		die( 1 );
 	}

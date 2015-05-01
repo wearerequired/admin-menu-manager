@@ -6,7 +6,8 @@ var MenuItemView = Backbone.View.extend({
 		return {
 			class        : this.model.get(4),
 			id           : this.model.get(5),
-			'aria-hidden': this.model.get(4).indexOf('wp-menu-separator') > -1
+			'aria-hidden': this.model.get(4).indexOf('wp-menu-separator') > -1,
+			'data-slug'  : this.model.get(2)
 		};
 	},
 

@@ -19,7 +19,7 @@
 	display: none !important;
 }
 
-#adminmenu:not(.ui-sortable-disabled) #admin-menu-manager-edit .menu-top,
+#adminmenu:not(.ui-sortable-disabled) #admin-menu-manager-edit a,
 #admin-menu-manager-edit .menu-top {
 	background: transparent !important;
 	font-size: 13px !important;
@@ -39,4 +39,28 @@
 
 #adminmenu .wp-menu-separator.ui-sortable-handle {
 	transition: height .5s ease-in-out, border .5s ease-in-out, margin .5s ease-in-out;
+}
+
+.amm-edit-options {
+	display: none;
+
+	#admin-menu-manager-edit.active & {
+		display: block;
+	}
+}
+
+.amm-edit-option {
+	display: block;
+	float: left;
+	width: 30px;
+	height: 30px;
+	margin-right: 3px;
+
+	a {
+		padding: 0 !important;
+	}
+}
+
+#admin-menu-manager-edit.active .menu-top {
+	display: none;
 }

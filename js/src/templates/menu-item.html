@@ -13,11 +13,11 @@
 	<% } %>
 	<div class="wp-menu-name"><%= label %></div>
 </a>
-<ul class="wp-submenu wp-submenu-wrap ui-sortable">
+<ul class="wp-submenu wp-submenu-wrap">
 	<li class="wp-submenu-head"><%= label %></li>
-	<% _.each(children, function(child) { %>
-	<li class="<%= child.classes %>">
-		<a href="<%= child.href %>" class="<%= child.classes %>"><%= child.label %></a>
+	<% _.each(children, function(child, index) { %>
+	<li class="<%= index===0 ? 'wp-first-item ' : '' %><%= child.current ? 'current' : '' %>" data-slug="<%= child.slug %>">
+		<a href="<%= child.href %>" class="<%= index===0 ? 'wp-first-item' : '' %>"><%= child.label %></a>
 	</li>
 	<% }); %>
 </ul>

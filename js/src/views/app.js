@@ -6,9 +6,8 @@ var AppView = Backbone.View.extend({
 
 	initialize: function () {
 		this.adminMenu = new AdminMenu({model: this.model});
-		this.render();
-
-		this.listenTo(this.adminMenu.editButton, 'sendData', this.sendData);
+		this.listenTo(this.adminMenu.editButton, 'saveMenu', this.saveMenu);
+		this.listenTo(this.adminMenu.editButton, 'resetMenu', this.resetMenu);
 	},
 
 	render: function () {
@@ -16,10 +15,20 @@ var AppView = Backbone.View.extend({
 		return this;
 	},
 
-	sendData: function (callback) {
+	saveMenu: function (callback) {
 		var data = {
 			action   : 'amm_update_menu',
 			adminMenu: this.adminMenu.menu.toJSON(),
+		};
+
+		jQuery.post(ajaxurl, data, function () {
+			callback();
+		});
+	},
+
+	resetMenu: function (callback) {
+		var data = {
+			action: 'amm_reset_menu',
 		};
 
 		jQuery.post(ajaxurl, data, function () {

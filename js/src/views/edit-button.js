@@ -4,52 +4,60 @@ var EditButton = Backbone.View.extend({
 	template: require('templates/edit-button'),
 	isActive: false,
 
-	initialize: function () {
-		this.model.set('label', AdminMenuManager.templates.editButton.labelEdit);
-		this.model.set('icon', 'dashicons-edit');
-	},
-
 	render: function () {
-		this.$el.html(this.template(this.model.toJSON()));
+		this.$el.html(this.template(AdminMenuManager.templates.editButton));
+		this.delegateEvents();
 		return this;
 	},
 
 	events: {
-		'click a': 'buttonClick'
+		'click'                       : 'initEditing',
+		'click #amm-edit-option-save' : 'save',
+		'click #amm-edit-option-undo' : 'undo',
+		'click #amm-edit-option-redo' : 'redo',
+		'click #amm-edit-option-reset': 'reset'
 	},
 
-	buttonClick: function (e) {
+	initEditing: function (e) {
 		e.preventDefault();
 
 		this.isActive = !this.isActive;
 
 		this.trigger('isActive', this.isActive);
+		this.$el.toggleClass('active', this.isActive);
+	},
 
-		if (this.isActive) {
-			this.model.set('label', AdminMenuManager.templates.editButton.labelSave);
-			this.model.set('icon', 'dashicons-yes');
-			this.render();
-		} else {
-			this.trigger('sendData', jQuery.proxy(this.sendDataCallback, this));
+	save: function (e) {
+		e.preventDefault();
+
+		this.trigger('isActive', this.isActive);
+		this.$el.toggleClass('active', this.isActive);
+		this.trigger('saveMenu', jQuery.proxy(this.saveCallback, this));
+	},
+
+	saveCallback: function () {
+		this.render();
+	},
+
+	undo: function (e) {
+		e.preventDefault();
+		this.trigger('undo');
+	},
+
+	redo: function (e) {
+		e.preventDefault();
+		this.trigger('redo');
+	},
+
+	reset: function (e) {
+		e.preventDefault();
+		if (confirm(AdminMenuManager.templates.editButton.ays)) {
+			this.trigger('resetMenu', jQuery.proxy(this.resetCallback, this));
 		}
 	},
 
-	sendDataCallback: function () {
-		this.model.set('label', AdminMenuManager.templates.editButton.labelSaving);
-		this.model.set('icon', 'dashicons-edit');
-		this.render();
-
-		var that = this;
-
-		this.$el.fadeOut(1000, function () {
-			that.model.set('label', AdminMenuManager.templates.editButton.labelSaved);
-			that.render();
-			that.$el.fadeIn().delay(1000).fadeOut(50, function () {
-				that.model.set('label', AdminMenuManager.templates.editButton.labelEdit);
-				that.render();
-				that.$el.fadeIn(50);
-			});
-		});
+	resetCallback: function (e) {
+		document.location.reload(true);
 	}
 
 });
