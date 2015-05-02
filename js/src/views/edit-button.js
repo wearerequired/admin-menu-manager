@@ -11,16 +11,19 @@ var EditButton = Backbone.View.extend({
 	},
 
 	events: {
-		'click'                       : 'initEditing',
+		'click'                       : 'edit',
 		'click #amm-edit-option-save' : 'save',
 		'click #amm-edit-option-undo' : 'undo',
 		'click #amm-edit-option-redo' : 'redo',
 		'click #amm-edit-option-reset': 'reset'
 	},
 
-	initEditing: function (e) {
+	edit: function (e) {
 		e.preventDefault();
+		this.initEditing();
+	},
 
+	initEditing: function () {
 		this.isActive = !this.isActive;
 
 		this.trigger('isActive', this.isActive);
