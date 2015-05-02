@@ -90,6 +90,12 @@
 		transform: translateY(-50%);
 	}
 
+	a:hover,
+	li.menu-top:hover,
+	li.opensub > a.menu-top {
+		background: transparent !important;
+	}
+
 	li.wp-has-submenu.wp-not-current-submenu.opensub:after {
 		content: none !important;
 		border-color: transparent !important;
