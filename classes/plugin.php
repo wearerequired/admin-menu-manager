@@ -138,13 +138,6 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 
 		foreach ( $menu as $menu_item ) {
 			if ( ! empty( $submenu[ $menu_item[2] ] ) ) {
-				foreach ( $submenu[ $menu_item[2] ] as $key => &$value ) {
-					if ( '' === $key && '' === $value[0] ) {
-						unset( $submenu[ $menu_item[2] ][ $key ] );
-						continue;
-					}
-					$value[] = $key;
-				}
 				$menu_item['children'] = array_values( $submenu[ $menu_item[2] ] );
 			}
 
@@ -192,6 +185,8 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
+
+		$_REQUEST['trash'] = isset( $_REQUEST['trash'] ) ? $_REQUEST['trash'] : array();
 
 		$menu  = $this->update_menu_loop( $_REQUEST['menu'] );
 		$trash = $this->update_menu_loop( $_REQUEST['trash'] );
@@ -307,7 +302,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		foreach ( $amm_menu as $priority => &$item ) {
 			// It was originally a top level item as well. It's a match!
 			foreach ( $temp_menu as $key => $m_item ) {
-				if ( $item[2] === $m_item[2] ) {
+				if ( str_replace( 'admin.php?page=', '', $item[2] ) === $m_item[2] ) {
 					if ( 'wp-menu-separator' == $m_item[4] ) {
 						$menu[ $priority ] = $m_item;
 					} else {
@@ -330,7 +325,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			// It must be a submenu item moved to the top level
 			foreach ( $temp_submenu as $key => &$parent ) {
 				foreach ( $parent as $sub_key => &$sub_item ) {
-					if ( $item[2] === $sub_item[2] ) {
+					if ( str_replace( 'admin.php?page=', '', $item[2] ) === $sub_item[2] ) {
 						$hook_name = get_plugin_page_hookname( $sub_item[2], $key );
 
 						$old_filters = array();
