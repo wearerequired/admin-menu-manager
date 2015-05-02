@@ -217,7 +217,7 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 		 */
 
 		// Iterate on menu items
-		var item = this.findInMenu(itemSlug, this.menu);
+		var item = this.findInMenu(itemSlug, this.menu) || this.findInMenu(itemSlug, this.trash);
 
 		if (item === undefined) {
 			console.log('item with slug ' + itemSlug + ' not found');
