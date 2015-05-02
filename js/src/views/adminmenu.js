@@ -165,15 +165,44 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 	 * @param bool isEditing Whether we are currently editing the menu or not.
 	 */
 	initSortable: function (isEditing) {
-		// Initialize sortable
-		this.$el.find('ul').sortable({
+		// Default sortable options
+		var options = {
+			// If defined, the items can be dragged only horizontally or vertically. Possible values: "x", "y".
+			axis       : 'y',
+			// Disables the sortable if set to true.
 			disabled   : !isEditing,
-			cancel     : 'li.wp-first-item, #collapse-menu, #admin-menu-manager-edit, .amm-edit-options, .amm-edit-option, #admin-menu-manager-trash-view',
-			connectWith: '#adminmenuwrap ul, #admin-menu-manager-trash',
+			// Specifies which items inside the element should be sortable.
+			items      : '> li',
+			// Prevents sorting if you start on elements matching the selector.
+			cancel     : '#collapse-menu, #admin-menu-manager-edit, .amm-edit-options',
+			// A selector of other sortable elements that the items from this list should be connected to.
+			connectWith: '#adminmenuwrap ul',
 			// This event is triggered when the user stopped sorting and the DOM position has changed.
 			update     : jQuery.proxy(this.sortableUpdate, this),
+			// This event is triggered during sorting, but only when the DOM position has changed.
 			change     : jQuery.proxy(this.sortableChange, this)
-		}).sortable('refresh');
+		};
+
+		// Main admin menu
+		this.$el.find('#adminmenu')
+				.sortable(_.extend(options, {connectWith: '.wp-submenu, #admin-menu-manager-trash'}))
+				.sortable('refresh');
+
+		// Sub menus
+		this.$el.find('.wp-submenu')
+				.sortable(_.extend(
+						options,
+						{
+							items      : '> li:not(.wp-first-item)',
+							connectWith: '#adminmenu, .wp-submenu, #admin-menu-manager-trash',
+						}
+				))
+				.sortable('refresh');
+
+		// Trash
+		this.$el.find('#admin-menu-manager-trash')
+				.sortable(_.extend(options, {connectWith: '#adminmenu, .wp-submenu'}))
+				.sortable('refresh');
 
 		if (!isEditing) {
 			// somehow it doesn't apply this class even if it's initially disabled
