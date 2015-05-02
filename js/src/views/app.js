@@ -17,8 +17,9 @@ var AppView = Backbone.View.extend({
 
 	saveMenu: function (callback) {
 		var data = {
-			action   : 'amm_update_menu',
-			adminMenu: this.adminMenu.menu.toJSON(),
+			action: 'amm_update_menu',
+			menu  : this.adminMenu.menu.toJSON(),
+			trash : this.adminMenu.trash.toJSON(),
 		};
 
 		jQuery.post(ajaxurl, data, function () {

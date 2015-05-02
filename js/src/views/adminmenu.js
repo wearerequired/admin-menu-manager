@@ -1,54 +1,142 @@
-var EditButtonView = require('views/edit-button');
-var MenuItem = require('models/menu-item');
-var MenuItemView = require('views/menu-item');
+var EditButtonView = require('views/edit-button'),
+		TrashView = require('views/trash'),
+		MenuItem = require('models/menu-item'),
+		MenuItemView = require('views/menu-item');
 
-var AdminMenu = Backbone.View.extend({
+var Menu = Backbone.Collection.extend({
+	model: MenuItem,
+});
+
+var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 	el       : '#adminmenuwrap',
 	tagName  : 'div',
 	className: 'amm-adminmenu-view',
 	isEditing: false,
 
+	/**
+	 * Initialize the admin menu.
+	 *
+	 * This class creates andrenders the whole menu
+	 * based on the data provided by the PHP part.
+	 *
+	 * @class AdminMenu
+	 * @augments Backbone.View
+	 * @constructs AdminMenu object
+	 */
 	initialize: function () {
 		this.editButton = new EditButtonView();
+		this.trashView = new TrashView();
 
 		// Initialize menu items
 
-		var Menu = Backbone.Collection.extend({
-			model: MenuItem,
+		this.menu = new Menu();
+		this.trash = new Menu();
+
+		this.initMenu(AdminMenuManager.menu, this.menu);
+		this.initMenu(AdminMenuManager.trash, this.trash);
+
+		// Allow for undo/redo
+		this.undoManager = new Backbone.UndoManager({
+			register: [this.menu, this.trash],
+			track   : true
 		});
 
-		this.menu = new Menu();
+		this.listenTo(this.editButton, 'undo', function () {
+			this.undoManager.undo(true);
+			this.render();
+			this.editButton.initEditing();
+		});
 
-		var count = 0;
-		_.each(AdminMenuManager.menu, function (el) {
-			var menuItem = new MenuItem(el),
-					$el = this.$el.find('#adminmenu > li');
+		this.listenTo(this.editButton, 'redo', function () {
+			this.undoManager.redo(true);
+			this.render();
+			this.editButton.initEditing();
+		});
 
-			menuItem.set(4, $el.get(count).className);
+		this.$el.find('#adminmenu').addClass('ui-sortable-disabled');
+	},
+
+	/**
+	 * Render the admin menu including edit buttons and trash.
+	 *
+	 * @returns {AdminMenu}
+	 */
+	render: function () {
+		var $adminMenu = this.$el.find('#adminmenu'),
+				collapse = this.$el.find('#collapse-menu').detach();
+
+		$adminMenu.empty();
+
+		// Render all menu items
+		_.each(this.menu.models, function (item) {
+			var menuItemView = new MenuItemView({model: item});
+			$adminMenu.append(menuItemView.render().el);
+		}, this);
+
+		// Append collapse and edit button and the trash
+		$adminMenu.append(collapse).append(this.editButton.render().el).append(this.trashView.render().el);
+
+		// Render all trashed menu items
+		_.each(this.trash.models, function (item) {
+			var menuItemView = new MenuItemView({model: item});
+			this.$el.find('#admin-menu-manager-trash').append(menuItemView.render().el);
+		}, this);
+
+		// Re-bind hoverIntent
+		this.hoverIntent();
+
+		// Re-init jQuery UI Sortable
+		this.initSortable(this.isEditing);
+
+		// Add listeners
+		this.listenTo(this.editButton, 'isActive', this.toggleSortable);
+
+		return this;
+	},
+
+	/**
+	 * Initialize the menu collections with top level and submenu items.
+	 *
+	 * @param object menuObject The admin menu object.
+	 * @param Backbone.Collection collection The collection the admin menu items will be added to.
+	 */
+	initMenu: function (menuObject, collection) {
+		var count = 0, isTrash = AdminMenuManager.trash === menuObject;
+
+		_.each(menuObject, function (el) {
+			var menuItem = new MenuItem(el);
+
 			menuItem.set('class', el[4]);
 			menuItem.set('children', new Menu());
 
-			// Add current class if applicable
-			if (jQuery($el.get(count)).hasClass('current') || jQuery($el.get(count)).hasClass('wp-has-current-submenu')) {
-				menuItem.set('current', true);
+			if (!isTrash) {
+				var $el = this.$el.find('#adminmenu > li');
+				menuItem.set(4, $el.get(count).className);
+
+				// Add current class if applicable
+				if (jQuery($el.get(count)).hasClass('current') || jQuery($el.get(count)).hasClass('wp-has-current-submenu')) {
+					menuItem.set('current', true);
+				}
 			}
 
 			if (el[2].indexOf('.php') === -1) {
 				menuItem.set('href', 'admin.php?page=' + el[2]);
 			}
 
-			this.menu.add(menuItem);
+			collection.add(menuItem);
 
-			if (AdminMenuManager.submenu[menuItem.get(2)]) {
+			if (el['children']) {
 				var subCount = 0;
-				_.each(AdminMenuManager.submenu[menuItem.get(2)], function (el) {
-					var $el = jQuery(this.$el.find('#adminmenu > li')[count]).find('li:not(.wp-submenu-head)');
-
+				_.each(el['children'], function (el) {
 					var submenuItem = new MenuItem(el);
 
-					// Add current class if applicable
-					if (jQuery($el.get(subCount)).hasClass('current')) {
-						submenuItem.set('current', true);
+					if (!isTrash) {
+						var $el = jQuery(this.$el.find('#adminmenu > li')[count]).find('li:not(.wp-submenu-head)');
+
+						// Add current class if applicable
+						if (jQuery($el.get(subCount)).hasClass('current')) {
+							submenuItem.set('current', true);
+						}
 					}
 
 					if (el[2].indexOf('.php') === -1) {
@@ -67,59 +155,21 @@ var AdminMenu = Backbone.View.extend({
 
 			count++;
 		}, this);
-
-		// Allow for undo/redo
-		this.undoManager = new Backbone.UndoManager({
-			register: [this.menu],
-			track   : true
-		});
-
-		this.listenTo(this.editButton, 'undo', function () {
-			this.undoManager.undo(true);
-			this.render();
-			this.editButton.initEditing();
-		});
-
-		this.listenTo(this.editButton, 'redo', function () {
-			this.undoManager.redo(true);
-			this.render();
-			this.editButton.initEditing();
-		});
-
 	},
 
-	render: function () {
-		var $adminMenu = this.$el.find('#adminmenu'),
-				collapse = this.$el.find('#collapse-menu').detach();
-
-		$adminMenu.empty();
-
-		_.each(this.menu.models, function (item) {
-			// Re-render the current item
-			var menuItemView = new MenuItemView({model: item});
-			$adminMenu.append(menuItemView.render().$el);
-		}, this);
-
-		// Append collapse and edit button
-		$adminMenu.append(collapse).append(this.editButton.render().el);
-
-		// Re-bind hoverIntent
-		this.hoverIntent();
-
-		this.initSortable(this.isEditing);
-
-		// Add listeners
-		this.listenTo(this.editButton, 'isActive', this.toggleSortable);
-
-		return this;
-	},
-
+	/**
+	 * Initialize jQuery UI Sortable.
+	 *
+	 * This happens after each rendering, due to new elements being added.
+	 *
+	 * @param bool isEditing Whether we are currently editing the menu or not.
+	 */
 	initSortable: function (isEditing) {
 		// Initialize sortable
 		this.$el.find('ul').sortable({
 			disabled   : !isEditing,
-			cancel     : '#admin-menu-manager-edit, #collapse-menu, li.wp-first-item',
-			connectWith: '#adminmenuwrap ul',
+			cancel     : 'li.wp-first-item, #collapse-menu, #admin-menu-manager-edit, .amm-edit-options, .amm-edit-option, #admin-menu-manager-trash-view',
+			connectWith: '#adminmenuwrap ul, #admin-menu-manager-trash',
 			// This event is triggered when the user stopped sorting and the DOM position has changed.
 			update     : jQuery.proxy(this.sortableUpdate, this),
 			change     : jQuery.proxy(this.sortableChange, this)
@@ -131,11 +181,24 @@ var AdminMenu = Backbone.View.extend({
 		}
 	},
 
+	/**
+	 * Event listener for the edit button.
+	 *
+	 * Toggles the jQuery UI Sortable disabled state.
+	 *
+	 * @param bool isActive Whether we are currently editing the menu or not.
+	 */
 	toggleSortable: function (isActive) {
 		this.isEditing = isActive;
 		this.initSortable(isActive);
 	},
 
+	/**
+	 * This is triggered after an element has been successfully sorted.
+	 *
+	 * @param event e
+	 * @param object ui
+	 */
 	sortableUpdate: function (e, ui) {
 		var itemSlug = ui.item.attr('data-slug'),
 				newPosition = [ui.item.index()];
@@ -165,7 +228,11 @@ var AdminMenu = Backbone.View.extend({
 		item.collection.remove(item);
 
 		// Move it to the new position
-		if (newPosition.length === 1) {
+		if (ui.item.parent('#admin-menu-manager-trash').length > 0) {
+			// Item was trashed
+			this.trash.add(item, {at: newPosition[0]});
+		} else if (newPosition.length === 1) {
+			// Item was moved to the top level
 			this.menu.add(item, {at: newPosition[0]});
 
 			var _4 = item.get(4);
@@ -174,50 +241,37 @@ var AdminMenu = Backbone.View.extend({
 				item.set('class', _4);
 			}
 		} else if (newPosition.length === 2) {
+			// Item was moved to a submenu
 			this.menu.at(newPosition[0]).collection.add(item, {at: newPosition[1]});
 		}
 
 		this.render();
 	},
 
+	/**
+	 * This function is triggered during sorting.
+	 *
+	 * It ensures that items can't be moved after the collapse and edit buttons.
+	 *
+	 * @param event e
+	 * @param object ui
+	 */
 	sortableChange: function (e, ui) {
-		// todo: show the submenu items of an element close to the current item so we could move it there
-
-		// Items can't be moved after the collapse and edit buttons
-		var $fixed = this.$el.find('#admin-menu-manager-edit, #collapse-menu').detach();
+		var $fixed = this.$el.find('#collapse-menu, #admin-menu-manager-edit, #admin-menu-manager-trash-view').detach();
 		this.$el.find('#adminmenu').append($fixed);
 	},
 
-	findInMenu: function (itemSlug, collection) {
-		var result;
-
-		collection.find(function (menuItem) {
-			// Accommodate for different structures
-			if (menuItem.get(2) && itemSlug && menuItem.get(2) === itemSlug) {
-				result = menuItem;
-				return true;
-			}
-
-			if (menuItem.get('children').length === 0) {
-				return false;
-			}
-
-			// Loop through sub menu items
-			var item = this.findInMenu(itemSlug, menuItem.get('children'));
-			if (item !== undefined) {
-				result = item;
-				return true;
-			}
-
-		}, this);
-
-		return result;
-	},
-
+	/**
+	 * Initialize the hoverIntent jQuery plugin.
+	 *
+	 * This happens after each rendering, due to new elements being added.
+	 *
+	 * @see /wp-admin/js/common.js for the source of this.
+	 */
 	hoverIntent: function () {
 		var $adminmenu = this.$el.find('#adminmenu');
 		$adminmenu.find('li.wp-has-submenu').hoverIntent({
-			over       : function () {
+			over: function () {
 				var $menuItem = jQuery(this),
 						$submenu = $menuItem.find('.wp-submenu'),
 						top = parseInt($submenu.css('top'), 10);
@@ -235,7 +289,8 @@ var AdminMenu = Backbone.View.extend({
 				$adminmenu.find('li.opensub').removeClass('opensub');
 				$menuItem.addClass('opensub');
 			},
-			out        : function () {
+
+			out: function () {
 				if ($adminmenu.data('wp-responsive')) {
 					// The menu is in responsive mode, bail
 					return;
@@ -243,6 +298,7 @@ var AdminMenu = Backbone.View.extend({
 
 				jQuery(this).removeClass('opensub').find('.wp-submenu').css('margin-top', '');
 			},
+
 			timeout    : 200,
 			sensitivity: 7,
 			interval   : 90
@@ -284,7 +340,40 @@ var AdminMenu = Backbone.View.extend({
 				$submenu.css('margin-top', '');
 			}
 		}
-	}
+	},
+
+	/**
+	 * Find a menu item in a given collection.
+	 *
+	 * @param string itemSlug Slug of the item, e.g. `index.php`.
+	 * @param Backbone.Collection collection The collection to search in.
+	 * @returns The menu item object on success, undefined otherwise.
+	 */
+	findInMenu: function (itemSlug, collection) {
+		var result;
+
+		collection.find(function (menuItem) {
+			// Accommodate for different structures
+			if (menuItem.get(2) && itemSlug && menuItem.get(2) === itemSlug) {
+				result = menuItem;
+				return true;
+			}
+
+			if (menuItem.get('children').length === 0) {
+				return false;
+			}
+
+			// Loop through sub menu items
+			var item = this.findInMenu(itemSlug, menuItem.get('children'));
+			if (item !== undefined) {
+				result = item;
+				return true;
+			}
+
+		}, this);
+
+		return result;
+	},
 });
 
 module.exports = AdminMenu;

@@ -118,7 +118,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				)
 			),
 			'menu'      => self::get_admin_menu(),
-			'submenu'   => self::get_admin_submenu(),
+			'trash'     => self::get_admin_menu_trash(),
 		) );
 	}
 
@@ -128,28 +128,58 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * @since 1.0.0
 	 */
 	public function get_admin_menu() {
-		global $menu;
+		global $menu, $submenu;
 
 		if ( null === $menu ) {
 			$menu = array();
 		}
 
-		return $menu;
-	}
+		$menu_items = array();
 
-	/**
-	 * Grab a list of all registered admin pages.
-	 *
-	 * @since 1.0.0
-	 */
-	public function get_admin_submenu() {
-		global $submenu;
+		foreach ( $menu as $menu_item ) {
+			if ( ! empty( $submenu[ $menu_item[2] ] ) ) {
+				foreach ( $submenu[ $menu_item[2] ] as $key => &$value ) {
+					if ( '' === $key && '' === $value[0] ) {
+						unset( $submenu[ $menu_item[2] ][ $key ] );
+						continue;
+					}
+					$value[] = $key;
+				}
+				$menu_item['children'] = array_values( $submenu[ $menu_item[2] ] );
+			}
 
-		if ( null === $submenu ) {
-			$submenu = array();
+			$menu_items[] = $menu_item;
 		}
 
-		return (array) $submenu;
+		return $menu_items;
+	}
+
+	public function get_admin_menu_trash() {
+		$menu    = get_option( 'amm_trash_menu', array() );
+		$submenu = get_option( 'amm_trash_submenu', array() );
+
+		if ( null === $menu ) {
+			$menu = array();
+		}
+
+		$menu_items = array();
+
+		foreach ( $menu as $menu_item ) {
+			if ( ! empty( $submenu[ $menu_item[2] ] ) ) {
+				foreach ( $submenu[ $menu_item[2] ] as $key => &$value ) {
+					if ( '' === $key && '' === $value[0] ) {
+						unset( $submenu[ $menu_item[2] ][ $key ] );
+						continue;
+					}
+					$value[] = $key;
+				}
+				$menu_item['children'] = array_values( $submenu[ $menu_item[2] ] );
+			}
+
+			$menu_items[] = $menu_item;
+		}
+
+		return $menu_items;
 	}
 
 	/**
@@ -163,7 +193,19 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			return;
 		}
 
-		$menu    = $_REQUEST['adminMenu'];
+		$menu  = $this->update_menu_loop( $_REQUEST['menu'] );
+		$trash = $this->update_menu_loop( $_REQUEST['trash'] );
+
+		// Note: The third autoload parameter was introduced in WordPress 4.2.0
+		update_option( 'amm_menu', $menu['menu'], false );
+		update_option( 'amm_submenu', $menu['submenu'], false );
+		update_option( 'amm_trash_menu', $trash['menu'], false );
+		update_option( 'amm_trash_submenu', $trash['submenu'], false );
+
+		die( 1 );
+	}
+
+	protected function update_menu_loop( $menu ) {
 		$items   = array();
 		$submenu = array();
 
@@ -208,13 +250,14 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			$items[] = $item;
 		}
 
-		$items[ $lastSeparator ][2] = 'separator-last';
+		if ( null !== $lastSeparator ) {
+			$items[ $lastSeparator ][2] = 'separator-last';
+		}
 
-		// Note: The third autoload parameter was introduced in WordPress 4.2.0
-		update_option( 'amm_menu', $items, false );
-		update_option( 'amm_submenu', $submenu, false );
-
-		die( 1 );
+		return array(
+			'menu'    => $items,
+			'submenu' => $submenu
+		);
 	}
 
 	/**
@@ -227,6 +270,8 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 
 		delete_option( 'amm_menu' );
 		delete_option( 'amm_submenu' );
+		delete_option( 'amm_trash_menu' );
+		delete_option( 'amm_trash_submenu' );
 
 		die( 1 );
 	}
@@ -241,8 +286,10 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * 0 = menu_title, 1 = capability, 2 = menu_slug, 3 = page_title, 4 = classes
 	 */
 	public function alter_admin_menu() {
-		$amm_menu    = get_option( 'amm_menu', array() );
-		$amm_submenu = get_option( 'amm_submenu', array() );
+		$amm_menu          = get_option( 'amm_menu', array() );
+		$amm_submenu       = get_option( 'amm_submenu', array() );
+		$amm_trash_menu    = get_option( 'amm_trash_menu', array() );
+		$amm_trash_submenu = get_option( 'amm_trash_submenu', array() );
 
 		if ( empty( $amm_menu ) || empty( $amm_submenu ) ) {
 			return;
@@ -380,8 +427,51 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 						continue 2;
 					}
 				}
+			}
+		}
 
-				// Still no match, menu item must have been removed.
+		// Remove trashed items
+		foreach ( $amm_trash_menu as $priority => &$item ) {
+			// It was originally a top level item as well. It's a match!
+			foreach ( $temp_menu as $key => $m_item ) {
+				if ( $item[2] === $m_item[2] ) {
+					unset( $temp_menu[ $key ] );
+					continue 2;
+				}
+			}
+
+			// It must be a submenu item moved to the top level
+			foreach ( $temp_submenu as $key => &$parent ) {
+				foreach ( $parent as $sub_key => &$sub_item ) {
+					if ( $item[2] === $sub_item[2] ) {
+						unset( $temp_submenu[ $key ][ $sub_key ] );
+						continue 3;
+					}
+				}
+			}
+
+			unset( $temp_menu[ $priority ] );
+		}
+
+		foreach ( $amm_trash_submenu as $parent_page => &$page ) {
+			foreach ( $page as $priority => &$item ) {
+				// Iterate on original submenu items
+				foreach ( $temp_submenu as $s_parent_page => &$s_page ) {
+					foreach ( $s_page as $s_priority => &$s_item ) {
+						if ( $item[2] === $s_item[2] && $parent_page == $s_parent_page ) {
+							unset( $temp_submenu[ $s_parent_page ][ $s_priority ] );
+							continue 2;
+						}
+					}
+				}
+
+				// It must be a top level item moved to submenu
+				foreach ( $temp_menu as $m_key => &$m_item ) {
+					if ( $item[2] === $m_item[2] ) {
+						unset( $temp_menu[ $m_key ] );
+						continue 2;
+					}
+				}
 			}
 		}
 
