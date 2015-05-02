@@ -232,6 +232,10 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 		var itemSlug = ui.item.attr('data-slug'),
 				newPosition = [ui.item.index()];
 
+		if (newPosition[0] === -1) {
+			return;
+		}
+
 		// It's a submenu item
 		if (ui.item.parent('.wp-submenu').length > 0) {
 			newPosition[0] = newPosition[0] > 0 ? --newPosition[0] : 0;
@@ -266,7 +270,7 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 
 			var _4 = item.get(4);
 			if (_4 === '' || _4 === 'current') {
-				item.set(4, item.get('class'));
+				item.set(4, item.get('class').replace('wp-has-current-submenu ', ''));
 				item.set('class', _4);
 			}
 		} else if (newPosition.length === 2) {
