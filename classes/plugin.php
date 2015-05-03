@@ -126,6 +126,8 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * Grab a list of all registered admin pages.
 	 *
 	 * @since 1.0.0
+	 *
+	 * @return array
 	 */
 	public function get_admin_menu() {
 		global $menu, $submenu;
@@ -147,6 +149,11 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		return $menu_items;
 	}
 
+	/**
+	 * Grab a list of all trashed admin menu items.
+	 *
+	 * @return array
+	 */
 	public function get_admin_menu_trash() {
 		$menu    = get_option( 'amm_trash_menu', array() );
 		$submenu = get_option( 'amm_trash_submenu', array() );
@@ -200,6 +207,13 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		die( 1 );
 	}
 
+	/**
+	 * Loop through all menu items to update the menu.
+	 *
+	 * @param array $menu
+	 *
+	 * @return array An array containing top level and sub level menu items.
+	 */
 	protected function update_menu_loop( $menu ) {
 		$items   = array();
 		$submenu = array();
@@ -290,7 +304,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			return;
 		}
 
-		global $menu, $submenu, $wp_filter;;
+		global $menu, $submenu, $wp_filter;
 
 		$temp_menu    = $menu;
 		$temp_submenu = $submenu;
