@@ -232,15 +232,15 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 		var itemSlug = ui.item.attr('data-slug'),
 				newPosition = [ui.item.index()];
 
-		if (newPosition[0] === -1) {
-			return;
-		}
-
 		// It's a submenu item
 		if (ui.item.parent('.wp-submenu').length > 0) {
 			newPosition[0] = newPosition[0] > 0 ? --newPosition[0] : 0;
 			var parentPosition = jQuery('#adminmenu > li').index(ui.item.parents('li'));
 			newPosition.unshift(parentPosition);
+		}
+
+		if (newPosition[0] === -1) {
+			return;
 		}
 
 		/**
@@ -253,7 +253,6 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 		var item = this.findInMenu(itemSlug, this.menu) || this.findInMenu(itemSlug, this.trash);
 
 		if (item === undefined) {
-			console.log('item with slug ' + itemSlug + ' not found');
 			return;
 		}
 
@@ -275,7 +274,7 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 			}
 		} else if (newPosition.length === 2) {
 			// Item was moved to a submenu
-			this.menu.at(newPosition[0]).collection.add(item, {at: newPosition[1]});
+			this.menu.at(newPosition[0]).attributes.children.add(item, {at: newPosition[1]});
 		}
 
 		this.render();
