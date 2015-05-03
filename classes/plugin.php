@@ -304,7 +304,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			return;
 		}
 
-		global $menu, $submenu, $wp_filter;
+		global $menu, $submenu;
 
 		$temp_menu    = $menu;
 		$temp_submenu = $submenu;
@@ -342,15 +342,6 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 					if ( str_replace( 'admin.php?page=', '', $item[2] ) === $sub_item[2] ) {
 						$hook_name = get_plugin_page_hookname( $sub_item[2], $key );
 
-						$old_filters = array();
-
-						foreach ( $wp_filter as $filter => $value ) {
-							if ( false !== strpos( $filter, $hook_name ) ) {
-								$old_filters[ $filter ] = $value;
-								unset( $wp_filter[ $filter ] );
-							}
-						}
-
 						if ( ! isset( $sub_item[3] ) ) {
 							$sub_item[3] = $sub_item[0];
 						}
@@ -368,9 +359,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 						// Add hook name of the former parent as CSS class to the new item
 						$menu[ $priority ][4] .= ' ' . get_plugin_page_hookname( $key, $key );
 
-						foreach ( $old_filters as $filter => $value ) {
-							$wp_filter[ str_replace( $hook_name, $new_page, $filter ) ] = $value;
-						}
+						$this->switch_menu_item_filters( $hook_name, $new_page );
 
 						unset( $temp_submenu[ $key ][ $sub_key ] );
 
@@ -413,15 +402,6 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 					if ( str_replace( 'admin.php?page=', '', $item[2] ) === $m_item[2] ) {
 						$hook_name = get_plugin_page_hookname( $m_item[2], $parent_page );
 
-						$old_filters = array();
-
-						foreach ( $wp_filter as $filter => $value ) {
-							if ( false !== strpos( $filter, $hook_name ) ) {
-								$old_filters[ $filter ] = $value;
-								unset( $wp_filter[ $filter ] );
-							}
-						}
-
 						$new_page = add_submenu_page(
 							$parent_page, // Parent Slug
 							$m_item[0], // Page title
@@ -430,9 +410,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 							$m_item[2] // Slug
 						);
 
-						foreach ( $old_filters as $filter => $value ) {
-							$wp_filter[ str_replace( $hook_name, $new_page, $filter ) ] = $value;
-						}
+						$this->switch_menu_item_filters( $hook_name, $new_page );
 
 						unset( $temp_menu[ $m_key ] );
 
@@ -504,6 +482,36 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			} else {
 				$submenu[ $parent ] = $item;
 			}
+		}
+	}
+
+	/**
+	 * Get all the filters hooked to an admin menu page.
+	 *
+	 * @param string $hook_name The plugin page hook name.
+	 *
+	 * @return array
+	 */
+	protected function get_menu_item_filters( $hook_name ) {
+		global $wp_filter;
+
+		$old_filters = array();
+
+		foreach ( $wp_filter as $filter => $value ) {
+			if ( false !== strpos( $filter, $hook_name ) ) {
+				$old_filters[ $filter ] = $value;
+				unset( $wp_filter[ $filter ] );
+			}
+		}
+
+		return $old_filters;
+	}
+
+	protected function switch_menu_item_filters( $old_hook, $new_hook ) {
+		global $wp_filter;
+
+		foreach ( $this->get_menu_item_filters( $old_hook ) as $filter => $value ) {
+			$wp_filter[ str_replace( $old_hook, $new_hook, $filter ) ] = $value;
 		}
 	}
 
