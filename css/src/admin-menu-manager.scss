@@ -19,7 +19,7 @@
 	display: none !important;
 }
 
-#adminmenu:not(.ui-sortable-disabled) #admin-menu-manager-edit .menu-top,
+#adminmenu:not(.ui-sortable-disabled) #admin-menu-manager-edit a,
 #admin-menu-manager-edit .menu-top {
 	background: transparent !important;
 	font-size: 13px !important;
@@ -39,4 +39,75 @@
 
 #adminmenu .wp-menu-separator.ui-sortable-handle {
 	transition: height .5s ease-in-out, border .5s ease-in-out, margin .5s ease-in-out;
+}
+
+.amm-edit-options {
+	display: none;
+	overflow: hidden;
+
+	#admin-menu-manager-edit.active & {
+		display: block;
+	}
+}
+
+.amm-edit-option {
+	display: block;
+	float: left;
+	width: 30px;
+	height: 30px;
+	margin-right: 3px;
+
+	a {
+		padding: 0 !important;
+	}
+}
+
+#admin-menu-manager-edit.active > .menu-top {
+	display: none;
+}
+
+#admin-menu-manager-trash {
+	box-sizing: border-box;
+	position: relative;
+	min-height: 60px;
+	display: none;
+	clear: both;
+	margin-top: 20px;
+	padding: 10px;
+	border: 2px #fff dashed;
+	background: #666;
+	color: #fff;
+
+	&:before {
+		position: absolute;
+		top: 50%;
+		left: 0;
+		width: 100%;
+		height: 40px;
+		font-size: 40px;
+		line-height: 40px;
+		opacity: 0.5;
+		transform: translateY(-50%);
+	}
+
+	a:hover,
+	li.menu-top:hover,
+	li.opensub > a.menu-top {
+		background: transparent !important;
+	}
+
+	li.wp-has-submenu.wp-not-current-submenu.opensub:after {
+		content: none !important;
+		border-color: transparent !important;
+	}
+
+	li.wp-has-submenu.wp-not-current-submenu.opensub:after
+	.wp-menu-arrow,
+	.wp-submenu {
+		display: none !important;
+	}
+}
+
+#admin-menu-manager-edit.active + li #admin-menu-manager-trash {
+	display: block;
 }

@@ -11,7 +11,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	/**
 	 * Plugin version.
 	 */
-	const VERSION = '1.0.1';
+	const VERSION = '2.0.0-alpha';
 
 	/**
 	 * Constructs the object, hooks in to `plugins_loaded`.
@@ -27,13 +27,11 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		$this->hook( 'init' );
 
 		// Load admin style sheet and JavaScript.
-		$this->hook( 'admin_enqueue_scripts' );
-
-		// Add edit button to menu
-		$this->hook( 'adminmenu', 'add_admin_menu_button' );
+		$this->hook( 'admin_enqueue_scripts', 5 );
 
 		// Handle form submissions
 		$this->hook( 'wp_ajax_amm_update_menu', 'update_menu' );
+		$this->hook( 'wp_ajax_amm_reset_menu', 'reset_menu' );
 
 		// Modify admin menu
 		$this->hook( 'admin_menu', 'alter_admin_menu', 999 );
@@ -85,48 +83,80 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			wp_add_inline_style( 'admin-menu-manager', $inline_css );
 		}
 
+		wp_register_script(
+			'backbone-undo',
+			$this->get_url() . 'js/vendor/backbone.undo.min.js',
+			array( 'backbone' ),
+			self::VERSION
+		);
+
 		wp_enqueue_script(
 			'admin-menu-manager',
 			$this->get_url() . 'js/admin-menu-manager' . $suffix . '.js',
 			array(
 				'jquery-ui-sortable',
-				'underscore'
+				'backbone',
+				'backbone-undo'
 			),
-			self::VERSION, true );
+			self::VERSION
+		);
 
 		wp_localize_script( 'admin-menu-manager', 'AdminMenuManager', array(
-			'buttonEdit'   => __( 'Edit Menu', 'admin-menu-manager' ),
-			'buttonSave'   => __( 'Save', 'admin-menu-manager' ),
-			'buttonSaving' => __( 'Saving&hellip;', 'admin-menu-manager' ),
-			'buttonSaved'  => __( 'Saved!', 'admin-menu-manager' ),
-			'adminMenu'    => self::get_admin_menu(),
+			'templates' => array(
+				'editButton' => array(
+					'label'       => __( 'Edit Menu', 'admin-menu-manager' ),
+					'labelSaving' => __( 'Saving&hellip;', 'admin-menu-manager' ),
+					'labelSaved'  => __( 'Saved!', 'admin-menu-manager' ),
+					'ays'         => __( 'Are you sure? This will reset the whole menu!', 'admin-menu-manager' ),
+					'options'     => array(
+						'save'  => __( 'Save changes', 'admin-menu-manager' ),
+						'add'   => __( 'Add new item', 'admin-menu-manager' ),
+						'undo'  => __( 'Undo change', 'admin-menu-manager' ),
+						'redo'  => __( 'Redo change', 'admin-menu-manager' ),
+						'reset' => __( 'Reset menu', 'admin-menu-manager' ),
+					)
+				)
+			),
+			'menu'      => self::get_admin_menu(),
+			'trash'     => self::get_admin_menu_trash(),
 		) );
-	}
-
-	/**
-	 * Add our edit button to the menu.
-	 */
-	public function add_admin_menu_button() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-		?>
-		<li id="admin-menu-manager-edit" class="hide-if-no-js">
-			<a href="#" class="menu-top" title="<?php esc_attr_e( 'Edit Menu', 'admin-menu-manager' ); ?>">
-				<div class="wp-menu-image dashicons-before dashicons-edit"></div>
-				<div class="wp-menu-name"><?php _e( 'Edit Menu', 'admin-menu-manager' ); ?></div>
-			</a>
-		</li>
-	<?php
 	}
 
 	/**
 	 * Grab a list of all registered admin pages.
 	 *
 	 * @since 1.0.0
+	 *
+	 * @return array
 	 */
 	public function get_admin_menu() {
 		global $menu, $submenu;
+
+		if ( null === $menu ) {
+			$menu = array();
+		}
+
+		$menu_items = array();
+
+		foreach ( $menu as $menu_item ) {
+			if ( ! empty( $submenu[ $menu_item[2] ] ) ) {
+				$menu_item['children'] = array_values( $submenu[ $menu_item[2] ] );
+			}
+
+			$menu_items[] = $menu_item;
+		}
+
+		return $menu_items;
+	}
+
+	/**
+	 * Grab a list of all trashed admin menu items.
+	 *
+	 * @return array
+	 */
+	public function get_admin_menu_trash() {
+		$menu    = get_option( 'amm_trash_menu', array() );
+		$submenu = get_option( 'amm_trash_submenu', array() );
 
 		if ( null === $menu ) {
 			$menu = array();
@@ -143,9 +173,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 					}
 					$value[] = $key;
 				}
-				$menu_item[] = array_values( $submenu[ $menu_item[2] ] );
-			} else {
-				$menu_item[] = array();
+				$menu_item['children'] = array_values( $submenu[ $menu_item[2] ] );
 			}
 
 			$menu_items[] = $menu_item;
@@ -161,21 +189,61 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * just like WordPress uses it in the backend.
 	 */
 	public function update_menu() {
-		$menu    = $_REQUEST['adminMenu'];
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$_REQUEST['trash'] = isset( $_REQUEST['trash'] ) ? $_REQUEST['trash'] : array();
+
+		$menu  = $this->update_menu_loop( $_REQUEST['menu'] );
+		$trash = $this->update_menu_loop( $_REQUEST['trash'] );
+
+		// Note: The third autoload parameter was introduced in WordPress 4.2.0
+		update_option( 'amm_menu', $menu['menu'], false );
+		update_option( 'amm_submenu', $menu['submenu'], false );
+		update_option( 'amm_trash_menu', $trash['menu'], false );
+		update_option( 'amm_trash_submenu', $trash['submenu'], false );
+
+		die( 1 );
+	}
+
+	/**
+	 * Loop through all menu items to update the menu.
+	 *
+	 * @param array $menu
+	 *
+	 * @return array An array containing top level and sub level menu items.
+	 */
+	protected function update_menu_loop( $menu ) {
 		$items   = array();
 		$submenu = array();
 
 		$separatorIndex = 1;
 		$lastSeparator  = null;
 
-		foreach ( $menu as $index => $item ) {
-			$item[0] = wp_unslash( $item[0] );
+		foreach ( $menu as $item ) {
+			$item = array(
+				wp_unslash( $item['label'] ),
+				$item['capability'],
+				$item['href'],
+				$item['pageTitle'],
+				$item['classes'],
+				$item['id'],
+				$item['icon'],
+				isset( $item['children'] ) ? $item['children'] : array(),
+			);
 
-			if ( isset( $item[7] ) ) {
+			if ( ! empty( $item[7] ) ) {
 				$submenu[ $item[2] ] = array();
 				foreach ( $item[7] as $subitem ) {
-					$subitem[0]            = wp_unslash( $subitem[0] );
-					$subitem               = array_slice( $subitem, 0, 4 );
+					$subitem = array(
+						wp_unslash( $subitem['label'] ),
+						$subitem['capability'],
+						$subitem['href'],
+						$subitem['pageTitle'],
+						$subitem['classes'],
+					);
+
 					$submenu[ $item[2] ][] = $subitem;
 				}
 				unset( $item[7] );
@@ -191,11 +259,28 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			$items[] = $item;
 		}
 
-		$items[ $lastSeparator ][2] = 'separator-last';
+		if ( null !== $lastSeparator ) {
+			$items[ $lastSeparator ][2] = 'separator-last';
+		}
 
-		// Note: The third autoload parameter was introduced in WordPress 4.2.0
-		update_option( 'amm_menu', $items, false );
-		update_option( 'amm_submenu', $submenu, false );
+		return array(
+			'menu'    => $items,
+			'submenu' => $submenu
+		);
+	}
+
+	/**
+	 * Ajax Handler to reset the menu.
+	 */
+	public function reset_menu() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		delete_option( 'amm_menu' );
+		delete_option( 'amm_submenu' );
+		delete_option( 'amm_trash_menu' );
+		delete_option( 'amm_trash_submenu' );
 
 		die( 1 );
 	}
@@ -210,14 +295,16 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * 0 = menu_title, 1 = capability, 2 = menu_slug, 3 = page_title, 4 = classes
 	 */
 	public function alter_admin_menu() {
-		$amm_menu    = get_option( 'amm_menu', array() );
-		$amm_submenu = get_option( 'amm_submenu', array() );
+		$amm_menu          = get_option( 'amm_menu', array() );
+		$amm_submenu       = get_option( 'amm_submenu', array() );
+		$amm_trash_menu    = get_option( 'amm_trash_menu', array() );
+		$amm_trash_submenu = get_option( 'amm_trash_submenu', array() );
 
 		if ( empty( $amm_menu ) || empty( $amm_submenu ) ) {
 			return;
 		}
 
-		global $menu, $submenu, $wp_filter;;
+		global $menu, $submenu;
 
 		$temp_menu    = $menu;
 		$temp_submenu = $submenu;
@@ -229,7 +316,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		foreach ( $amm_menu as $priority => &$item ) {
 			// It was originally a top level item as well. It's a match!
 			foreach ( $temp_menu as $key => $m_item ) {
-				if ( $item[2] === $m_item[2] ) {
+				if ( str_replace( 'admin.php?page=', '', $item[2] ) === $m_item[2] ) {
 					if ( 'wp-menu-separator' == $m_item[4] ) {
 						$menu[ $priority ] = $m_item;
 					} else {
@@ -252,17 +339,8 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			// It must be a submenu item moved to the top level
 			foreach ( $temp_submenu as $key => &$parent ) {
 				foreach ( $parent as $sub_key => &$sub_item ) {
-					if ( $item[2] === $sub_item[2] ) {
+					if ( str_replace( 'admin.php?page=', '', $item[2] ) === $sub_item[2] ) {
 						$hook_name = get_plugin_page_hookname( $sub_item[2], $key );
-
-						$old_filters = array();
-
-						foreach ( $wp_filter as $filter => $value ) {
-							if ( false !== strpos( $filter, $hook_name ) ) {
-								$old_filters[ $filter ] = $value;
-								unset( $wp_filter[ $filter ] );
-							}
-						}
 
 						if ( ! isset( $sub_item[3] ) ) {
 							$sub_item[3] = $sub_item[0];
@@ -281,9 +359,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 						// Add hook name of the former parent as CSS class to the new item
 						$menu[ $priority ][4] .= ' ' . get_plugin_page_hookname( $key, $key );
 
-						foreach ( $old_filters as $filter => $value ) {
-							$wp_filter[ str_replace( $hook_name, $new_page, $filter ) ] = $value;
-						}
+						$this->switch_menu_item_filters( $hook_name, $new_page );
 
 						unset( $temp_submenu[ $key ][ $sub_key ] );
 
@@ -302,7 +378,10 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				// Iterate on original submenu items
 				foreach ( $temp_submenu as $s_parent_page => &$s_page ) {
 					foreach ( $s_page as $s_priority => &$s_item ) {
-						if ( $item[2] === $s_item[2] && $parent_page == $s_parent_page ) {
+						if (
+							str_replace( 'admin.php?page=', '', $item[2] ) === $s_item[2] &&
+							str_replace( 'admin.php?page=', '', $parent_page ) == $s_parent_page
+						) {
 							add_submenu_page(
 								$s_parent_page, // Parent Slug
 								isset( $s_item[3] ) ? $s_item[3] : $s_item[0], // Page title
@@ -320,17 +399,8 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 
 				// It must be a top level item moved to submenu
 				foreach ( $temp_menu as $m_key => &$m_item ) {
-					if ( $item[2] === $m_item[2] ) {
+					if ( str_replace( 'admin.php?page=', '', $item[2] ) === $m_item[2] ) {
 						$hook_name = get_plugin_page_hookname( $m_item[2], $parent_page );
-
-						$old_filters = array();
-
-						foreach ( $wp_filter as $filter => $value ) {
-							if ( false !== strpos( $filter, $hook_name ) ) {
-								$old_filters[ $filter ] = $value;
-								unset( $wp_filter[ $filter ] );
-							}
-						}
 
 						$new_page = add_submenu_page(
 							$parent_page, // Parent Slug
@@ -340,17 +410,58 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 							$m_item[2] // Slug
 						);
 
-						foreach ( $old_filters as $filter => $value ) {
-							$wp_filter[ str_replace( $hook_name, $new_page, $filter ) ] = $value;
-						}
+						$this->switch_menu_item_filters( $hook_name, $new_page );
 
 						unset( $temp_menu[ $m_key ] );
 
 						continue 2;
 					}
 				}
+			}
+		}
 
-				// Still no match, menu item must have been removed.
+		// Remove trashed items
+		foreach ( $amm_trash_menu as $priority => &$item ) {
+			// It was originally a top level item as well. It's a match!
+			foreach ( $temp_menu as $key => $m_item ) {
+				if ( $item[2] === $m_item[2] ) {
+					unset( $temp_menu[ $key ] );
+					continue 2;
+				}
+			}
+
+			// It must be a submenu item moved to the top level
+			foreach ( $temp_submenu as $key => &$parent ) {
+				foreach ( $parent as $sub_key => &$sub_item ) {
+					if ( $item[2] === $sub_item[2] ) {
+						unset( $temp_submenu[ $key ][ $sub_key ] );
+						continue 3;
+					}
+				}
+			}
+
+			unset( $temp_menu[ $priority ] );
+		}
+
+		foreach ( $amm_trash_submenu as $parent_page => &$page ) {
+			foreach ( $page as $priority => &$item ) {
+				// Iterate on original submenu items
+				foreach ( $temp_submenu as $s_parent_page => &$s_page ) {
+					foreach ( $s_page as $s_priority => &$s_item ) {
+						if ( $item[2] === $s_item[2] && $parent_page == $s_parent_page ) {
+							unset( $temp_submenu[ $s_parent_page ][ $s_priority ] );
+							continue 2;
+						}
+					}
+				}
+
+				// It must be a top level item moved to submenu
+				foreach ( $temp_menu as $m_key => &$m_item ) {
+					if ( $item[2] === $m_item[2] ) {
+						unset( $temp_menu[ $m_key ] );
+						continue 2;
+					}
+				}
 			}
 		}
 
@@ -371,6 +482,36 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			} else {
 				$submenu[ $parent ] = $item;
 			}
+		}
+	}
+
+	/**
+	 * Get all the filters hooked to an admin menu page.
+	 *
+	 * @param string $hook_name The plugin page hook name.
+	 *
+	 * @return array
+	 */
+	protected function get_menu_item_filters( $hook_name ) {
+		global $wp_filter;
+
+		$old_filters = array();
+
+		foreach ( $wp_filter as $filter => $value ) {
+			if ( false !== strpos( $filter, $hook_name ) ) {
+				$old_filters[ $filter ] = $value;
+				unset( $wp_filter[ $filter ] );
+			}
+		}
+
+		return $old_filters;
+	}
+
+	protected function switch_menu_item_filters( $old_hook, $new_hook ) {
+		global $wp_filter;
+
+		foreach ( $this->get_menu_item_filters( $old_hook ) as $filter => $value ) {
+			$wp_filter[ str_replace( $old_hook, $new_hook, $filter ) ] = $value;
 		}
 	}
 
