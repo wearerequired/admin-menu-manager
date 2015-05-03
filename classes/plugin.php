@@ -375,7 +375,10 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				// Iterate on original submenu items
 				foreach ( $temp_submenu as $s_parent_page => &$s_page ) {
 					foreach ( $s_page as $s_priority => &$s_item ) {
-						if ( $item[2] === $s_item[2] && $parent_page == $s_parent_page ) {
+						if (
+							str_replace( 'admin.php?page=', '', $item[2] ) === $s_item[2] &&
+							str_replace( 'admin.php?page=', '', $parent_page ) == $s_parent_page
+						) {
 							add_submenu_page(
 								$s_parent_page, // Parent Slug
 								isset( $s_item[3] ) ? $s_item[3] : $s_item[0], // Page title
@@ -393,7 +396,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 
 				// It must be a top level item moved to submenu
 				foreach ( $temp_menu as $m_key => &$m_item ) {
-					if ( $item[2] === $m_item[2] ) {
+					if ( str_replace( 'admin.php?page=', '', $item[2] ) === $m_item[2] ) {
 						$hook_name = get_plugin_page_hookname( $m_item[2], $parent_page );
 
 						$old_filters = array();
