@@ -24,20 +24,40 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: classes/plugin.php:98
+#: classes/plugin.php:107
 msgid "Edit Menu"
 msgstr ""
 
-#: classes/plugin.php:99
-msgid "Save"
-msgstr ""
-
-#: classes/plugin.php:100
+#: classes/plugin.php:108
 msgid "Saving&hellip;"
 msgstr ""
 
-#: classes/plugin.php:101
+#: classes/plugin.php:109
 msgid "Saved!"
+msgstr ""
+
+#: classes/plugin.php:110
+msgid "Are you sure? This will reset the whole menu!"
+msgstr ""
+
+#: classes/plugin.php:112
+msgid "Save changes"
+msgstr ""
+
+#: classes/plugin.php:113
+msgid "Add new item"
+msgstr ""
+
+#: classes/plugin.php:114
+msgid "Undo change"
+msgstr ""
+
+#: classes/plugin.php:115
+msgid "Redo change"
+msgstr ""
+
+#: classes/plugin.php:116
+msgid "Reset menu"
 msgstr ""
 
 #. Plugin Name of the plugin/theme

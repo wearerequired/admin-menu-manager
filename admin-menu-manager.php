@@ -3,7 +3,7 @@
  * Plugin Name: Admin Menu Manager
  * Plugin URI:  http://required.ch
  * Description: Manage the WordPress admin menu using a simple drag & drop interface.
- * Version:     1.0.1
+ * Version:     2.0.0-alpha
  * Author:      required+
  * Author URI:  http://required.ch
  * License:     GPLv2+
