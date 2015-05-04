@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Admin Menu Manager 1.0.0\n"
+"Project-Id-Version: Admin Menu Manager 1.0.1\n"
 "Report-Msgid-Bugs-To: http://required.ch\n"
 "POT-Creation-Date: 2015-04-08 06:58:47+00:00\n"
 "MIME-Version: 1.0\n"
@@ -24,19 +24,19 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: classes/plugin.php:98 classes/plugin.php:115 classes/plugin.php:117
+#: classes/plugin.php:100 classes/plugin.php:117 classes/plugin.php:119
 msgid "Edit Menu"
 msgstr ""
 
-#: classes/plugin.php:99
+#: classes/plugin.php:101
 msgid "Save"
 msgstr ""
 
-#: classes/plugin.php:100
+#: classes/plugin.php:102
 msgid "Saving&hellip;"
 msgstr ""
 
-#: classes/plugin.php:101
+#: classes/plugin.php:103
 msgid "Saved!"
 msgstr ""
 
