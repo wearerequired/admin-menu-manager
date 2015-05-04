@@ -71,6 +71,32 @@ if ( ! class_exists( 'WP_Stack_Plugin2' ) ) {
 		}
 
 		/**
+		 * Remove a WordPress hook (action/filter).
+		 *
+		 * @param  mixed $hook,... first parameter is the name of the hook.
+		 *                         If second or third parameters are included,
+		 *                         they will be used as a priority (if an integer)
+		 *                         or as a class method callback name (if a string).
+		 *
+		 * @return bool Always returns true.
+		 */
+		public function unhook( $hook ) {
+			$priority = 10;
+			$method   = $this->sanitize_method( $hook );
+			$args     = func_get_args();
+			unset( $args[0] );
+			foreach ( (array) $args as $arg ) {
+				if ( is_int( $arg ) ) {
+					$priority = $arg;
+				} else {
+					$method = $arg;
+				}
+			}
+
+			return remove_action( $hook, array( $this, $method ), $priority );
+		}
+
+		/**
 		 * Sanitize a method name by replacing dots and dashes.
 		 *
 		 * @param string $method The method name to sanitize.
