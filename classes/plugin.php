@@ -11,7 +11,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	/**
 	 * Plugin version.
 	 */
-	const VERSION = '1.0.1';
+	const VERSION = '1.0.2';
 
 	/**
 	 * Constructs the object, hooks in to `plugins_loaded`.
@@ -43,6 +43,8 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 
 		// Add our filter way later, after other plugins have defined the menu
 		$this->hook( 'menu_order', 'alter_admin_menu_order', 9999 );
+
+		$this->hook( 'gettext', 'disable_translations' );
 	}
 
 	/**
@@ -117,7 +119,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				<div class="wp-menu-name"><?php _e( 'Edit Menu', 'admin-menu-manager' ); ?></div>
 			</a>
 		</li>
-	<?php
+		<?php
 	}
 
 	/**
@@ -200,6 +202,10 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		die( 1 );
 	}
 
+	public function disable_translations( $translated_text, $text, $domain ) {
+		return $text;
+	}
+
 	/**
 	 * Here's where the magic happens!
 	 *
@@ -217,7 +223,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			return;
 		}
 
-		global $menu, $submenu, $wp_filter;;
+		global $menu, $submenu, $wp_filter;
 
 		$temp_menu    = $menu;
 		$temp_submenu = $submenu;
@@ -303,7 +309,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				foreach ( $temp_submenu as $s_parent_page => &$s_page ) {
 					foreach ( $s_page as $s_priority => &$s_item ) {
 						if ( $item[2] === $s_item[2] && $parent_page == $s_parent_page ) {
-							add_submenu_page(
+							$new_page = add_submenu_page(
 								$s_parent_page, // Parent Slug
 								isset( $s_item[3] ) ? $s_item[3] : $s_item[0], // Page title
 								$s_item[0], // Menu title
@@ -352,6 +358,8 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 
 				// Still no match, menu item must have been removed.
 			}
+
+			$this->unhook( 'gettext', 'disable_translations' );
 		}
 
 		/**
