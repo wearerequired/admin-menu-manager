@@ -41,8 +41,6 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 
 		// Add our filter way later, after other plugins have defined the menu
 		$this->hook( 'menu_order', 'alter_admin_menu_order', 9999 );
-
-		$this->hook( 'gettext', 'disable_translations' );
 	}
 
 	/**
@@ -50,10 +48,6 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 */
 	public function init() {
 		$this->load_textdomain( 'admin-menu-manager', '/languages' );
-	}
-
-	public function disable_translations( $translated_text, $text, $domain ) {
-		return $text;
 	}
 
 	/**
@@ -310,10 +304,11 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			return;
 		}
 
-		global $menu, $submenu;
+		global $menu, $submenu, $admin_page_hooks;
 
-		$temp_menu    = $menu;
-		$temp_submenu = $submenu;
+		$temp_menu             = $menu;
+		$temp_submenu          = $submenu;
+		$temp_admin_page_hooks = $admin_page_hooks;
 
 		$menu    = null;
 		$submenu = null;
@@ -469,8 +464,6 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 					}
 				}
 			}
-
-			$this->unhook( 'gettext', 'disable_translations' );
 		}
 
 		/**
@@ -489,6 +482,17 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				$submenu[ $parent ] = array_merge( $submenu[ $parent ], $item );
 			} else {
 				$submenu[ $parent ] = $item;
+			}
+		}
+
+		/**
+		 * Loop through admin page hooks.
+		 *
+		 * We want to keep the original, untranslated values.
+		 */
+		foreach ( $admin_page_hooks as $key => &$value ) {
+			if ( isset( $temp_admin_page_hooks[ $key ] ) ) {
+				$value = $temp_admin_page_hooks[ $key ];
 			}
 		}
 	}
