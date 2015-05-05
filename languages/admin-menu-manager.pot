@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Admin Menu Manager 1.0.1\n"
+"Project-Id-Version: Admin Menu Manager 2.0.0-alpha\n"
 "Report-Msgid-Bugs-To: http://required.ch\n"
 "POT-Creation-Date: 2015-04-08 06:58:47+00:00\n"
 "MIME-Version: 1.0\n"
