@@ -2,7 +2,7 @@
   "name": "admin-menu-manager",
   "title": "Admin Menu Manager",
   "description": "Manage the WordPress admin menu using a simple drag & drop interface.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "homepage": "http://required.ch",
   "author": {
     "name": "required+",
