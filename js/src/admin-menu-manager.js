@@ -174,7 +174,9 @@
           item = AdminMenuManager.adminMenu[oldItem[0]][7][oldItem[1]];
           AdminMenuManager.adminMenu[oldItem[0]][7].splice(oldItem[1], 1);
         }
-      }
+      } else {
+				return;
+			}
 
       // Move it to the new position. Add icon if not existing
       if (currentPosition.length === 1) {
