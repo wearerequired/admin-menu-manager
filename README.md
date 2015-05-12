@@ -54,7 +54,7 @@ Answer
 
 ## Contribute ##
 
-If you would like to contribute to this plugin, report an issue or anything like that, please note that we develop this plugin on [GitHub](https://github.com/wearerequired/WP-Widget-Disable). Please submit pull requests to the `develop` branch.
+If you would like to contribute to this plugin, report an issue or anything like that, please note that we develop this plugin on [GitHub](https://github.com/wearerequired/admin-menu-manager). Please submit pull requests to the `develop` branch.
 
 Developed by [required+](http://required.ch/ "Team of experienced web professionals from Switzerland & Germany").
 
