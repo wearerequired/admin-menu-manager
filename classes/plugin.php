@@ -304,14 +304,13 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			return;
 		}
 
-		global $menu, $submenu, $admin_page_hooks;
+		global $menu, $submenu, $admin_page_hooks, $_registered_pages;
 
 		$temp_menu             = $menu;
 		$temp_submenu          = $submenu;
 		$temp_admin_page_hooks = $admin_page_hooks;
 
-		$menu    = null;
-		$submenu = null;
+		$menu = $submenu = $_registered_pages = null;
 
 		// Iterate on the top level items
 		foreach ( $amm_menu as $priority => &$item ) {
@@ -373,23 +372,35 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			unset( $temp_menu[ $priority ] );
 		}
 
+		/**
+		 * Loop through admin page hooks.
+		 *
+		 * We want to keep the original, untranslated values.
+		 */
+		foreach ( $admin_page_hooks as $key => &$value ) {
+			if ( isset( $temp_admin_page_hooks[ $key ] ) ) {
+				$value = $temp_admin_page_hooks[ $key ];
+			}
+		}
+
 		// Iterate on all our submenu items
 		foreach ( $amm_submenu as $parent_page => &$page ) {
 			foreach ( $page as $priority => &$item ) {
 				// Iterate on original submenu items
 				foreach ( $temp_submenu as $s_parent_page => &$s_page ) {
 					foreach ( $s_page as $s_priority => &$s_item ) {
-						if (
-							str_replace( 'admin.php?page=', '', $item[2] ) === $s_item[2] &&
-							str_replace( 'admin.php?page=', '', $parent_page ) == $s_parent_page
-						) {
-							add_submenu_page(
-								$s_parent_page, // Parent Slug
+						if ( str_replace( 'admin.php?page=', '', $item[2] ) === $s_item[2] ) {
+							$hook_name = get_plugin_page_hookname( $s_item[2], $s_parent_page );
+
+							$new_page = add_submenu_page(
+								$parent_page, // Parent Slug
 								isset( $s_item[3] ) ? $s_item[3] : $s_item[0], // Page title
 								$s_item[0], // Menu title
 								$s_item[1], // Capability
 								$s_item[2] // SLug
 							);
+
+							$this->switch_menu_item_filters( $hook_name, $new_page );
 
 							unset( $temp_submenu[ $s_parent_page ][ $s_priority ] );
 
@@ -482,17 +493,6 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				$submenu[ $parent ] = array_merge( $submenu[ $parent ], $item );
 			} else {
 				$submenu[ $parent ] = $item;
-			}
-		}
-
-		/**
-		 * Loop through admin page hooks.
-		 *
-		 * We want to keep the original, untranslated values.
-		 */
-		foreach ( $admin_page_hooks as $key => &$value ) {
-			if ( isset( $temp_admin_page_hooks[ $key ] ) ) {
-				$value = $temp_admin_page_hooks[ $key ];
 			}
 		}
 	}
