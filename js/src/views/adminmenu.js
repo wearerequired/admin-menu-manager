@@ -119,8 +119,11 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 				}
 			}
 
+			// todo: Allow for custom menu items
 			if (el[2].indexOf('.php') === -1) {
 				menuItem.set('href', 'admin.php?page=' + el[2]);
+			} else {
+				menuItem.set('href', el[2]);
 			}
 
 			collection.add(menuItem);
@@ -131,7 +134,7 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 					var submenuItem = new MenuItem(el);
 
 					if (!isTrash) {
-						var $el = jQuery(this.view.$el.find('#adminmenu > li')[count]).find('li:not(.wp-submenu-head)');
+						var $el = jQuery(this.$el.find('#adminmenu > li')[count]).find('li:not(.wp-submenu-head)');
 
 						// Add current class if applicable
 						if (jQuery($el.get(subCount)).hasClass('current')) {
@@ -139,8 +142,9 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 						}
 					}
 
+					// todo: Allow for custom menu items
 					if (el[2].indexOf('.php') === -1) {
-						submenuItem.set('href', this.parent[2] + '?page=' + el[2]);
+						submenuItem.set('href', menuItem.get('href') + '?page=' + el[2]);
 					}
 
 					submenuItem.set(5, menuItem.get(5));
@@ -150,7 +154,7 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 					menuItem.attributes.children.add(submenuItem);
 
 					subCount++;
-				}, {view: this, parent: el});
+				}, this);
 			}
 
 			count++;
