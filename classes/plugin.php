@@ -58,6 +58,10 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * The plugin now uses user options instead of site options.
 	 */
 	public function db_update() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		$options = array(
 			'amm_menu'          => get_site_option( 'amm_menu', array() ),
 			'amm_submenu'       => get_site_option( 'amm_submenu', array() ),
