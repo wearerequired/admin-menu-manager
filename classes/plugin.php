@@ -73,6 +73,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			$focus      = $_wp_admin_css_colors[ $current_color ]->icon_colors['focus'];
 			$current    = $_wp_admin_css_colors[ $current_color ]->icon_colors['current'];
 			$inline_css = "
+			#admin-menu-manager-trash,
 			#adminmenu:not(.ui-sortable-disabled) .wp-menu-separator.ui-sortable-handle { background-color: $background; border-color: $border !important; }
 			#admin-menu-manager-edit .menu-top { color: $base; }
 			#admin-menu-manager-edit .menu-top:focus,
