@@ -81,7 +81,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * Load our JavaScript and CSS if the user has enough capabilities to edit the menu.
 	 */
 	public function admin_enqueue_scripts() {
-		if ( ! current_user_can( 'read' ) ) {
+		if ( ! current_user_can( 'read' ) || is_network_admin() ) {
 			return;
 		}
 
