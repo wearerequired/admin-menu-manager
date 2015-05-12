@@ -224,6 +224,9 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 	toggleSortable: function (isActive) {
 		this.isEditing = isActive;
 		this.initSortable(isActive);
+
+		// Trigger the WordPress admin menu resize event
+		jQuery(document).trigger('wp-window-resized.pin-menu');
 	},
 
 	/**
@@ -282,6 +285,9 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 		}
 
 		this.render();
+
+		// Trigger the WordPress admin menu resize event
+		jQuery(document).trigger('wp-window-resized.pin-menu');
 	},
 
 	/**
