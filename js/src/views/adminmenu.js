@@ -35,6 +35,26 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 		this.initMenu(AdminMenuManager.menu, this.menu);
 		this.initMenu(AdminMenuManager.trash, this.trash);
 
+		this.listenTo(this.editButton, 'addSeparator', function () {
+			this.menu.add(new MenuItem({
+				'2'   : 'separator' + Math.floor(Math.random() * (100 - 1)) + 1, // todo: count instead of random
+				'4'   : 'wp-menu-separator'
+			}));
+			this.render();
+		});
+
+		this.listenTo(this.editButton, 'addCustomItem', function () {
+			this.menu.add(new MenuItem({
+				'0'   : 'Custom item',
+				'1'   : 'read',
+				'2'   : 'custom-item-' + Math.floor(Math.random() * (100 - 1)) + 1, // todo: count instead of random
+				'4'   : 'wp-not-current-submenu menu-top toplevel_page_custom',
+				'5'   : 'custom-item-' + Math.floor(Math.random() * (100 - 1)) + 1,
+				'href': '#custom-item-' + Math.floor(Math.random() * (100 - 1)) + 1 // todo: allow for custom URLs
+			}));
+			this.render();
+		});
+
 		// Allow for undo/redo
 		this.undoManager = new Backbone.UndoManager({
 			register: [this.menu, this.trash],
@@ -120,10 +140,10 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 			}
 
 			// todo: Allow for custom menu items
-			if (el[2].indexOf('.php') === -1) {
-				menuItem.set('href', 'admin.php?page=' + el[2]);
-			} else {
+			if ( el[2].indexOf('#') > -1 || el[2].indexOf('.php') > -1) {
 				menuItem.set('href', el[2]);
+			} else {
+				menuItem.set('href', 'admin.php?page=' + el[2]);
 			}
 
 			collection.add(menuItem);
@@ -142,8 +162,7 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 						}
 					}
 
-					// todo: Allow for custom menu items
-					if (el[2].indexOf('.php') === -1) {
+					if ( el[2].indexOf('#') === -1 && el[2].indexOf('.php') === -1) {
 						submenuItem.set('href', menuItem.get('href') + '?page=' + el[2]);
 					}
 
@@ -212,6 +231,9 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 			// somehow it doesn't apply this class even if it's initially disabled
 			this.$el.find('ul').addClass('ui-sortable-disabled');
 		}
+
+		// Trigger the WordPress admin menu resize event
+		jQuery(document).trigger('wp-window-resized.pin-menu');
 	},
 
 	/**
@@ -224,9 +246,6 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 	toggleSortable: function (isActive) {
 		this.isEditing = isActive;
 		this.initSortable(isActive);
-
-		// Trigger the WordPress admin menu resize event
-		jQuery(document).trigger('wp-window-resized.pin-menu');
 	},
 
 	/**

@@ -12,7 +12,9 @@
 
 #adminmenu #admin-menu-manager-edit {
 	margin-top: 20px;
-	cursor: pointer !important;
+	cursor: default !important;
+	float: left;
+	width: 100%;
 }
 
 .folded #adminmenu #admin-menu-manager-edit .wp-menu-name {
@@ -43,7 +45,8 @@
 
 .amm-edit-options {
 	display: none;
-	overflow: hidden;
+	float: left;
+	width: 100%;
 
 	#admin-menu-manager-edit.active & {
 		display: block;
@@ -56,14 +59,62 @@
 	width: 30px;
 	height: 30px;
 	margin-right: 3px;
+	position: relative;
 
 	a {
 		padding: 0 !important;
 	}
+
+	.wp-menu-image:before {
+		color: inherit !important;
+	}
+}
+
+#amm-edit-option-save .wp-menu-image:before {
+	font-size: 24px;
+	padding: 4px 0 !important;
+}
+
+.amm-edit-option-choices {
+	display: block;
+	position: absolute;
+	color: #fff;
+	top: 40px;
+	left: 0;
+	white-space: nowrap;
+	overflow: visible;
+	z-index: 100;
+
+	&.hidden {
+		display: none;
+	}
+
+	&:after {
+		content: " ";
+		bottom: 100%;
+		left: 18px;
+		border: 10px solid transparent;
+		height: 0;
+		width: 0;
+		position: absolute;
+		pointer-events: none;
+		margin-left: -10px;
+	}
+}
+
+.amm-edit-option-choice {
+	padding: 5px 20px 5px 15px !important;
 }
 
 #admin-menu-manager-edit.active > .menu-top {
 	display: none;
+}
+
+#admin-menu-manager-trash-view {
+	float: left;
+	width: 100%;
+	min-height: 140px;
+	cursor: default !important;
 }
 
 #admin-menu-manager-trash {
@@ -76,6 +127,8 @@
 	padding: 10px;
 	border: 2px #fff dashed;
 	color: #fff;
+	float: left;
+	width: 100%;
 
 	&:before {
 		position: absolute;

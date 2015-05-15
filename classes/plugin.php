@@ -81,7 +81,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * Load our JavaScript and CSS if the user has enough capabilities to edit the menu.
 	 */
 	public function admin_enqueue_scripts() {
-		if ( ! current_user_can( 'read' ) || is_network_admin() ) {
+		if ( ! current_user_can( 'read' ) || is_network_admin() || is_customize_preview() ) {
 			return;
 		}
 
@@ -99,14 +99,18 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			$base       = $_wp_admin_css_colors[ $current_color ]->icon_colors['base'];
 			$focus      = $_wp_admin_css_colors[ $current_color ]->icon_colors['focus'];
 			$current    = $_wp_admin_css_colors[ $current_color ]->icon_colors['current'];
+
 			$inline_css = "
+			.amm-edit-option-choices { background-color: $border; }
+			.amm-edit-option-choices:after { border-bottom-color: $border; }
 			#admin-menu-manager-trash,
 			#adminmenu:not(.ui-sortable-disabled) .wp-menu-separator.ui-sortable-handle { background-color: $background; border-color: $border !important; }
-			#admin-menu-manager-edit .menu-top { color: $base; }
+			#admin-menu-manager-edit > .menu-top,
+			#admin-menu-manager-edit > .menu-top div.wp-menu-image:before,
+			.amm-edit-option a { color: $base; !important }
 			#admin-menu-manager-edit .menu-top:focus,
 			#admin-menu-manager-edit .menu-top:focus div.wp-menu-image:before { color: $focus !important; }
-			#admin-menu-manager-edit:hover .menu-top,
-			#admin-menu-manager-edit:hover div.wp-menu-image:before { color: $current !important; }
+			.amm-edit-option a:hover { color: $current !important; }
 			";
 			wp_add_inline_style( 'admin-menu-manager', $inline_css );
 		}
@@ -135,13 +139,17 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 					'label'       => __( 'Edit Menu', 'admin-menu-manager' ),
 					'labelSaving' => __( 'Saving&hellip;', 'admin-menu-manager' ),
 					'labelSaved'  => __( 'Saved!', 'admin-menu-manager' ),
-					'ays'         => __( 'Are you sure? This will reset the whole menu!', 'admin-menu-manager' ),
+					'ays'         => __( 'Are you sure? This will reset the whole menu.', 'admin-menu-manager' ),
 					'options'     => array(
-						'save'  => __( 'Save changes', 'admin-menu-manager' ),
-						'add'   => __( 'Add new item', 'admin-menu-manager' ),
-						'undo'  => __( 'Undo change', 'admin-menu-manager' ),
-						'redo'  => __( 'Redo change', 'admin-menu-manager' ),
-						'reset' => __( 'Reset menu', 'admin-menu-manager' ),
+						'save'          => __( 'Save changes', 'admin-menu-manager' ),
+						'add'           => __( 'Add new item', 'admin-menu-manager' ),
+						'addSeparator'  => __( 'Separator', 'admin-menu-manager' ),
+						'addCustomItem' => __( 'Custom item', 'admin-menu-manager' ),
+						'addImport'     => __( 'Import', 'admin-menu-manager' ),
+						'addExport'     => __( 'Export', 'admin-menu-manager' ),
+						'undo'          => __( 'Undo change', 'admin-menu-manager' ),
+						'redo'          => __( 'Redo change', 'admin-menu-manager' ),
+						'reset'         => __( 'Reset menu', 'admin-menu-manager' ),
 					)
 				)
 			),
@@ -287,8 +295,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 
 			// Store separators in correct order
 			if ( false !== strpos( $item[2], 'separator' ) ) {
-				$item[2]       = 'separator' . $separatorIndex ++;
-				$item[4]       = 'wp-menu-separator';
+				$item          = array( '', 'read', 'separator' . $separatorIndex ++, '', 'wp-menu-separator' );
 				$lastSeparator = count( $items );
 			}
 
@@ -313,10 +320,10 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			return;
 		}
 
-		delete_option( 'amm_menu' );
-		delete_option( 'amm_submenu' );
-		delete_option( 'amm_trash_menu' );
-		delete_option( 'amm_trash_submenu' );
+		delete_user_option( wp_get_current_user()->ID, 'amm_menu' );
+		delete_user_option( wp_get_current_user()->ID, 'amm_submenu' );
+		delete_user_option( wp_get_current_user()->ID, 'amm_trash_menu' );
+		delete_user_option( wp_get_current_user()->ID, 'amm_trash_submenu' );
 
 		die( 1 );
 	}
@@ -360,9 +367,15 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		foreach ( $amm_menu as $priority => &$item ) {
 			// It was originally a top level item as well. It's a match!
 			foreach ( $temp_menu as $key => $m_item ) {
-				if ( $item[2] === $m_item[2] ) {
+				// For slugs like edit.php?post_type=page
+				$m_item_slug = $m_item[2];
+				if ( false !== strpos( $m_item[2], '=' ) ) {
+					$m_item_slug = str_replace( '=', '', strstr( $m_item_slug, '=' ) );
+				}
+
+				if ( $item[2] === $m_item_slug ) {
 					if ( 'wp-menu-separator' == $m_item[4] ) {
-						$menu[ $priority ] = $m_item;
+						$menu[] = $m_item;
 					} else {
 						add_menu_page(
 							$m_item[3], // Page title
@@ -412,9 +425,20 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				}
 			}
 
+			// It must be a custom menu item
+			if (
+				( isset( $item[5] ) && false !== strpos( $item[5], 'custom-item' ) ) ||
+				'wp-menu-separator' === $item[4]
+			) {
+				$menu[] = $item;
+				continue;
+			}
+
 			// Still no match, menu item must have been removed.
-			unset( $temp_menu[ $priority ] );
+			//unset( $item );
 		}
+
+		//var_dump($amm_menu);
 
 		/**
 		 * Loop through admin page hooks.
@@ -430,6 +454,27 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		// Iterate on all our submenu items
 		foreach ( $amm_submenu as $parent_page => &$page ) {
 			foreach ( $page as $priority => &$item ) {
+				// Iterate on original top level menu items
+				foreach ( $temp_menu as $m_key => &$m_item ) {
+					if ( $item[2] === $m_item[2] ) {
+						$hook_name = get_plugin_page_hookname( $m_item[2], $parent_page );
+
+						$new_page = add_submenu_page(
+							$parent_page, // Parent Slug
+							$m_item[0], // Page title
+							$m_item[0], // Menu title
+							$m_item[1], // Capability
+							$m_item[2] // Slug
+						);
+
+						$this->switch_menu_item_filters( $hook_name, $new_page );
+
+						unset( $temp_menu[ $m_key ] );
+
+						continue 2;
+					}
+				}
+
 				// Iterate on original submenu items
 				foreach ( $temp_submenu as $s_parent_page => &$s_page ) {
 					foreach ( $s_page as $s_priority => &$s_item ) {
@@ -453,25 +498,13 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 					}
 				}
 
-				// It must be a top level item moved to submenu
-				foreach ( $temp_menu as $m_key => &$m_item ) {
-					if ( $item[2] === $m_item[2] ) {
-						$hook_name = get_plugin_page_hookname( $m_item[2], $parent_page );
-
-						$new_page = add_submenu_page(
-							$parent_page, // Parent Slug
-							$m_item[0], // Page title
-							$m_item[0], // Menu title
-							$m_item[1], // Capability
-							$m_item[2] // Slug
-						);
-
-						$this->switch_menu_item_filters( $hook_name, $new_page );
-
-						unset( $temp_menu[ $m_key ] );
-
-						continue 2;
-					}
+				// It must be a custom menu item
+				if (
+					( isset( $item[5] ) && false !== strpos( $item[5], 'custom-item' ) ) ||
+					'wp-menu-separator' === $item[4]
+				) {
+					$submenu[ $parent_page ][] = $item;
+					continue;
 				}
 			}
 		}

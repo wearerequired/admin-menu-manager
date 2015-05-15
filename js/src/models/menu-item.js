@@ -1,7 +1,7 @@
 module.exports = Backbone.Model.extend({
 	defaults   : {
 		0       : '', // Menu title
-		1       : '', // Capability
+		1       : 'read', // Capability
 		2       : '', // Slug
 		3       : '', // Page title
 		4       : '', // Classes

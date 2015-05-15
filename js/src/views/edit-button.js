@@ -11,15 +11,19 @@ var EditButton = Backbone.View.extend({
 	},
 
 	events: {
-		'click'                       : 'edit',
-		'click #amm-edit-option-save' : 'save',
-		'click #amm-edit-option-undo' : 'undo',
-		'click #amm-edit-option-redo' : 'redo',
-		'click #amm-edit-option-reset': 'reset'
+		'click [href=#edit]'                  : 'edit',
+		'click #amm-edit-option-save'         : 'save',
+		'click #amm-edit-option-add'          : 'add',
+		'click #amm-edit-option-add-separator': 'addSeparator',
+		'click #amm-edit-option-add-custom'   : 'addCustomItem',
+		'click #amm-edit-option-undo'         : 'undo',
+		'click #amm-edit-option-redo'         : 'redo',
+		'click #amm-edit-option-reset'        : 'reset'
 	},
 
 	edit: function (e) {
 		e.preventDefault();
+
 		this.initEditing();
 	},
 
@@ -33,6 +37,8 @@ var EditButton = Backbone.View.extend({
 	save: function (e) {
 		e.preventDefault();
 
+		this.isActive = !this.isActive;
+
 		this.trigger('isActive', this.isActive);
 		this.$el.toggleClass('active', this.isActive);
 		this.trigger('saveMenu', jQuery.proxy(this.saveCallback, this));
@@ -40,6 +46,27 @@ var EditButton = Backbone.View.extend({
 
 	saveCallback: function () {
 		this.render();
+	},
+
+	add: function (e) {
+		e.preventDefault();
+
+		this.$el.find('#amm-edit-option-add + .amm-edit-option-choices').toggleClass('hidden');
+
+		// Trigger the WordPress admin menu resize event
+		jQuery(document).trigger('wp-window-resized.pin-menu');
+	},
+
+	addSeparator: function (e) {
+		e.preventDefault();
+
+		this.trigger('addSeparator');
+	},
+
+	addCustomItem: function (e) {
+		e.preventDefault();
+
+		this.trigger('addCustomItem');
 	},
 
 	undo: function (e) {
