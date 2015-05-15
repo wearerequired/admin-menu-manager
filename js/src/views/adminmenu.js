@@ -37,8 +37,8 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 
 		this.listenTo(this.editButton, 'addSeparator', function () {
 			this.menu.add(new MenuItem({
-				'2'   : 'separator' + Math.floor(Math.random() * (100 - 1)) + 1, // todo: count instead of random
-				'4'   : 'wp-menu-separator'
+				'2': 'separator' + Math.floor(Math.random() * (100 - 1)) + 1, // todo: count instead of random
+				'4': 'wp-menu-separator'
 			}));
 			this.render();
 		});
@@ -140,7 +140,7 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 			}
 
 			// todo: Allow for custom menu items
-			if ( el[2].indexOf('#') > -1 || el[2].indexOf('.php') > -1) {
+			if (el[2].indexOf('#') > -1 || el[2].indexOf('.php') > -1) {
 				menuItem.set('href', el[2]);
 			} else {
 				menuItem.set('href', 'admin.php?page=' + el[2]);
@@ -162,7 +162,7 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 						}
 					}
 
-					if ( el[2].indexOf('#') === -1 && el[2].indexOf('.php') === -1) {
+					if (el[2].indexOf('#') === -1 && el[2].indexOf('.php') === -1) {
 						submenuItem.set('href', menuItem.get('href') + '?page=' + el[2]);
 					}
 
