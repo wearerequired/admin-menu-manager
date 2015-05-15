@@ -163,7 +163,7 @@ var AdminMenu = Backbone.View.extend(/** @lends AdminMenu.prototype */{
 					}
 
 					if (el[2].indexOf('#') === -1 && el[2].indexOf('.php') === -1) {
-						submenuItem.set('href', menuItem.get('href') + '?page=' + el[2]);
+						submenuItem.set('href', menuItem.get('href').substr(0, menuItem.get('href').search('\\?page=')) + '?page=' + el[2]);
 					}
 
 					submenuItem.set(5, menuItem.get(5));
