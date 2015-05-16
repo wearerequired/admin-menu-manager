@@ -32,8 +32,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		$this->hook( 'admin_enqueue_scripts', 5 );
 
 		// Handle form submissions
-		$this->hook( 'wp_ajax_amm_update_menu', 'update_menu' );
-		$this->hook( 'wp_ajax_amm_reset_menu', 'reset_menu' );
+		$this->hook( 'wp_ajax_adminmenu', 'ajax_handler' );
 
 		// Modify admin menu
 		$this->hook( 'admin_menu', 'alter_admin_menu', 999 );
@@ -90,7 +89,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 
 		wp_enqueue_style( 'admin-menu-manager', $this->get_url() . 'css/admin-menu-manager' . $suffix . '.css', array(), self::VERSION );
 
-		global $_wp_admin_css_colors;
+		global $_wp_admin_css_colors, $parent_file, $submenu_file;
 
 		$current_color = get_user_option( 'admin_color' );
 		if ( isset( $_wp_admin_css_colors[ $current_color ] ) ) {
@@ -127,15 +126,22 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			$this->get_url() . 'js/admin-menu-manager' . $suffix . '.js',
 			array(
 				'jquery-ui-sortable',
-				'backbone',
+				'wp-backbone',
 				'backbone-undo'
 			),
 			self::VERSION
 		);
 
+		$plugin_page = null;
+
+		if ( isset( $_GET['page'] ) ) {
+			$plugin_page = wp_unslash( $_GET['page'] );
+			$plugin_page = plugin_basename( $plugin_page );
+		}
+
 		wp_localize_script( 'admin-menu-manager', 'AdminMenuManager', array(
-			'templates' => array(
-				'editButton' => array(
+			'templates'    => array(
+				'editButton'     => array(
 					'label'       => __( 'Edit Menu', 'admin-menu-manager' ),
 					'labelSaving' => __( 'Saving&hellip;', 'admin-menu-manager' ),
 					'labelSaved'  => __( 'Saved!', 'admin-menu-manager' ),
@@ -151,10 +157,16 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 						'redo'          => __( 'Redo change', 'admin-menu-manager' ),
 						'reset'         => __( 'Reset menu', 'admin-menu-manager' ),
 					)
-				)
+				),
+				'collapseButton' => array(
+					'label' => __( 'Collapse menu', 'admin-menu-manager' ),
+				),
 			),
-			'menu'      => self::get_admin_menu(),
-			'trash'     => self::get_admin_menu_trash(),
+			'parent_file'  => $parent_file,
+			'submenu_file' => $submenu_file,
+			'plugin_page'  => $plugin_page,
+			'menu'         => $this->get_admin_menu(),
+			'trash'        => $this->get_admin_menu_trash(),
 		) );
 	}
 
@@ -218,6 +230,22 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		return $menu_items;
 	}
 
+	public function ajax_handler( $type = 'menu' ) {
+		if ( ! current_user_can( 'read' ) ) {
+			return;
+		}
+
+		if ( 'trash' === $type ) {
+			$menu = $this->get_admin_menu_trash();
+		} else {
+
+		}
+
+		var_dump( $menu );
+
+		return wp_json_encode( $menu );
+	}
+
 	/**
 	 * Ajax Handler to update the menu.
 	 *
@@ -225,7 +253,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * just like WordPress uses it in the backend.
 	 */
 	public function update_menu() {
-		if ( ! current_user_can( 'read' ) ) {
+		if ( ! apply_filters( 'amm_user_can_change_menu', current_user_can( 'read' ) ) ) {
 			return;
 		}
 
@@ -316,7 +344,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * Ajax Handler to reset the menu.
 	 */
 	public function reset_menu() {
-		if ( ! current_user_can( 'read' ) ) {
+		if ( ! apply_filters( 'amm_user_can_change_menu', current_user_can( 'read' ) ) ) {
 			return;
 		}
 

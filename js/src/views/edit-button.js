@@ -30,7 +30,7 @@ var EditButton = Backbone.View.extend({
 	initEditing: function () {
 		this.isActive = !this.isActive;
 
-		this.trigger('isActive', this.isActive);
+		this.trigger('active', this.isActive);
 		this.$el.toggleClass('active', this.isActive);
 	},
 
@@ -39,9 +39,9 @@ var EditButton = Backbone.View.extend({
 
 		this.isActive = !this.isActive;
 
-		this.trigger('isActive', this.isActive);
+		this.trigger('active', this.isActive);
 		this.$el.toggleClass('active', this.isActive);
-		this.trigger('saveMenu', jQuery.proxy(this.saveCallback, this));
+		this.trigger('save', jQuery.proxy(this.saveCallback, this));
 	},
 
 	saveCallback: function () {
