@@ -32,7 +32,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		$this->hook( 'admin_enqueue_scripts', 5 );
 
 		// Handle form submissions
-		$this->hook( 'wp_ajax_adminmenu', 'ajax_handler' );
+		$this->hook( 'wp_ajax_adminmenu', 'update_menu' );
 
 		// Modify admin menu
 		$this->hook( 'admin_menu', 'alter_admin_menu', 999 );
@@ -233,20 +233,22 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		return $menu_items;
 	}
 
-	public function ajax_handler( $type = 'menu' ) {
-		if ( ! current_user_can( 'read' ) ) {
-			return;
+	/**
+	 * Retrieve the raw request entity (body)
+	 *
+	 * @see WP_REST_Server
+	 *
+	 * @return string
+	 */
+	protected function get_raw_data() {
+		global $HTTP_RAW_POST_DATA;
+		// A bug in PHP < 5.2.2 makes $HTTP_RAW_POST_DATA not set by default,
+		// but we can do it ourself.
+		if ( ! isset( $HTTP_RAW_POST_DATA ) ) {
+			$HTTP_RAW_POST_DATA = file_get_contents( 'php://input' );
 		}
 
-		if ( 'trash' === $type ) {
-			$menu = $this->get_admin_menu_trash();
-		} else {
-
-		}
-
-		var_dump( $menu );
-
-		return wp_json_encode( $menu );
+		return $HTTP_RAW_POST_DATA;
 	}
 
 	/**
@@ -254,22 +256,29 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 *
 	 * The passed array is splitted up in a menu and submenu array,
 	 * just like WordPress uses it in the backend.
+	 *
+	 * Borrows
 	 */
 	public function update_menu() {
 		if ( ! apply_filters( 'amm_user_can_change_menu', current_user_can( 'read' ) ) ) {
 			return;
 		}
 
-		$_REQUEST['trash'] = isset( $_REQUEST['trash'] ) ? $_REQUEST['trash'] : array();
+		$data = json_decode( $this->get_raw_data(), true );
 
-		$menu  = $this->update_menu_loop( $_REQUEST['menu'] );
-		$trash = $this->update_menu_loop( $_REQUEST['trash'] );
+		if ( ! is_array( $data ) || empty( $data ) ) {
+			die( 1 );
+		}
 
-		// Note: The third autoload parameter was introduced in WordPress 4.2.0
-		update_user_option( wp_get_current_user()->ID, 'amm_menu', $menu['menu'], false );
-		update_user_option( wp_get_current_user()->ID, 'amm_submenu', $menu['submenu'], false );
-		update_user_option( wp_get_current_user()->ID, 'amm_trash_menu', $trash['menu'], false );
-		update_user_option( wp_get_current_user()->ID, 'amm_trash_submenu', $trash['submenu'], false );
+		$menu = $this->update_menu_loop( $data );
+
+		if ( isset( $_REQUEST['type'] ) && 'trash' === $_REQUEST['type'] ) {
+			update_user_option( wp_get_current_user()->ID, 'amm_trash_menu', $trash['menu'], false );
+			update_user_option( wp_get_current_user()->ID, 'amm_trash_submenu', $trash['submenu'], false );
+		} else {
+			update_user_option( wp_get_current_user()->ID, 'amm_menu', $menu['menu'], false );
+			update_user_option( wp_get_current_user()->ID, 'amm_submenu', $menu['submenu'], false );
+		}
 
 		die( 1 );
 	}
