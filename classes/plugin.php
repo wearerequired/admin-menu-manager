@@ -148,7 +148,6 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 					'label'       => __( 'Edit Menu', 'admin-menu-manager' ),
 					'labelSaving' => __( 'Saving&hellip;', 'admin-menu-manager' ),
 					'labelSaved'  => __( 'Saved!', 'admin-menu-manager' ),
-					'ays'         => __( 'Are you sure? This will reset the whole menu.', 'admin-menu-manager' ),
 					'options'     => array(
 						'save'          => __( 'Save changes', 'admin-menu-manager' ),
 						'add'           => __( 'Add new item', 'admin-menu-manager' ),

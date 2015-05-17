@@ -89,13 +89,7 @@ var EditButton = Backbone.View.extend({
 
 	reset: function (e) {
 		e.preventDefault();
-		if (confirm(AdminMenuManager.templates.editButton.ays)) {
-			this.trigger('resetMenu', jQuery.proxy(this.resetCallback, this));
-		}
-	},
-
-	resetCallback: function (e) {
-		document.location.reload(true);
+		this.trigger('reset');
 	}
 
 });
