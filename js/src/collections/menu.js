@@ -24,19 +24,28 @@ var Menu = Backbone.Collection.extend({
 	},
 
 	parseModel: function (model) {
-		var self = location.pathname.split('/').pop(),
+		var classes,
+				self = location.pathname.split('/').pop(),
 				slug = model.get(2);
+
+		if (slug.indexOf('separator') === 0) {
+			return;
+		}
+
+		classes = model.get(4).split(' ');
+		classes.push('menu-top');
 
 		if (( AdminMenuManager.parent_file && slug === AdminMenuManager.parent_file ) ||
 				( ( !window.typenow) && self === slug)
 		) {
 			if (model.children) {
-				model.set(4, model.get(4) + ' wp-has-current-submenu wp-menu-open');
+				classes.push('wp-has-current-submenu');
+				classes.push('wp-menu-open');
 			} else {
-				model.set(4, model.get(4) + ' current');
+				classes.push('current');
 			}
 		} else {
-			model.set(4, model.get(4) + ' wp-not-current-submenu');
+			classes.push('wp-not-current-submenu');
 		}
 
 		if (slug.indexOf('#') > -1 || slug.indexOf('.php') > -1) {
@@ -46,7 +55,7 @@ var Menu = Backbone.Collection.extend({
 		}
 
 		if (model.children) {
-			model.set(4, model.get(4) + ' wp-has-submenu');
+			classes.push('wp-has-submenu');
 
 			model.children.each(function (model) {
 				var slug = model.get(2), parentHref = this.parent.get('href');
@@ -68,6 +77,8 @@ var Menu = Backbone.Collection.extend({
 				}
 			}, {parent: model});
 		}
+
+		model.set(4, _.uniq(classes).join(' '));
 	},
 
 	url: function () {
