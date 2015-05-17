@@ -2,7 +2,8 @@
 var AdminMenu = require('views/adminmenu'),
 		CollapseButton = require('views/collapse-button'),
 		EditButton = require('views/edit-button'),
-		TrashView = require('views/trash');
+		TrashView = require('views/trash'),
+		MenuItem = require('models/menu-item');
 
 var AppView = wp.Backbone.View.extend({
 	el       : '#adminmenuwrap',
@@ -22,12 +23,56 @@ var AppView = wp.Backbone.View.extend({
 		this.listenTo(this.views.first('#admin-menu-manager-edit'), 'active', this.toggleSortable);
 
 		// Listen to the save event
-		this.listenTo(this.views.first('#admin-menu-manager-edit'), 'save', function (callback) {
+		this.listenTo(this.views.first('#admin-menu-manager-edit'), 'save', function (view) {
 			this.views.first('#admin-menu-manager-menu').collection.save();
 			this.views.first('#admin-menu-manager-trash-view').collection.save();
-			if (typeof(callback) === typeof(Function)) {
-				callback();
-			}
+
+			this.render();
+		});
+
+		this.listenTo(this.views.first('#admin-menu-manager-edit'), 'addSeparator', function (view) {
+			this.views.first('#admin-menu-manager-menu').collection.add(new MenuItem({
+				'2': 'separator' + Math.floor(Math.random() * (100 - 1)) + 1, // todo: count instead of random
+				'4': 'wp-menu-separator'
+			}));
+
+			this.render();
+			this.initSortable(this.isEditing);
+		});
+
+		this.listenTo(this.views.first('#admin-menu-manager-edit'), 'addCustomItem', function (view) {
+			this.views.first('#admin-menu-manager-menu').collection.add(new MenuItem({
+				'0'   : 'Custom item',
+				'1'   : 'read',
+				'2'   : 'custom-item-' + Math.floor(Math.random() * (100 - 1)) + 1, // todo: count instead of random
+				'4'   : 'wp-not-current-submenu menu-top toplevel_page_custom',
+				'5'   : 'custom-item-' + Math.floor(Math.random() * (100 - 1)) + 1,
+				'href': '#custom-item-' + Math.floor(Math.random() * (100 - 1)) + 1 // todo: allow for custom URLs
+			}));
+
+			this.render();
+			this.initSortable(this.isEditing);
+		});
+
+		// Allow for undo/redo
+		this.undoManager = new Backbone.UndoManager({
+			register: [
+				this.views.first('#admin-menu-manager-menu').collection,
+				this.views.first('#admin-menu-manager-trash-view').collection
+			],
+			track   : true
+		});
+
+		this.listenTo(this.views.first('#admin-menu-manager-edit'), 'undo', function (view) {
+			this.undoManager.undo(true);
+			this.render();
+			this.initSortable(this.isEditing);
+		});
+
+		this.listenTo(this.views.first('#admin-menu-manager-edit'), 'redo', function (view) {
+			this.undoManager.redo(true);
+			this.render();
+			this.initSortable(this.isEditing);
 		});
 	},
 
@@ -95,6 +140,9 @@ var AppView = wp.Backbone.View.extend({
 
 		// Trigger the WordPress admin menu resize event
 		jQuery(document).trigger('wp-window-resized.pin-menu');
+
+		// Trigger the SVG painter
+		wp.svgPainter.init();
 	},
 
 	/**
@@ -157,9 +205,6 @@ var AppView = wp.Backbone.View.extend({
 
 		// Re-init jQuery UI Sortable
 		this.initSortable(this.isEditing);
-
-		// Trigger the WordPress admin menu resize event
-		jQuery(document).trigger('wp-window-resized.pin-menu');
 	},
 
 	/**
