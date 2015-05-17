@@ -4,6 +4,18 @@ var MenuItemView = require('views/menu-item');
 var CollectionView = Backbone.View.extend({
 	collectionView: MenuItemView,
 
+	/**
+	 * Render the admin menu including edit buttons and trash.
+	 *
+	 * @returns {AdminMenu}
+	 */
+	render: function () {
+		this.$el.html(this.renderCollection());
+		this.delegateEvents();
+
+		return this;
+	},
+
 	renderCollection: function () {
 		var els = [];
 

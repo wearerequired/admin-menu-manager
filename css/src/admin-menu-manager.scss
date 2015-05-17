@@ -21,18 +21,18 @@
 	display: none !important;
 }
 
-#adminmenu:not(.ui-sortable-disabled) #admin-menu-manager-edit a,
+#admin-menu-manager-edit a,
 #admin-menu-manager-edit .menu-top {
 	background: transparent !important;
 	font-size: 13px !important;
 	cursor: pointer !important;
 }
 
-#adminmenu:not(.ui-sortable-disabled) .ui-sortable-handle a {
+#amm-adminmenu:not(.ui-sortable-disabled) .ui-sortable-handle a {
 	cursor: move !important;
 }
 
-#adminmenu:not(.ui-sortable-disabled) .wp-menu-separator.ui-sortable-handle {
+#amm-adminmenu:not(.ui-sortable-disabled) .wp-menu-separator.ui-sortable-handle {
 	height: 26px;
 	border: 2px dashed;
 	margin: 0;
@@ -142,6 +142,10 @@
 		transform: translateY(-50%);
 	}
 
+	&.ui-sortable:not(.ui-sortable-disabled) {
+		display: block;
+	}
+
 	a:hover,
 	li.menu-top:hover,
 	li.opensub > a.menu-top {
@@ -160,6 +164,4 @@
 	}
 }
 
-#admin-menu-manager-edit.active + li #admin-menu-manager-trash {
-	display: block;
-}
+@import "modal";

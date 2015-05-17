@@ -29,18 +29,6 @@ var AdminMenu = CollectionView.extend(/** @lends AdminMenu.prototype */{
 
 		this.render();
 	},
-
-	/**
-	 * Render the admin menu including edit buttons and trash.
-	 *
-	 * @returns {AdminMenu}
-	 */
-	render: function () {
-		this.$el.html(this.renderCollection());
-		this.delegateEvents();
-
-		return this;
-	},
 });
 
 module.exports = AdminMenu;

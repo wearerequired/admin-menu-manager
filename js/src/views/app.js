@@ -28,6 +28,49 @@ var AppView = wp.Backbone.View.extend({
 			this.views.first('#admin-menu-manager-trash-view').collection.save();
 
 			this.render();
+			this.initSortable(false);
+		});
+
+		// Listen to the export event
+		this.listenTo(this.views.first('#admin-menu-manager-edit'), 'export', function (view) {
+			var menu = this.views.first('#admin-menu-manager-menu').collection.toJSON();
+			var trash = this.views.first('#admin-menu-manager-trash-view').collection.toJSON();
+
+			var ExportModal = require('views/export-modal');
+			this.views.set('#admin-menu-manager-modal-view', new ExportModal({
+				content: JSON.stringify({menu: menu, trash: trash})
+			}));
+
+			this.render();
+		});
+
+		// Listen to the import event
+		this.listenTo(this.views.first('#admin-menu-manager-edit'), 'import', function (view) {
+			var menu = this.views.first('#admin-menu-manager-menu').collection;
+			var trash = this.views.first('#admin-menu-manager-trash-view').collection;
+
+			var ImportModal = require('views/import-modal');
+			this.views.set('#admin-menu-manager-modal-view', new ImportModal());
+
+			this.render();
+
+			this.listenTo(this.views.first('#admin-menu-manager-modal-view'), 'import', function (data) {
+				data = JSON.parse(data);
+
+				if (data.menu) {
+					menu.reset(data.menu);
+				}
+
+				if (data.trash) {
+					trash.reset(data.trash);
+				}
+
+				// Re-bind hoverIntent
+				this.hoverIntent();
+
+				// Re-init jQuery UI Sortable
+				this.initSortable(this.isEditing);
+			});
 		});
 
 		this.listenTo(this.views.first('#admin-menu-manager-edit'), 'addSeparator', function (view) {
@@ -135,7 +178,7 @@ var AppView = wp.Backbone.View.extend({
 
 		if (!isEditing) {
 			// somehow it doesn't apply this class even if it's initially disabled
-			this.$el.find('ul').addClass('ui-sortable-disabled');
+			this.$el.find('.ui-sortable').addClass('ui-sortable-disabled');
 		}
 
 		// Trigger the WordPress admin menu resize event

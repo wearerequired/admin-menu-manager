@@ -1,0 +1,20 @@
+<div id="amm-modal-content-wrap">
+	<a id="amm-modal-close" href="#">
+		<span class="dashicons-before dashicons-no">
+			<span class="screen-reader-text"><%= close %></span>
+		</span>
+	</a>
+
+	<div id="amm-modal-content">
+		<h1 id="amm-modal-title"><%= title %></h1>
+
+		<p><%= description %></p>
+		<label for="amm-modal-textarea" class="screen-reader-text"><%= formLabel %></label>
+		<textarea id="amm-modal-textarea" name="amm-modal-textarea"><%= content %></textarea>
+	</div>
+
+	<div id="amm-modal-toolbar">
+		<button href="#" id="amm-modal-toolbar-button" class="button button-primary button-large" disabled="disabled"><%= buttonText %></button>
+	</div>
+</div>
+<div id="amm-modal-backdrop"></div>

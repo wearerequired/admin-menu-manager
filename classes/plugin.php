@@ -161,6 +161,20 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 						'reset'         => __( 'Reset menu', 'admin-menu-manager' ),
 					)
 				),
+				'exportModal'    => array(
+					'close'       => _x( 'Close', 'modal close button', 'admin-menu-manager' ),
+					'title'       => __( 'Export', 'admin-menu-manager' ),
+					'description' => __( 'Export your menu data to another site. Copy the text below:', 'admin-menu-manager' ),
+					'formLabel'   => _x( 'Menu data', 'form label', 'admin-menu-manager' ),
+					'buttonText'  => _x( 'Done', 'button text', 'admin-menu-manager' ),
+				),
+				'importModal'    => array(
+					'close'       => _x( 'Close', 'modal close button', 'admin-menu-manager' ),
+					'title'       => __( 'Import', 'admin-menu-manager' ),
+					'description' => __( 'Import your menu data from another site. Insert the data here:', 'admin-menu-manager' ),
+					'formLabel'   => _x( 'Menu data', 'form label', 'admin-menu-manager' ),
+					'buttonText'  => _x( 'Import', 'button text', 'admin-menu-manager' ),
+				),
 				'collapseButton' => array(
 					'label' => __( 'Collapse menu', 'admin-menu-manager' ),
 				),
@@ -209,7 +223,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		$menu    = get_user_option( 'amm_trash_menu' );
 		$submenu = get_user_option( 'amm_trash_submenu' );
 
-		if ( false === $menu ) {
+		if ( ! is_array( $menu ) ) {
 			$menu = array();
 		}
 
@@ -303,13 +317,13 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			}
 
 			$item = array(
-				wp_unslash( $item['label'] ),
-				$item['capability'],
+				wp_unslash( $item[0] ),
+				$item[1],
 				$item['href'],
-				$item['pageTitle'],
-				$item['classes'],
-				$item['id'],
-				$item['icon'],
+				$item[3],
+				$item[4],
+				$item[5],
+				$item[6],
 				isset( $item['children'] ) ? $item['children'] : array(),
 			);
 
@@ -321,11 +335,11 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 					}
 
 					$subitem = array(
-						wp_unslash( $subitem['label'] ),
-						$subitem['capability'],
+						wp_unslash( $subitem[0] ),
+						$subitem[1],
 						$subitem['href'],
-						$subitem['pageTitle'],
-						$subitem['classes'],
+						$subitem[3],
+						$subitem[4],
 					);
 
 					$submenu[ $item[2] ][] = $subitem;
@@ -383,15 +397,19 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		$amm_trash_menu    = get_user_option( 'amm_trash_menu' );
 		$amm_trash_submenu = get_user_option( 'amm_trash_submenu' );
 
-		if ( false === $amm_menu || false === $amm_submenu ) {
+		if ( ! is_array( $amm_menu ) || empty( $amm_menu ) ) {
 			return;
 		}
 
-		if ( false === $amm_trash_menu ) {
+		if ( ! is_array( $amm_submenu ) || empty( $amm_submenu ) ) {
+			return;
+		}
+
+		if ( ! is_array( $amm_trash_menu ) ) {
 			$amm_trash_menu = array();
 		}
 
-		if ( false === $amm_trash_submenu ) {
+		if ( ! is_array( $amm_trash_submenu ) ) {
 			$amm_trash_submenu = array();
 		}
 
@@ -477,8 +495,6 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			// Still no match, menu item must have been removed.
 			//unset( $item );
 		}
-
-		//var_dump($amm_menu);
 
 		/**
 		 * Loop through admin page hooks.

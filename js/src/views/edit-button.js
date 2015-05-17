@@ -16,6 +16,8 @@ var EditButton = Backbone.View.extend({
 		'click #amm-edit-option-add'          : 'add',
 		'click #amm-edit-option-add-separator': 'addSeparator',
 		'click #amm-edit-option-add-custom'   : 'addCustomItem',
+		'click #amm-edit-option-add-import'   : 'import',
+		'click #amm-edit-option-add-export'   : 'export',
 		'click #amm-edit-option-undo'         : 'undo',
 		'click #amm-edit-option-redo'         : 'redo',
 		'click #amm-edit-option-reset'        : 'reset'
@@ -63,6 +65,16 @@ var EditButton = Backbone.View.extend({
 		e.preventDefault();
 
 		this.trigger('addCustomItem', this);
+	},
+
+	import: function (e) {
+		e.preventDefault();
+		this.trigger('import', this);
+	},
+
+	export: function (e) {
+		e.preventDefault();
+		this.trigger('export', this);
 	},
 
 	undo: function (e) {
