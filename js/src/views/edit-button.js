@@ -41,11 +41,7 @@ var EditButton = Backbone.View.extend({
 
 		this.trigger('active', this.isActive);
 		this.$el.toggleClass('active', this.isActive);
-		this.trigger('save', jQuery.proxy(this.saveCallback, this));
-	},
-
-	saveCallback: function () {
-		this.render();
+		this.trigger('save', this);
 	},
 
 	add: function (e) {
@@ -60,23 +56,23 @@ var EditButton = Backbone.View.extend({
 	addSeparator: function (e) {
 		e.preventDefault();
 
-		this.trigger('addSeparator');
+		this.trigger('addSeparator', this);
 	},
 
 	addCustomItem: function (e) {
 		e.preventDefault();
 
-		this.trigger('addCustomItem');
+		this.trigger('addCustomItem', this);
 	},
 
 	undo: function (e) {
 		e.preventDefault();
-		this.trigger('undo');
+		this.trigger('undo', this);
 	},
 
 	redo: function (e) {
 		e.preventDefault();
-		this.trigger('redo');
+		this.trigger('redo', this);
 	},
 
 	reset: function (e) {
