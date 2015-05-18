@@ -286,8 +286,8 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		$menu = $this->update_menu_loop( $data );
 
 		if ( isset( $_REQUEST['type'] ) && 'trash' === $_REQUEST['type'] ) {
-			update_user_option( wp_get_current_user()->ID, 'amm_trash_menu', $trash['menu'], false );
-			update_user_option( wp_get_current_user()->ID, 'amm_trash_submenu', $trash['submenu'], false );
+			update_user_option( wp_get_current_user()->ID, 'amm_trash_menu', $menu['menu'], false );
+			update_user_option( wp_get_current_user()->ID, 'amm_trash_submenu', $menu['submenu'], false );
 		} else {
 			update_user_option( wp_get_current_user()->ID, 'amm_menu', $menu['menu'], false );
 			update_user_option( wp_get_current_user()->ID, 'amm_submenu', $menu['submenu'], false );
