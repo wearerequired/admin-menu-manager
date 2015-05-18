@@ -16,7 +16,7 @@
 <ul class="wp-submenu wp-submenu-wrap">
 	<li class="wp-submenu-head"><%= label %></li>
 	<% _.each(children, function(child, index) { %>
-	<li class="<%= index===0 ? 'wp-first-item ' : '' %><%= child.classes %>" data-slug="<%= child.slug %>">
+	<li class="<%= index===0 ? 'wp-first-item ' : '' %><%= child.classes.indexOf(' current') > -1 || child.classes === 'current' ? 'current' : '' %>" data-slug="<%= child.slug %>">
 		<a href="<%= child.href %>" class="<%= index===0 ? 'wp-first-item' : '' %>"><%= child.label %></a>
 	</li>
 	<% }); %>

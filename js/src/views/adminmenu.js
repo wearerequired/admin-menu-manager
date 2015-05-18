@@ -21,14 +21,7 @@ var AdminMenu = CollectionView.extend(/** @lends AdminMenu.prototype */{
 
 		this.collection = new Menu();
 		this.collection.reset(AdminMenuManager.menu);
-
-		// Bind collection changes to re-rendering
-		this.collection.on('reset', this.render);
-		this.collection.on('add', this.render);
-		this.collection.on('remove', this.render);
-
-		this.render();
-	},
+	}
 });
 
 module.exports = AdminMenu;

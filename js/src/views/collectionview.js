@@ -27,8 +27,6 @@ var CollectionView = Backbone.View.extend({
 				model: model
 			});
 
-			// Render the PeopleView, and append its element
-			// to the table
 			els.push(menuItemView.render().el);
 		});
 

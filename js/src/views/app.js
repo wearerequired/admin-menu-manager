@@ -215,7 +215,7 @@ var AppView = wp.Backbone.View.extend({
 		// It's a submenu item
 		if (ui.item.parent('.wp-submenu').length > 0) {
 			newPosition[0] = newPosition[0] > 0 ? --newPosition[0] : 0;
-			var parentPosition = jQuery('#adminmenu > li').index(ui.item.parents('li'));
+			var parentPosition = jQuery('#amm-adminmenu > li').index(ui.item.parents('li'));
 			newPosition.unshift(parentPosition);
 		}
 
@@ -255,7 +255,8 @@ var AppView = wp.Backbone.View.extend({
 					.add(item, {at: newPosition[1]});
 		}
 
-		this.render();
+		this.views.first('#admin-menu-manager-menu').render();
+		this.views.first('#admin-menu-manager-trash-view').render();
 
 		// Re-bind hoverIntent
 		this.hoverIntent();
