@@ -68,7 +68,7 @@ var Menu = Backbone.Collection.extend({
 						( this.parent.get(2) === self + '?post_type=' + window.typenow || parentHref === self) )
 				) {
 					model.set(4, model.get(4) + ' current');
-					
+
 					// Mark parent as active if child is the current item
 					if (!_.contains(classes, 'wp-has-current-submenu')) {
 						classes.push('wp-has-current-submenu');
