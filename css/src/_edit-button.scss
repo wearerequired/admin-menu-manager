@@ -1,0 +1,88 @@
+/**
+ * Edit button styling
+ */
+
+#adminmenu #admin-menu-manager-edit {
+	margin-top: 20px;
+	cursor: default !important;
+	float: left;
+	width: 100%;
+}
+
+#admin-menu-manager-edit a,
+#admin-menu-manager-edit .menu-top {
+	background: transparent !important;
+	font-size: 13px !important;
+	cursor: pointer !important;
+}
+
+.folded #adminmenu #admin-menu-manager-edit .wp-menu-name {
+	display: none !important;
+}
+
+.amm-edit-options {
+	display: none;
+	float: left;
+	width: 100%;
+
+	#admin-menu-manager-edit.active & {
+		display: block;
+	}
+}
+
+.amm-edit-option {
+	display: block;
+	float: left;
+	width: 30px;
+	height: 30px;
+	margin-right: 3px;
+	position: relative;
+
+	a {
+		padding: 0 !important;
+	}
+
+	.wp-menu-image:before {
+		color: inherit !important;
+	}
+}
+
+#amm-edit-option-save .wp-menu-image:before {
+	font-size: 24px;
+	padding: 4px 0 !important;
+}
+
+.amm-edit-option-choices {
+	display: block;
+	position: absolute;
+	color: #fff;
+	top: 40px;
+	left: 0;
+	white-space: nowrap;
+	overflow: visible;
+	z-index: 100;
+
+	&.hidden {
+		display: none;
+	}
+
+	&:after {
+		content: " ";
+		bottom: 100%;
+		left: 18px;
+		border: 10px solid transparent;
+		height: 0;
+		width: 0;
+		position: absolute;
+		pointer-events: none;
+		margin-left: -10px;
+	}
+}
+
+.amm-edit-option-choice {
+	padding: 5px 20px 5px 15px !important;
+}
+
+#admin-menu-manager-edit.active > .menu-top {
+	display: none;
+}
