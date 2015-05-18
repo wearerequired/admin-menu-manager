@@ -32,7 +32,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		$this->hook( 'admin_enqueue_scripts', 5 );
 
 		// Handle form submissions
-		$this->hook( 'wp_ajax_adminmenu', 'update_menu' );
+		$this->hook( 'wp_ajax_adminmenu', 'ajax_handler' );
 
 		// Modify admin menu
 		$this->hook( 'admin_menu', 'alter_admin_menu', 999 );
@@ -272,7 +272,26 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	}
 
 	/**
-	 * Ajax Handler to update the menu.
+	 * Ajax Handler.
+	 *
+	 * Works for saving and resetting the menu.
+	 */
+	public function ajax_handler() {
+		if ( ! apply_filters( 'amm_user_can_change_menu', current_user_can( 'read' ) ) ) {
+			return;
+		}
+
+		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
+			$this->update_menu();
+		} else if ( 'DELETE' === $_SERVER['REQUEST_METHOD'] ) {
+			$this->reset_menu();
+		}
+
+		die( 1 );
+	}
+
+	/**
+	 * Update the menu.
 	 *
 	 * The passed array is splitted up in a menu and submenu array,
 	 * just like WordPress uses it in the backend.
@@ -280,10 +299,6 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * Borrows
 	 */
 	public function update_menu() {
-		if ( ! apply_filters( 'amm_user_can_change_menu', current_user_can( 'read' ) ) ) {
-			return;
-		}
-
 		$data = json_decode( $this->get_raw_data(), true );
 
 		if ( ! is_array( $data ) || empty( $data ) ) {
@@ -299,8 +314,6 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			update_user_option( wp_get_current_user()->ID, 'amm_menu', $menu['menu'], false );
 			update_user_option( wp_get_current_user()->ID, 'amm_submenu', $menu['submenu'], false );
 		}
-
-		die( 1 );
 	}
 
 	/**
@@ -373,19 +386,16 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	}
 
 	/**
-	 * Ajax Handler to reset the menu.
+	 * Reset the menu completely.
 	 */
 	public function reset_menu() {
-		if ( ! apply_filters( 'amm_user_can_change_menu', current_user_can( 'read' ) ) ) {
-			return;
+		if ( isset( $_REQUEST['type'] ) && 'trash' === $_REQUEST['type'] ) {
+			delete_user_option( wp_get_current_user()->ID, 'amm_trash_menu' );
+			delete_user_option( wp_get_current_user()->ID, 'amm_trash_submenu' );
+		} else {
+			delete_user_option( wp_get_current_user()->ID, 'amm_menu' );
+			delete_user_option( wp_get_current_user()->ID, 'amm_submenu' );
 		}
-
-		delete_user_option( wp_get_current_user()->ID, 'amm_menu' );
-		delete_user_option( wp_get_current_user()->ID, 'amm_submenu' );
-		delete_user_option( wp_get_current_user()->ID, 'amm_trash_menu' );
-		delete_user_option( wp_get_current_user()->ID, 'amm_trash_submenu' );
-
-		die( 1 );
 	}
 
 	/**

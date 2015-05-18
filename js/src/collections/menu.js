@@ -91,11 +91,11 @@ var Menu = Backbone.Collection.extend({
 	},
 
 	save: function () {
-		Backbone.sync('create', this, {
-			success: function () {
-				console.log('saved!');
-			}
-		});
+		Backbone.sync('create', this);
+	},
+
+	destroy: function () {
+		Backbone.sync('delete', this);
 	}
 });
 
