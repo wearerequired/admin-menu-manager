@@ -32,8 +32,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		$this->hook( 'admin_enqueue_scripts', 5 );
 
 		// Handle form submissions
-		$this->hook( 'wp_ajax_amm_update_menu', 'update_menu' );
-		$this->hook( 'wp_ajax_amm_reset_menu', 'reset_menu' );
+		$this->hook( 'wp_ajax_adminmenu', 'update_menu' );
 
 		// Modify admin menu
 		$this->hook( 'admin_menu', 'alter_admin_menu', 999 );
@@ -81,7 +80,10 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * Load our JavaScript and CSS if the user has enough capabilities to edit the menu.
 	 */
 	public function admin_enqueue_scripts() {
-		if ( ! current_user_can( 'read' ) || is_network_admin() || is_customize_preview() ) {
+		if ( ! apply_filters( 'amm_user_can_change_menu', current_user_can( 'read' ) ) ||
+		     is_network_admin() ||
+		     is_customize_preview()
+		) {
 			return;
 		}
 
@@ -90,7 +92,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 
 		wp_enqueue_style( 'admin-menu-manager', $this->get_url() . 'css/admin-menu-manager' . $suffix . '.css', array(), self::VERSION );
 
-		global $_wp_admin_css_colors;
+		global $_wp_admin_css_colors, $parent_file, $submenu_file;
 
 		$current_color = get_user_option( 'admin_color' );
 		if ( isset( $_wp_admin_css_colors[ $current_color ] ) ) {
@@ -127,19 +129,25 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			$this->get_url() . 'js/admin-menu-manager' . $suffix . '.js',
 			array(
 				'jquery-ui-sortable',
-				'backbone',
+				'wp-backbone',
 				'backbone-undo'
 			),
 			self::VERSION
 		);
 
+		$plugin_page = null;
+
+		if ( isset( $_GET['page'] ) ) {
+			$plugin_page = wp_unslash( $_GET['page'] );
+			$plugin_page = plugin_basename( $plugin_page );
+		}
+
 		wp_localize_script( 'admin-menu-manager', 'AdminMenuManager', array(
-			'templates' => array(
-				'editButton' => array(
+			'templates'    => array(
+				'editButton'     => array(
 					'label'       => __( 'Edit Menu', 'admin-menu-manager' ),
 					'labelSaving' => __( 'Saving&hellip;', 'admin-menu-manager' ),
 					'labelSaved'  => __( 'Saved!', 'admin-menu-manager' ),
-					'ays'         => __( 'Are you sure? This will reset the whole menu.', 'admin-menu-manager' ),
 					'options'     => array(
 						'save'          => __( 'Save changes', 'admin-menu-manager' ),
 						'add'           => __( 'Add new item', 'admin-menu-manager' ),
@@ -151,10 +159,30 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 						'redo'          => __( 'Redo change', 'admin-menu-manager' ),
 						'reset'         => __( 'Reset menu', 'admin-menu-manager' ),
 					)
-				)
+				),
+				'exportModal'    => array(
+					'close'       => _x( 'Close', 'modal close button', 'admin-menu-manager' ),
+					'title'       => __( 'Export', 'admin-menu-manager' ),
+					'description' => __( 'Export your menu data to another site. Copy the text below:', 'admin-menu-manager' ),
+					'formLabel'   => _x( 'Menu data', 'form label', 'admin-menu-manager' ),
+					'buttonText'  => _x( 'Done', 'button text', 'admin-menu-manager' ),
+				),
+				'importModal'    => array(
+					'close'       => _x( 'Close', 'modal close button', 'admin-menu-manager' ),
+					'title'       => __( 'Import', 'admin-menu-manager' ),
+					'description' => __( 'Import your menu data from another site. Insert the data here:', 'admin-menu-manager' ),
+					'formLabel'   => _x( 'Menu data', 'form label', 'admin-menu-manager' ),
+					'buttonText'  => _x( 'Import', 'button text', 'admin-menu-manager' ),
+				),
+				'collapseButton' => array(
+					'label' => __( 'Collapse menu', 'admin-menu-manager' ),
+				),
 			),
-			'menu'      => self::get_admin_menu(),
-			'trash'     => self::get_admin_menu_trash(),
+			'parent_file'  => $parent_file,
+			'submenu_file' => $submenu_file,
+			'plugin_page'  => $plugin_page,
+			'menu'         => $this->get_admin_menu(),
+			'trash'        => $this->get_admin_menu_trash(),
 		) );
 	}
 
@@ -194,7 +222,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		$menu    = get_user_option( 'amm_trash_menu' );
 		$submenu = get_user_option( 'amm_trash_submenu' );
 
-		if ( false === $menu ) {
+		if ( ! is_array( $menu ) ) {
 			$menu = array();
 		}
 
@@ -219,26 +247,51 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	}
 
 	/**
+	 * Retrieve the raw request entity (body)
+	 *
+	 * @see WP_REST_Server
+	 *
+	 * @return string
+	 */
+	protected function get_raw_data() {
+		global $HTTP_RAW_POST_DATA;
+		// A bug in PHP < 5.2.2 makes $HTTP_RAW_POST_DATA not set by default,
+		// but we can do it ourself.
+		if ( ! isset( $HTTP_RAW_POST_DATA ) ) {
+			$HTTP_RAW_POST_DATA = file_get_contents( 'php://input' );
+		}
+
+		return $HTTP_RAW_POST_DATA;
+	}
+
+	/**
 	 * Ajax Handler to update the menu.
 	 *
 	 * The passed array is splitted up in a menu and submenu array,
 	 * just like WordPress uses it in the backend.
+	 *
+	 * Borrows
 	 */
 	public function update_menu() {
-		if ( ! current_user_can( 'read' ) ) {
+		if ( ! apply_filters( 'amm_user_can_change_menu', current_user_can( 'read' ) ) ) {
 			return;
 		}
 
-		$_REQUEST['trash'] = isset( $_REQUEST['trash'] ) ? $_REQUEST['trash'] : array();
+		$data = json_decode( $this->get_raw_data(), true );
 
-		$menu  = $this->update_menu_loop( $_REQUEST['menu'] );
-		$trash = $this->update_menu_loop( $_REQUEST['trash'] );
+		if ( ! is_array( $data ) || empty( $data ) ) {
+			die( 1 );
+		}
 
-		// Note: The third autoload parameter was introduced in WordPress 4.2.0
-		update_user_option( wp_get_current_user()->ID, 'amm_menu', $menu['menu'], false );
-		update_user_option( wp_get_current_user()->ID, 'amm_submenu', $menu['submenu'], false );
-		update_user_option( wp_get_current_user()->ID, 'amm_trash_menu', $trash['menu'], false );
-		update_user_option( wp_get_current_user()->ID, 'amm_trash_submenu', $trash['submenu'], false );
+		$menu = $this->update_menu_loop( $data );
+
+		if ( isset( $_REQUEST['type'] ) && 'trash' === $_REQUEST['type'] ) {
+			update_user_option( wp_get_current_user()->ID, 'amm_trash_menu', $menu['menu'], false );
+			update_user_option( wp_get_current_user()->ID, 'amm_trash_submenu', $menu['submenu'], false );
+		} else {
+			update_user_option( wp_get_current_user()->ID, 'amm_menu', $menu['menu'], false );
+			update_user_option( wp_get_current_user()->ID, 'amm_submenu', $menu['submenu'], false );
+		}
 
 		die( 1 );
 	}
@@ -263,13 +316,13 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			}
 
 			$item = array(
-				wp_unslash( $item['label'] ),
-				$item['capability'],
+				wp_unslash( $item[0] ),
+				$item[1],
 				$item['href'],
-				$item['pageTitle'],
-				$item['classes'],
-				$item['id'],
-				$item['icon'],
+				$item[3],
+				$item[4],
+				$item[5],
+				$item[6],
 				isset( $item['children'] ) ? $item['children'] : array(),
 			);
 
@@ -281,11 +334,11 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 					}
 
 					$subitem = array(
-						wp_unslash( $subitem['label'] ),
-						$subitem['capability'],
+						wp_unslash( $subitem[0] ),
+						$subitem[1],
 						$subitem['href'],
-						$subitem['pageTitle'],
-						$subitem['classes'],
+						$subitem[3],
+						$subitem[4],
 					);
 
 					$submenu[ $item[2] ][] = $subitem;
@@ -316,7 +369,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * Ajax Handler to reset the menu.
 	 */
 	public function reset_menu() {
-		if ( ! current_user_can( 'read' ) ) {
+		if ( ! apply_filters( 'amm_user_can_change_menu', current_user_can( 'read' ) ) ) {
 			return;
 		}
 
@@ -343,15 +396,19 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		$amm_trash_menu    = get_user_option( 'amm_trash_menu' );
 		$amm_trash_submenu = get_user_option( 'amm_trash_submenu' );
 
-		if ( false === $amm_menu || false === $amm_submenu ) {
+		if ( ! is_array( $amm_menu ) || empty( $amm_menu ) ) {
 			return;
 		}
 
-		if ( false === $amm_trash_menu ) {
+		if ( ! is_array( $amm_submenu ) || empty( $amm_submenu ) ) {
+			return;
+		}
+
+		if ( ! is_array( $amm_trash_menu ) ) {
 			$amm_trash_menu = array();
 		}
 
-		if ( false === $amm_trash_submenu ) {
+		if ( ! is_array( $amm_trash_submenu ) ) {
 			$amm_trash_submenu = array();
 		}
 
@@ -437,8 +494,6 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			// Still no match, menu item must have been removed.
 			//unset( $item );
 		}
-
-		//var_dump($amm_menu);
 
 		/**
 		 * Loop through admin page hooks.

@@ -36,7 +36,7 @@ include( dirname( __FILE__ ) . '/lib/requirements-check.php' );
 $admin_menu_manager_requirements_check = new Admin_Menu_Manager_Requirements_Check( array(
 	'title' => 'Admin Menu Manager',
 	'php'   => '5.3',
-	'wp'    => '4.0',
+	'wp'    => '4.1',
 	'file'  => __FILE__,
 ));
 

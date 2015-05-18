@@ -11,16 +11,20 @@ var MenuItemView = Backbone.View.extend({
 		};
 	},
 
+	initialize: function () {
+		//this.model.on('change', this.render, this);
+	},
+
 	render: function () {
 		if (this.model.get(4).indexOf('wp-menu-separator') > -1) {
 			this.template = _.template('<div class="separator"></div>');
 		}
 
 		this.$el.html(this.template(this.model.toJSON()));
-		return this;
-	},
+		this.delegateEvents();
 
-	events: {},
+		return this;
+	}
 
 });
 
