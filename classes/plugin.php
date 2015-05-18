@@ -144,7 +144,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 
 		wp_localize_script( 'admin-menu-manager', 'AdminMenuManager', array(
 			'templates'    => array(
-				'editButton'     => array(
+				'editButton'      => array(
 					'label'       => __( 'Edit Menu', 'admin-menu-manager' ),
 					'labelSaving' => __( 'Saving&hellip;', 'admin-menu-manager' ),
 					'labelSaved'  => __( 'Saved!', 'admin-menu-manager' ),
@@ -160,23 +160,30 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 						'reset'         => __( 'Reset menu', 'admin-menu-manager' ),
 					)
 				),
-				'exportModal'    => array(
+				'exportModal'     => array(
 					'close'       => _x( 'Close', 'modal close button', 'admin-menu-manager' ),
 					'title'       => __( 'Export', 'admin-menu-manager' ),
 					'description' => __( 'Export your menu data to another site. Copy the text below:', 'admin-menu-manager' ),
 					'formLabel'   => _x( 'Menu data', 'form label', 'admin-menu-manager' ),
 					'buttonText'  => _x( 'Done', 'button text', 'admin-menu-manager' ),
 				),
-				'importModal'    => array(
+				'importModal'     => array(
 					'close'       => _x( 'Close', 'modal close button', 'admin-menu-manager' ),
 					'title'       => __( 'Import', 'admin-menu-manager' ),
 					'description' => __( 'Import your menu data from another site. Insert the data here:', 'admin-menu-manager' ),
 					'formLabel'   => _x( 'Menu data', 'form label', 'admin-menu-manager' ),
 					'buttonText'  => _x( 'Import', 'button text', 'admin-menu-manager' ),
 				),
-				'collapseButton' => array(
+				'collapseButton'  => array(
 					'label' => __( 'Collapse menu', 'admin-menu-manager' ),
 				),
+				'menuItemOptions' => array(
+					'title'      => __( 'Edit item', 'admin-menu-manager' ),
+					'labelLabel' => __( 'Label:', 'admin-menu-manager' ),
+					'iconLabel'  => __( 'Icon:', 'admin-menu-manager' ),
+					'linkLabel'  => __( 'Link:', 'admin-menu-manager' ),
+					'save'       => __( 'Save', 'admin-menu-manager' ),
+				)
 			),
 			'parent_file'  => $parent_file,
 			'submenu_file' => $submenu_file,

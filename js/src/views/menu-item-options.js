@@ -4,7 +4,10 @@ var MenuItemOptionsView = Backbone.View.extend({
 	className: 'wp-submenu wp-submenu-wrap sub-open amm-menu-item-options',
 
 	render: function () {
-		this.$el.html(this.template(this.model.toJSON()));
+		var options = AdminMenuManager.templates.menuItemOptions;
+		options.model = this.model.toJSON();
+
+		this.$el.html(this.template(options));
 		return this;
 	},
 
