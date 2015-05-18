@@ -2,7 +2,6 @@ var CollectionView = require('views/collectionview'),
 		Menu = require('collections/menu');
 
 var TrashView = CollectionView.extend({
-	isActive : false,
 	tagName  : 'ul',
 	id       : 'admin-menu-manager-trash',
 	className: 'dashicons-before dashicons-trash',

@@ -25,6 +25,7 @@
 	transition: height .5s ease-in-out, border .5s ease-in-out, margin .5s ease-in-out;
 }
 
+@import "menu-item";
 @import "edit-button";
 @import "trash";
 @import "modal";

@@ -24,11 +24,12 @@ var CollectionView = Backbone.View.extend({
 
 			// Instantiate a PeopleItem view for each
 			var menuItemView = new MenuItemView({
-				model: model
+				model : model,
+				parent: this
 			});
 
 			els.push(menuItemView.render().el);
-		});
+		}, this);
 
 		return jQuery(els);
 	}

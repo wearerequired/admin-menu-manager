@@ -1,0 +1,51 @@
+/**
+ * Menu Item Styling
+ */
+
+#adminmenu .wp-submenu li.amm-is-editing {
+	overflow: visible;
+	position: relative;
+}
+
+.menu-top.amm-is-editing {
+	&:after {
+		position: absolute;
+		top: 9px;
+		right: 0;
+		border: 8px solid transparent;
+		border-right-color: #32373c;
+		content: " ";
+		height: 0;
+		width: 0;
+		pointer-events: none;
+		z-index: 10000;
+	}
+}
+
+#adminmenu .amm-menu-item-options {
+	position: absolute !important;
+	left: 160px !important;
+	top: 0 !important;
+	min-width: 220px !important;
+	padding: 10px;
+	color: #fff;
+	cursor: auto !important;
+	z-index: 10000;
+
+	&, * {
+		user-select: text !important
+	}
+
+	h4 {
+		margin-top: 0;
+	}
+
+	p {
+		clear: both;
+		overflow: hidden;
+	}
+
+	input {
+		float: right;
+	}
+}

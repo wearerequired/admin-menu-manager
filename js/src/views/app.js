@@ -20,7 +20,10 @@ var AppView = wp.Backbone.View.extend({
 		this.views.set('#admin-menu-manager-trash-view', new TrashView());
 
 		// Listen to edit button activation
-		this.listenTo(this.views.first('#admin-menu-manager-edit'), 'active', this.toggleSortable);
+		this.listenTo(this.views.first('#admin-menu-manager-edit'), 'active', function (isActive) {
+			this.toggleSortable(isActive);
+			this.views.first('#admin-menu-manager-menu').isEditing = isActive;
+		});
 
 		// Listen to the reset event
 		this.listenTo(this.views.first('#admin-menu-manager-edit'), 'reset', function () {
@@ -162,7 +165,7 @@ var AppView = wp.Backbone.View.extend({
 			// Specifies which items inside the element should be sortable.
 			items      : '> li',
 			// Prevents sorting if you start on elements matching the selector.
-			cancel     : '#collapse-menu, #admin-menu-manager-edit, .amm-edit-options',
+			cancel     : '#collapse-menu, #admin-menu-manager-edit, .amm-edit-options, .amm-is-editing',
 			// A selector of other sortable elements that the items from this list should be connected to.
 			connectWith: '#amm-adminmenu ul',
 			// This event is triggered when the user stopped sorting and the DOM position has changed.

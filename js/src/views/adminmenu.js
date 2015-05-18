@@ -2,10 +2,10 @@ var CollectionView = require('views/collectionview'),
 		Menu = require('collections/menu');
 
 var AdminMenu = CollectionView.extend(/** @lends AdminMenu.prototype */{
-	isEditing: false,
 	id       : 'amm-adminmenu',
+	isEditing: false,
 
-	/**
+	/**s
 	 * Initialize the admin menu.
 	 *
 	 * This class creates andrenders the whole menu
