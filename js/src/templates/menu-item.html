@@ -1,9 +1,9 @@
-<a href="<%= href %>" class="<%= classes %>" aria-haspopup="<%= children ? true: false %>">
+<a href="<%- href %>" class="<%- classes %>" aria-haspopup="<%= children ? true: false %>">
 	<div class="wp-menu-arrow">
 		<div></div>
 	</div>
 	<% if ( icon.indexOf('dashicons') > -1 ) { %>
-	<div class='wp-menu-image dashicons-before <%= icon %>'><br /></div>
+	<div class='wp-menu-image dashicons-before <%- icon %>'><br /></div>
 	<% } else if ( icon.indexOf('image/svg') > -1 || icon.indexOf('http') > -1 ) { %>
 	<div class="wp-menu-image svg" style="background-image:url('<%= icon %>') !important;"><br /></div>
 	<% } else if ('div' === icon || 'none' === icon) { %>
@@ -11,13 +11,13 @@
 	<% } else { %>
 	<div class="wp-menu-image dashicons-before dashicons-admin-settings"><br /></div>
 	<% } %>
-	<div class="wp-menu-name"><%= label %></div>
+	<div class="wp-menu-name"><%- label %></div>
 </a>
 <ul class="wp-submenu wp-submenu-wrap">
-	<li class="wp-submenu-head"><%= label %></li>
+	<li class="wp-submenu-head"><%- label %></li>
 	<% _.each(children, function(child, index) { %>
 	<li class="<%= index===0 ? 'wp-first-item ' : '' %><%= child.classes.indexOf(' current') > -1 || child.classes === 'current' ? 'current' : '' %>" data-slug="<%= child.slug %>">
-		<a href="<%= child.href %>" class="<%= index===0 ? 'wp-first-item' : '' %>"><%= child.label %></a>
+		<a href="<%- child.href %>" class="<%= index===0 ? 'wp-first-item' : '' %>"><%- child.label %></a>
 	</li>
 	<% }); %>
 </ul>
