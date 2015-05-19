@@ -41,7 +41,7 @@ var MenuItemView = Backbone.View.extend({
 		e.preventDefault();
 
 		var model,
-				$target = jQuery(e.target).parents('[data-slug]'),
+				$target = jQuery(e.target).parents('[data-slug]').first(),
 				slug = $target.attr('data-slug').replace('&', '&#038;');
 
 		if ($target.find('.amm-menu-item-options').length > 0) {
