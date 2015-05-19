@@ -106,7 +106,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			.amm-edit-option-choices { background-color: $border; }
 			.amm-edit-option-choices:after { border-bottom-color: $border; }
 			#admin-menu-manager-trash,
-			#adminmenu:not(.ui-sortable-disabled) .wp-menu-separator.ui-sortable-handle { background-color: $background; border-color: $border !important; }
+			#amm-adminmenu:not(.ui-sortable-disabled) .wp-menu-separator.ui-sortable-handle { background-color: $background; border-color: $border !important; }
 			#admin-menu-manager-edit > .menu-top,
 			#admin-menu-manager-edit > .menu-top div.wp-menu-image:before,
 			.amm-edit-option a { color: $base; !important }
