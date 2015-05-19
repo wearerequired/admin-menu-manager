@@ -90,7 +90,7 @@ var AppView = wp.Backbone.View.extend({
 				'4': 'wp-menu-separator'
 			}));
 
-			this.render();
+			this.views.first('#admin-menu-manager-menu').render();
 			this.initSortable(this.isEditing);
 		});
 
@@ -104,7 +104,7 @@ var AppView = wp.Backbone.View.extend({
 				'href': '#custom-item-' + Math.floor(Math.random() * (100 - 1)) + 1 // todo: allow for custom URLs
 			}));
 
-			this.render();
+			this.views.first('#admin-menu-manager-menu').render();
 			this.initSortable(this.isEditing);
 		});
 
