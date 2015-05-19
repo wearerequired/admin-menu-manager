@@ -331,39 +331,41 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		$lastSeparator  = null;
 
 		foreach ( $menu as $item ) {
-			if ( false !== strpos( $item['href'], '=' ) ) {
-				$item['href'] = str_replace( '=', '', strstr( $item['href'], '=' ) );
+			if ( false !== strpos( $item[2], '=' ) ) {
+				$item[2] = str_replace( '=', '', strstr( $item[2], '=' ) );
 			}
 
 			$item = array(
 				wp_unslash( $item[0] ),
 				$item[1],
-				$item['href'],
+				$item[2],
 				$item[3],
 				$item[4],
 				$item[5],
 				$item[6],
-				isset( $item['children'] ) ? $item['children'] : array(),
+				'children' => isset( $item['children'] ) ? $item['children'] : array(),
+				'href'     => $item['href']
 			);
 
-			if ( ! empty( $item[7] ) ) {
+			if ( ! empty( $item['children'] ) ) {
 				$submenu[ $item[2] ] = array();
-				foreach ( $item[7] as $subitem ) {
-					if ( false !== strpos( $subitem['href'], '=' ) ) {
-						$subitem['href'] = str_replace( '=', '', strstr( $subitem['href'], '=' ) );
+				foreach ( $item['children'] as $subitem ) {
+					if ( false !== strpos( $subitem[2], '=' ) ) {
+						$subitem[2] = str_replace( '=', '', strstr( $subitem[2], '=' ) );
 					}
 
 					$subitem = array(
 						wp_unslash( $subitem[0] ),
 						$subitem[1],
-						$subitem['href'],
+						$subitem[2],
 						$subitem[3],
 						$subitem[4],
+						'href' => $subitem['href'],
 					);
 
 					$submenu[ $item[2] ][] = $subitem;
 				}
-				unset( $item[7] );
+				unset( $item['children'] );
 			}
 
 			// Store separators in correct order
