@@ -10,7 +10,7 @@ var MenuItemView = Backbone.View.extend({
 			class        : this.model.get(4),
 			id           : this.model.get(5),
 			'aria-hidden': this.model.get(4).indexOf('wp-menu-separator') > -1,
-			'data-slug'  : this.model.get(2)
+			'data-id'    : this.model.id
 		};
 	},
 
@@ -41,8 +41,8 @@ var MenuItemView = Backbone.View.extend({
 		e.preventDefault();
 
 		var model,
-				$target = jQuery(e.target).parents('[data-slug]').first(),
-				slug = $target.attr('data-slug').replace('&', '&#038;');
+				$target = jQuery(e.target).parents('[data-id]').first(),
+				slug = $target.attr('data-id').replace('&', '&#038;');
 
 		if ($target.find('.amm-menu-item-options').length > 0) {
 			$target.removeClass('amm-is-editing');

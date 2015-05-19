@@ -19,7 +19,6 @@ var Menu = Backbone.Collection.extend({
 
 		this.each(function (model) {
 			this.parseModel(model);
-
 		}, this);
 	},
 
@@ -96,6 +95,23 @@ var Menu = Backbone.Collection.extend({
 
 	destroy: function () {
 		Backbone.sync('delete', this);
+	},
+
+	/**
+	 * Get a model of this collection or a matching child.
+	 *
+	 * @param obj
+	 * @returns {*}
+	 */
+	getRecursively: function (obj) {
+		var allChildren = _.flatten(this.map(function (model) {
+			return model.children ? [model.children.models] : [];
+		}));
+
+		return this.get(obj) ||
+				_.find(allChildren, function (model) {
+					return model.id === obj;
+				});
 	}
 });
 

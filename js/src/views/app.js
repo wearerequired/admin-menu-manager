@@ -206,7 +206,7 @@ var AppView = wp.Backbone.View.extend({
 	 * @param object ui
 	 */
 	sortableUpdate: function (e, ui) {
-		var itemSlug = ui.item.attr('data-slug'),
+		var itemId = ui.item.attr('data-id'),
 				newPosition = [ui.item.index()];
 
 		// It's a submenu item
@@ -227,11 +227,10 @@ var AppView = wp.Backbone.View.extend({
 		 */
 
 		// Iterate on menu items
-		var item =
-				this.findInMenu(itemSlug, this.views.first('#admin-menu-manager-menu').collection) ||
-				this.findInMenu(itemSlug, this.views.first('#admin-menu-manager-trash-view').collection);
+		var item = this.views.first('#admin-menu-manager-menu').collection.getRecursively(itemId) ||
+				this.views.first('#admin-menu-manager-trash-view').collection.getRecursively(itemId);
 
-		if (item === undefined) {
+		if (!item) {
 			return;
 		}
 
@@ -341,40 +340,7 @@ var AppView = wp.Backbone.View.extend({
 				$submenu.css('margin-top', '');
 			}
 		}
-	},
-
-	/**
-	 * Find a menu item in a given collection.
-	 *
-	 * @param string itemSlug Slug of the item, e.g. `index.php`.
-	 * @param Backbone.Collection collection The collection to search in.
-	 * @returns The menu item object on success, undefined otherwise.
-	 */
-	findInMenu: function (itemSlug, collection) {
-		var result;
-
-		collection.find(function (menuItem) {
-			// Accommodate for different structures
-			if (menuItem.get(2) && itemSlug && menuItem.get(2) === itemSlug) {
-				result = menuItem;
-				return true;
-			}
-
-			if (!menuItem.children || menuItem.children.length === 0) {
-				return false;
-			}
-
-			// Loop through sub menu items
-			var item = this.findInMenu(itemSlug, menuItem.children);
-			if (item !== undefined) {
-				result = item;
-				return true;
-			}
-
-		}, this);
-
-		return result;
-	},
+	}
 });
 
 module.exports = AppView;

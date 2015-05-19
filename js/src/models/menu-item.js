@@ -43,15 +43,11 @@ var MenuItem = Backbone.Model.extend({
 			pageTitle : this.attributes[3],
 			classes   : this.attributes[4],
 			slug      : this.attributes[2],
-			id        : this.attributes[5],
+			id        : this.id,
 			icon      : this.attributes[6],
 			capability: this.attributes[1],
 		};
 	}
-});
-
-var Children = Backbone.Collection.extend({
-	model: MenuItem
 });
 
 module.exports = MenuItem;
