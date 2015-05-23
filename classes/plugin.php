@@ -644,10 +644,16 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				}
 
 				// It must be a custom menu item
-				if (
-					( isset( $item[5] ) && false !== strpos( $item[5], 'custom-item' ) ) ||
-					'wp-menu-separator' === $item[4]
-				) {
+				if ( false !== strpos( $item['id'], 'custom-item' ) ) {
+					$submenu[ $parent_page ][] = array(
+						$item[0],
+						$item[1],
+						$item['href'],
+					);
+					continue;
+				}
+
+				if ( 'wp-menu-separator' === $item[4] ) {
 					$submenu[ $parent_page ][] = $item;
 					continue;
 				}
