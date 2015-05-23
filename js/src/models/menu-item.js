@@ -12,8 +12,8 @@ var MenuItem = Backbone.Model.extend({
 	idAttribute: '2',
 
 	initialize: function (attributes, options) {
+		this.children = new Backbone.Collection([], {model: MenuItem});
 		if (this.get('children')) {
-			this.children = new Backbone.Collection([], {model: MenuItem});
 			this.children.reset(this.get('children'));
 			this.unset('children');
 		}
