@@ -589,6 +589,29 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 							$m_item[2] // Slug
 						);
 
+						// Don't loose grand children
+						if ( isset( $temp_submenu[ $m_item[2] ] ) ) {
+							foreach ( $temp_submenu[ $m_item[2] ] as &$s_item ) {
+								$hook_name = get_plugin_page_hookname( $s_item[2], $m_item[2] );
+
+								$new_page = add_submenu_page(
+									$parent_page, // Parent Slug
+									$s_item[3], // Page title
+									$s_item[0], // Menu title
+									$s_item[1], // Capability
+									$s_item[2] // Slug
+								);
+
+								$this->switch_menu_item_filters( $hook_name, $new_page );
+
+								// Add original parent slug to sub menu item
+								end( $submenu[ $parent_page ] );
+								$submenu[ $parent_page ][ key( $submenu[ $parent_page ] ) ]['original_parent'] = $m_item[2];
+
+								unset( $s_item );
+							}
+						}
+
 						$this->switch_menu_item_filters( $hook_name, $new_page );
 
 						unset( $temp_menu[ $m_key ] );
