@@ -6,12 +6,13 @@ var AdminMenu = require('views/adminmenu'),
 		MenuItem = require('models/menu-item');
 
 var AppView = wp.Backbone.View.extend({
-	el       : '#adminmenuwrap',
-	template : require('templates/app'),
-	isEditing: false,
+	el          : '#adminmenuwrap',
+	template    : require('templates/app'),
+	isEditing   : false,
+	dropReceiver: undefined,
 
 	initialize: function () {
-		_.bindAll(this, 'sortableUpdate');
+		_.bindAll(this, 'sortableUpdate', 'sortableStop');
 		this.delegateEvents();
 
 		this.views.set('#admin-menu-manager-menu', new AdminMenu());
@@ -157,13 +158,16 @@ var AppView = wp.Backbone.View.extend({
 			// Disables the sortable if set to true.
 			disabled   : !isEditing,
 			// Specifies which items inside the element should be sortable.
-			items      : '> li',
+			items      : '> li, .wp-submenu > li:not(.wp-first-item)',
 			// Prevents sorting if you start on elements matching the selector.
 			cancel     : '#collapse-menu, #admin-menu-manager-edit, .amm-edit-options, .amm-is-editing',
 			// A selector of other sortable elements that the items from this list should be connected to.
 			connectWith: '#amm-adminmenu ul',
+			// A class name that gets applied to the otherwise white space.
+			placeholder: 'menu-top',
 			// This event is triggered when the user stopped sorting and the DOM position has changed.
-			update     : this.sortableUpdate
+			update     : this.sortableUpdate,
+			stop       : this.sortableStop
 		};
 
 		// Main admin menu
@@ -171,16 +175,14 @@ var AppView = wp.Backbone.View.extend({
 				.sortable(_.extend(options, {connectWith: '.wp-submenu, #admin-menu-manager-trash'}))
 				.sortable('refresh');
 
-		// Sub menus
-		this.$el.find('.wp-submenu')
-				.sortable(_.extend(
-						options,
-						{
-							items      : '> li:not(.wp-first-item)',
-							connectWith: '#amm-adminmenu, .wp-submenu, #admin-menu-manager-trash',
-						}
-				))
-				.sortable('refresh');
+		var that = this;
+		this.$el.find('.menu-top').droppable({
+			drop: function (e, ui) {
+				if (!that.dropReceiver) {
+					that.dropReceiver = jQuery(this).find('.wp-submenu');
+				}
+			}
+		});
 
 		// Trash
 		this.$el.find('#admin-menu-manager-trash')
@@ -197,6 +199,14 @@ var AppView = wp.Backbone.View.extend({
 
 		// Trigger the SVG painter
 		wp.svgPainter.init();
+	},
+
+	sortableStop: function (e, ui) {
+		if (this.dropReceiver) {
+			this.dropReceiver.append(ui.item);
+			this.dropReceiver = null;
+			this.sortableUpdate(e, ui);
+		}
 	},
 
 	/**
