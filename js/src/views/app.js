@@ -117,13 +117,15 @@ var AppView = wp.Backbone.View.extend({
 
 		this.listenTo(this.views.first('#admin-menu-manager-edit'), 'undo', function (view) {
 			this.undoManager.undo(true);
-			this.render();
+			this.views.first('#admin-menu-manager-menu').render();
+			this.views.first('#admin-menu-manager-trash-view').render();
 			this.initSortable(this.isEditing);
 		});
 
 		this.listenTo(this.views.first('#admin-menu-manager-edit'), 'redo', function (view) {
 			this.undoManager.redo(true);
-			this.render();
+			this.views.first('#admin-menu-manager-menu').render();
+			this.views.first('#admin-menu-manager-trash-view').render();
 			this.initSortable(this.isEditing);
 		});
 	},
