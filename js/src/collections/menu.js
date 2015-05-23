@@ -27,6 +27,11 @@ var Menu = Backbone.Collection.extend({
 				self = location.pathname.split('/').pop(),
 				slug = model.get('href') ? model.get('href') : model.get(2);
 
+		// If it's empty then we're most probably on the dashboard
+		if ('' === self) {
+			self = 'index.php';
+		}
+
 		if (slug.indexOf('separator') === 0) {
 			return;
 		}
@@ -47,7 +52,7 @@ var Menu = Backbone.Collection.extend({
 			classes.push('wp-not-current-submenu');
 		}
 
-		if (slug.indexOf('#') === -1 && slug.indexOf('.php') === -1 && slug.indexOf('http') === -1) {
+		if (!!model.get('is_plugin_item') || slug.indexOf('#') === -1 && slug.indexOf('.php') === -1 && slug.indexOf('http') === -1) {
 			model.set('href', 'admin.php?page=' + slug);
 		}
 
@@ -64,7 +69,7 @@ var Menu = Backbone.Collection.extend({
 				if ((AdminMenuManager.submenu_file && slug === AdminMenuManager.submenu_file) ||
 						(!AdminMenuManager.plugin_page && self === slug) ||
 						(AdminMenuManager.plugin_page && AdminMenuManager.plugin_page === slug &&
-						( this.parent.get(2) === self + '?post_type=' + window.typenow || parentHref === self) )
+						( this.parent.get(2) === self + '?post_type=' + window.typenow || parentHref === self || 'admin.php' === self) )
 				) {
 					model.set(4, model.get(4) + ' current');
 
@@ -75,8 +80,18 @@ var Menu = Backbone.Collection.extend({
 					}
 				}
 
-				if (slug.indexOf('#') === -1 && slug.indexOf('.php') === -1 && slug.indexOf('http') === -1) {
+				if (slug.indexOf('http') >= 0) {
+					model.set('href', slug);
+				} else if (!!model.get('inherit_parent')) {
 					model.set('href', parentHref + '?page=' + slug);
+				} else if (slug.indexOf('#') >= 0) {
+					model.set('href', slug);
+				} else if (slug.indexOf('custom-item') >= 0) {
+					model.set('href', '#' + slug);
+				} else if (slug.indexOf('.php') >= 0) {
+					model.set('href', slug);
+				} else {
+					model.set('href', 'admin.php?page=' + slug);
 				}
 			}, {parent: model});
 		}

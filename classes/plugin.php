@@ -211,8 +211,44 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		$menu_items = array();
 
 		foreach ( $menu as $menu_item ) {
+			$menu_file = $menu_item[2];
+			if ( false !== ( $pos = strpos( $menu_file, '?' ) ) ) {
+				$menu_file = substr( $menu_file, 0, $pos );
+			}
+
+			if ( file_exists( WP_PLUGIN_DIR . "/$menu_file" ) && ! file_exists( ABSPATH . "/wp-admin/$menu_file" ) ) {
+				$menu_item['is_plugin_item'] = true;
+			}
+
+			$admin_is_parent = false;
+
 			if ( ! empty( $submenu[ $menu_item[2] ] ) ) {
-				$menu_item['children'] = array_values( $submenu[ $menu_item[2] ] );
+
+				$submenu_items = array_values( $submenu[ $menu_item[2] ] );  // Re-index.
+				$menu_hook     = get_plugin_page_hook( $submenu_items[0][2], $menu_item[2] );
+
+				if ( ! empty( $menu_hook ) || ( ( 'index.php' != $submenu_items[0][2] ) && file_exists( WP_PLUGIN_DIR . "/$menu_file" ) && ! file_exists( ABSPATH . "/wp-admin/$menu_file" ) ) ) {
+					$admin_is_parent = true;
+				}
+
+
+				foreach ( $submenu[ $menu_item[2] ] as $sub_key => $sub_item ) {
+					$sub_file = $sub_item[2];
+					if ( false !== ( $pos = strpos( $sub_file, '?' ) ) ) {
+						$sub_file = substr( $sub_file, 0, $pos );
+					}
+
+					$menu_hook = get_plugin_page_hook( $sub_item[2], $menu_item[2] );
+
+					if ( ! empty( $menu_hook ) || ( ( 'index.php' != $sub_item[2] ) && file_exists( WP_PLUGIN_DIR . "/$sub_file" ) && ! file_exists( ABSPATH . "/wp-admin/$sub_file" ) ) ) {
+						// If admin.php is the current page or if the parent exists as a file in the plugins or admin dir
+						if ( ( ! $admin_is_parent && file_exists( WP_PLUGIN_DIR . "/$menu_file" ) && ! is_dir( WP_PLUGIN_DIR . "/{$menu_item[2]}" ) ) || file_exists( $menu_file ) ) {
+							$sub_item['inherit_parent'] = true;
+						}
+					}
+
+					$menu_item['children'][] = $sub_item;
+				}
 			}
 
 			$menu_items[] = $menu_item;
@@ -345,7 +381,8 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				$item[5],
 				$item[6],
 				'children' => isset( $item['children'] ) ? $item['children'] : array(),
-				'href'     => $item['href']
+				'href'     => $item['href'],
+				'id'       => $item['id'],
 			);
 
 			if ( ! empty( $item['children'] ) ) {
@@ -362,6 +399,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 						$subitem[3],
 						$subitem[4],
 						'href' => $subitem['href'],
+						'id'   => $subitem['id'],
 					);
 
 					$submenu[ $item[2] ][] = $subitem;
@@ -444,13 +482,18 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		foreach ( $amm_menu as $priority => &$item ) {
 			// It was originally a top level item as well. It's a match!
 			foreach ( $temp_menu as $key => $m_item ) {
-				// For slugs like edit.php?post_type=page
-				$m_item_slug = $m_item[2];
-				if ( false !== strpos( $m_item[2], '=' ) ) {
-					$m_item_slug = str_replace( '=', '', strstr( $m_item_slug, '=' ) );
+				$item_slug = $item[2];
+
+				if ( isset( $item['href'] ) ) {
+					preg_match( '/page=([a-z_0-9]*)/', $item['href'], $matches );
+					if ( isset( $matches[1] ) ) {
+						$item_slug = $matches[1];
+					} else {
+						$item_slug = $item['href'];
+					}
 				}
 
-				if ( $item[2] === $m_item_slug ) {
+				if ( $item[2] === $m_item[2] || isset( $item[5], $m_item[5] ) && $item[5] === $m_item[5] ) {
 					if ( 'wp-menu-separator' == $m_item[4] ) {
 						$menu[] = $m_item;
 					} else {
@@ -458,11 +501,15 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 							$m_item[3], // Page title
 							$m_item[0], // Menu title
 							$m_item[1], // Capability
-							$m_item[2], // Slug
+							$item_slug, // Slug
 							'', // Function
 							$m_item[6], // Icon
 							$priority // Position
 						);
+
+						if ( isset( $amm_submenu[ $m_item[2] ] ) ) {
+							$amm_submenu[ $item_slug ] = $amm_submenu[ $m_item[2] ];
+						}
 					}
 
 					unset( $temp_menu[ $key ] );
@@ -561,7 +608,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 								isset( $s_item[3] ) ? $s_item[3] : $s_item[0], // Page title
 								$s_item[0], // Menu title
 								$s_item[1], // Capability
-								$s_item[2] // SLug
+								$s_item[2] // Slug
 							);
 
 							$this->switch_menu_item_filters( $hook_name, $new_page );
