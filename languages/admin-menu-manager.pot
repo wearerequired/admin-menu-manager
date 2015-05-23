@@ -24,40 +24,84 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: classes/plugin.php:107
+#: classes/plugin.php:149
 msgid "Edit Menu"
 msgstr ""
 
-#: classes/plugin.php:108
+#: classes/plugin.php:150
 msgid "Saving&hellip;"
 msgstr ""
 
-#: classes/plugin.php:109
+#: classes/plugin.php:151
 msgid "Saved!"
 msgstr ""
 
-#: classes/plugin.php:110
-msgid "Are you sure? This will reset the whole menu!"
-msgstr ""
-
-#: classes/plugin.php:112
+#: classes/plugin.php:153
 msgid "Save changes"
 msgstr ""
 
-#: classes/plugin.php:113
+#: classes/plugin.php:154
 msgid "Add new item"
 msgstr ""
 
-#: classes/plugin.php:114
+#: classes/plugin.php:155
+msgid "Separator"
+msgstr ""
+
+#: classes/plugin.php:156
+msgid "Custom item"
+msgstr ""
+
+#: classes/plugin.php:157 classes/plugin.php:173
+msgid "Import"
+msgstr ""
+
+#: classes/plugin.php:158 classes/plugin.php:166
+msgid "Export"
+msgstr ""
+
+#: classes/plugin.php:159
 msgid "Undo change"
 msgstr ""
 
-#: classes/plugin.php:115
+#: classes/plugin.php:160
 msgid "Redo change"
 msgstr ""
 
-#: classes/plugin.php:116
+#: classes/plugin.php:161
 msgid "Reset menu"
+msgstr ""
+
+#: classes/plugin.php:167
+msgid "Export your menu data to another site. Copy the text below:"
+msgstr ""
+
+#: classes/plugin.php:174
+msgid "Import your menu data from another site. Insert the data here:"
+msgstr ""
+
+#: classes/plugin.php:179
+msgid "Collapse menu"
+msgstr ""
+
+#: classes/plugin.php:182
+msgid "Edit item"
+msgstr ""
+
+#: classes/plugin.php:183
+msgid "Label:"
+msgstr ""
+
+#: classes/plugin.php:184
+msgid "Icon:"
+msgstr ""
+
+#: classes/plugin.php:185
+msgid "Link:"
+msgstr ""
+
+#: classes/plugin.php:186
+msgid "Save"
 msgstr ""
 
 #. Plugin Name of the plugin/theme
@@ -74,4 +118,24 @@ msgstr ""
 
 #. Author of the plugin/theme
 msgid "required+"
+msgstr ""
+
+#: classes/plugin.php:165 classes/plugin.php:172
+msgctxt "modal close button"
+msgid "Close"
+msgstr ""
+
+#: classes/plugin.php:168 classes/plugin.php:175
+msgctxt "form label"
+msgid "Menu data"
+msgstr ""
+
+#: classes/plugin.php:169
+msgctxt "button text"
+msgid "Done"
+msgstr ""
+
+#: classes/plugin.php:176
+msgctxt "button text"
+msgid "Import"
 msgstr ""
