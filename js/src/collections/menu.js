@@ -89,12 +89,24 @@ var Menu = Backbone.Collection.extend({
 		return ajaxurl + '?action=adminmenu&type=' + type;
 	},
 
-	save: function () {
-		Backbone.sync('create', this);
+	save: function (callback) {
+		Backbone.sync('create', this, {
+			success: function () {
+				if (typeof(callback) === typeof(Function)) {
+					callback();
+				}
+			},
+		});
 	},
 
-	destroy: function () {
-		Backbone.sync('delete', this);
+	destroy: function (callback) {
+		Backbone.sync('delete', this, {
+			success: function () {
+				if (typeof(callback) === typeof(Function)) {
+					callback();
+				}
+			},
+		});
 	},
 
 	/**
