@@ -29,8 +29,6 @@ var AppView = wp.Backbone.View.extend({
 		this.listenTo(this.views.first('#admin-menu-manager-edit'), 'reset', function () {
 			this.views.first('#admin-menu-manager-menu').collection.destroy();
 			this.views.first('#admin-menu-manager-trash-view').collection.destroy();
-
-			location.reload(true);
 		});
 
 		// Listen to the save event
