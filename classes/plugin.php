@@ -550,16 +550,25 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			}
 
 			// It must be a custom menu item
-			if (
-				( isset( $item[5] ) && false !== strpos( $item[5], 'custom-item' ) ) ||
-				'wp-menu-separator' === $item[4]
-			) {
-				$menu[] = $item;
+			if ( false !== strpos( $item['id'], 'custom-item' ) ) {
+				$menu[] = array(
+					$item[0],
+					$item[1],
+					$item['href'],
+					$item[3],
+					$item[4],
+					$item[5],
+					$item[6],
+					'id' => $item['id'],
+				);
 				continue;
 			}
 
-			// Still no match, menu item must have been removed.
-			//unset( $item );
+			// It must be a separator
+			if ( 'wp-menu-separator' === $item[4] ) {
+				$menu[] = $item;
+				continue;
+			}
 		}
 
 		/**
@@ -649,10 +658,12 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 						$item[0],
 						$item[1],
 						$item['href'],
+						'id' => $item['id'],
 					);
 					continue;
 				}
 
+				// It must be a separator
 				if ( 'wp-menu-separator' === $item[4] ) {
 					$submenu[ $parent_page ][] = $item;
 					continue;
