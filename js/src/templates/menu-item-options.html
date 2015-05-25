@@ -8,7 +8,7 @@
 	<label for="amm-menu-item-option-icon"><%- iconLabel %></label>
 	<input name="amm-menu-item-option-icon" class="amm-menu-item-option" value="<%- model.icon %>" />
 </p>
-<% if (model.id.indexOf('custom-item') === 0) { %>
+<% if (model.id.indexOf('custom-item') > -1) { %>
 <p>
 	<label for="amm-menu-item-option-href"><%- linkLabel %></label>
 	<input name="amm-menu-item-option-href" class="amm-menu-item-option" value="<%- model.href %>" />
