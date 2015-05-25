@@ -28,8 +28,11 @@ var AppView = wp.Backbone.View.extend({
 
 		// Listen to the reset event
 		this.listenTo(this.views.first('#admin-menu-manager-edit'), 'reset', function () {
-			this.views.first('#admin-menu-manager-menu').collection.destroy();
-			this.views.first('#admin-menu-manager-trash-view').collection.destroy();
+			this.views.first('#admin-menu-manager-menu').collection.destroy(_.bind(function () {
+				this.views.first('#admin-menu-manager-trash-view').collection.destroy(function () {
+					window.location.reload(true);
+				});
+			}, this));
 		});
 
 		// Listen to the save event
