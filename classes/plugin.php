@@ -26,9 +26,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	public function add_hooks() {
 		$this->hook( 'init' );
 
-		$this->hook( 'init', 'db_update' );
-
-		// Load admin style sheet and JavaScript.
+		// Load admin CSS and JavaScript.
 		$this->hook( 'admin_enqueue_scripts', 5 );
 
 		// Handle form submissions
@@ -49,31 +47,6 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 */
 	public function init() {
 		$this->load_textdomain( 'admin-menu-manager', '/languages' );
-	}
-
-	/**
-	 * Delete old options if available.
-	 *
-	 * The plugin now uses user options instead of site options.
-	 */
-	public function db_update() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-
-		$options = array(
-			'amm_menu'          => get_site_option( 'amm_menu', array() ),
-			'amm_submenu'       => get_site_option( 'amm_submenu', array() ),
-			'amm_trash_menu'    => get_site_option( 'amm_trash_menu', array() ),
-			'amm_trash_submenu' => get_site_option( 'amm_trash_submenu', array() ),
-		);
-
-		foreach ( $options as $option => $value ) {
-			if ( ! empty( $value ) ) {
-				update_user_option( wp_get_current_user()->ID, $option, $value );
-				delete_site_option( $option );
-			}
-		}
 	}
 
 	/**
@@ -458,6 +431,14 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		$amm_trash_menu    = get_user_option( 'amm_trash_menu' );
 		$amm_trash_submenu = get_user_option( 'amm_trash_submenu' );
 
+		if ( ! $amm_menu ) {
+			$amm_menu = get_option( 'amm_menu', array() );
+		}
+
+		if ( ! $amm_submenu ) {
+			$amm_submenu = get_option( 'amm_submenu', array() );
+		}
+
 		if ( ! is_array( $amm_menu ) || empty( $amm_menu ) ) {
 			return;
 		}
@@ -497,7 +478,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 					}
 				}
 
-				if ( $item[2] === $m_item[2] || isset( $item[5], $m_item[5] ) && $item[5] === $m_item[5] ) {
+				if ( $item[2] === $m_item[2] ) {
 					if ( 'wp-menu-separator' == $m_item[4] ) {
 						$menu[] = $m_item;
 					} else {
@@ -657,7 +638,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				}
 
 				// It must be a custom menu item
-				if ( false !== strpos( $item['id'], 'custom-item' ) ) {
+				if ( isset( $item['id'] ) && false !== strpos( $item['id'], 'custom-item' ) ) {
 					$submenu[ $parent_page ][] = array(
 						$item[0],
 						$item[1],
@@ -668,7 +649,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				}
 
 				// It must be a separator
-				if ( 'wp-menu-separator' === $item[4] ) {
+				if ( isset( $item[4] ) && 'wp-menu-separator' === $item[4] ) {
 					$submenu[ $parent_page ][] = $item;
 					continue;
 				}
@@ -783,9 +764,16 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	public function alter_admin_menu_order( $menu_order ) {
 		global $menu;
 
-		if ( ! get_user_option( 'amm_menu', false ) ) {
+		$amm_menu = get_user_option( 'amm_menu' );
+
+		if ( ! $amm_menu ) {
+			$amm_menu = get_option( 'amm_menu', false );
+		}
+
+		if ( ! $amm_menu ) {
 			return $menu_order;
 		}
+
 
 		$new_order = array();
 		foreach ( $menu as $item ) {
