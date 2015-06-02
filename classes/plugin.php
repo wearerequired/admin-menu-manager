@@ -410,10 +410,6 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			delete_user_option( wp_get_current_user()->ID, 'amm_menu' );
 			delete_user_option( wp_get_current_user()->ID, 'amm_submenu' );
 		}
-
-		// Delete old-style options from version 1.x
-		delete_option( 'amm_menu' );
-		delete_option( 'amm_submenu' );
 	}
 
 	/**
