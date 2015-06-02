@@ -316,8 +316,11 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		}
 
 		$menu = $this->update_menu_loop( $data );
+		$type = isset( $_REQUEST['type'] ) && 'trash' === $_REQUEST['type'] ? 'trash' : 'menu';
 
-		if ( isset( $_REQUEST['type'] ) && 'trash' === $_REQUEST['type'] ) {
+		do_action( 'amm_before_menu_update', $type, $menu );
+
+		if ( 'trash' === $type ) {
 			update_user_option( wp_get_current_user()->ID, 'amm_trash_menu', $menu['menu'], false );
 			update_user_option( wp_get_current_user()->ID, 'amm_trash_submenu', $menu['submenu'], false );
 		} else {
@@ -403,7 +406,11 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * Reset the menu completely.
 	 */
 	public function reset_menu() {
-		if ( isset( $_REQUEST['type'] ) && 'trash' === $_REQUEST['type'] ) {
+		$type = isset( $_REQUEST['type'] ) && 'trash' === $_REQUEST['type'] ? 'trash' : 'menu';
+
+		do_action( 'amm_before_menu_reset', $type );
+
+		if ( 'trash' === $type ) {
 			delete_user_option( wp_get_current_user()->ID, 'amm_trash_menu' );
 			delete_user_option( wp_get_current_user()->ID, 'amm_trash_submenu' );
 		} else {
@@ -422,10 +429,10 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * 0 = menu_title, 1 = capability, 2 = menu_slug, 3 = page_title, 4 = classes
 	 */
 	public function alter_admin_menu() {
-		$amm_menu          = get_user_option( 'amm_menu' );
-		$amm_submenu       = get_user_option( 'amm_submenu' );
-		$amm_trash_menu    = get_user_option( 'amm_trash_menu' );
-		$amm_trash_submenu = get_user_option( 'amm_trash_submenu' );
+		$amm_menu          = apply_filters( 'amm_menu_data', get_user_option( 'amm_menu' ), 'menu' );
+		$amm_submenu       = apply_filters( 'amm_menu_data', get_user_option( 'amm_submenu' ), 'submenu' );
+		$amm_trash_menu    = apply_filters( 'amm_menu_data', get_user_option( 'amm_trash_menu' ), 'trash_menu' );
+		$amm_trash_submenu = apply_filters( 'amm_menu_data', get_user_option( 'amm_trash_submenu' ), 'trash_submenu' );
 
 		if ( ! $amm_menu ) {
 			$amm_menu = get_option( 'amm_menu', array() );
