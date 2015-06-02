@@ -53,10 +53,11 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * Load our JavaScript and CSS if the user has enough capabilities to edit the menu.
 	 */
 	public function admin_enqueue_scripts() {
-		if ( ! apply_filters( 'amm_user_can_change_menu', current_user_can( 'read' ) ) ||
-		     is_network_admin() ||
-		     is_customize_preview()
-		) {
+		if ( is_network_admin() || is_customize_preview() ) {
+			return;
+		}
+
+		if ( ! apply_filters( 'amm_user_can_change_menu', current_user_can( 'read' ) ) ) {
 			return;
 		}
 
@@ -104,7 +105,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				'jquery-ui-sortable',
 				'jquery-ui-droppable',
 				'wp-backbone',
-				'backbone-undo'
+				'backbone-undo',
 			),
 			self::VERSION
 		);
@@ -203,7 +204,6 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				if ( ! empty( $menu_hook ) || ( ( 'index.php' != $submenu_items[0][2] ) && file_exists( WP_PLUGIN_DIR . "/$menu_file" ) && ! file_exists( ABSPATH . "/wp-admin/$menu_file" ) ) ) {
 					$admin_is_parent = true;
 				}
-
 
 				foreach ( $submenu[ $menu_item[2] ] as $sub_key => $sub_item ) {
 					$sub_file = $sub_item[2];
@@ -398,7 +398,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 
 		return array(
 			'menu'    => $items,
-			'submenu' => $submenu
+			'submenu' => $submenu,
 		);
 	}
 
@@ -776,7 +776,6 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		if ( ! $amm_menu ) {
 			return $menu_order;
 		}
-
 
 		$new_order = array();
 		foreach ( $menu as $item ) {
