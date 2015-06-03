@@ -38,7 +38,6 @@ var MenuItem = Backbone.Model.extend({
 			'6'       : this.attributes[6], // icon
 			'1'       : this.attributes[1], // capability
 			children  : children,
-			current   : this.attributes['current'],
 			label     : this.attributes[0],
 			pageTitle : this.attributes[3],
 			classes   : this.attributes[4],
