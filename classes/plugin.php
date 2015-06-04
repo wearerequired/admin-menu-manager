@@ -538,7 +538,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			}
 
 			// It must be a custom menu item
-			if ( false !== strpos( $item['id'], 'custom-item' ) ) {
+			if ( isset( $item['id'] ) && false !== strpos( $item['id'], 'custom-item' ) ) {
 				$menu[] = array(
 					$item[0],
 					$item[1],
