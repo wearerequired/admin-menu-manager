@@ -40,7 +40,8 @@ var AppView = wp.Backbone.View.extend({
 			this.views.first('#admin-menu-manager-menu').collection.save();
 			this.views.first('#admin-menu-manager-trash-view').collection.save();
 
-			this.render();
+			this.views.first('#admin-menu-manager-menu').render();
+
 			this.initSortable(false);
 		});
 
@@ -54,7 +55,7 @@ var AppView = wp.Backbone.View.extend({
 				content: JSON.stringify({menu: menu, trash: trash})
 			}));
 
-			this.render();
+			this.views.first('#admin-menu-manager-menu').render();
 		});
 
 		// Listen to the import event
@@ -64,8 +65,6 @@ var AppView = wp.Backbone.View.extend({
 
 			var ImportModal = require('views/import-modal');
 			this.views.set('#admin-menu-manager-modal-view', new ImportModal());
-
-			this.render();
 
 			this.listenTo(this.views.first('#admin-menu-manager-modal-view'), 'import', function (data) {
 				data = JSON.parse(data);
