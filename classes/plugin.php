@@ -482,7 +482,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			// It was originally a top level item as well. It's a match!
 			foreach ( $temp_menu as $key => $m_item ) {
 
-				if ( $item[2] === $m_item[2] ) {
+				if ( $item_slug === $m_item[2] ) {
 					if ( 'wp-menu-separator' == $m_item[4] ) {
 						$menu[] = $m_item;
 					} else {
