@@ -349,13 +349,13 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			}
 
 			$item = array(
-				wp_unslash( $item[0] ),
-				$item[1],
-				$item[2],
-				$item[3],
-				$item[4],
-				$item[5],
-				$item[6],
+				0          => wp_unslash( $item[0] ),
+				1          => $item[1],
+				2          => $item[2],
+				3          => $item[3],
+				4          => $item[4],
+				5          => $item[5],
+				6          => $item[6],
 				'children' => isset( $item['children'] ) ? $item['children'] : array(),
 				'href'     => $item['href'],
 				'id'       => $item['id'],
@@ -369,11 +369,11 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 					}
 
 					$subitem = array(
-						wp_unslash( $subitem[0] ),
-						$subitem[1],
-						$subitem[2],
-						$subitem[3],
-						$subitem[4],
+						0      => wp_unslash( $subitem[0] ),
+						1      => $subitem[1],
+						2      => $subitem[2],
+						3      => $subitem[3],
+						4      => $subitem[4],
 						'href' => $subitem['href'],
 						'id'   => $subitem['id'],
 					);
@@ -540,13 +540,13 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			// It must be a custom menu item
 			if ( isset( $item['id'] ) && false !== strpos( $item['id'], 'custom-item' ) ) {
 				$menu[] = array(
-					$item[0],
-					$item[1],
-					$item['href'],
-					$item[3],
-					$item[4],
-					$item[5],
-					$item[6],
+					0    => $item[0],
+					1    => $item[1],
+					2    => $item['href'],
+					3    => $item[3],
+					4    => $item[4],
+					5    => $item[5],
+					6    => $item[6],
 					'id' => $item['id'],
 				);
 				continue;
@@ -643,9 +643,9 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				// It must be a custom menu item
 				if ( isset( $item['id'] ) && false !== strpos( $item['id'], 'custom-item' ) ) {
 					$submenu[ $parent_page ][] = array(
-						$item[0],
-						$item[1],
-						$item['href'],
+						0    => $item[0],
+						1    => $item[1],
+						2    => $item['href'],
 						'id' => $item['id'],
 					);
 					continue;
@@ -658,7 +658,6 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				}
 			}
 		}
-
 
 		// Remove trashed items
 		foreach ( $amm_trash_menu as $priority => $item ) {
