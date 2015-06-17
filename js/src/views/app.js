@@ -16,7 +16,7 @@ var AppView = wp.Backbone.View.extend({
 		this.delegateEvents();
 
 		this.views.set('#admin-menu-manager-menu', new AdminMenu());
-		this.views.set('#collapse-menu', new CollapseButton());
+		this.views.set('#admin-menu-manager-collapse', new CollapseButton());
 		this.views.set('#admin-menu-manager-edit', new EditButton());
 		this.views.set('#admin-menu-manager-trash-view', new TrashView());
 
