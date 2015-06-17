@@ -24,6 +24,7 @@
 	display: none;
 	float: left;
 	width: 100%;
+	text-align: center;
 
 	#admin-menu-manager-edit.active & {
 		display: block;
@@ -31,19 +32,27 @@
 }
 
 .amm-edit-option {
-	display: block;
-	float: left;
+	display: inline-block;
 	width: 30px;
 	height: 30px;
-	margin-right: 3px;
 	position: relative;
 
 	a {
 		padding: 0 !important;
 	}
 
-	.wp-menu-image:before {
-		color: inherit !important;
+	.wp-menu-image {
+		#adminmenu & {
+			margin: 0;
+			float: none;
+			width: 30px;
+			height: 30px;
+			padding: 0;
+		}
+
+		&:before {
+			color: inherit !important;
+		}
 	}
 }
 
