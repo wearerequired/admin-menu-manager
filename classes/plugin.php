@@ -460,14 +460,14 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 
 		global $menu, $submenu, $admin_page_hooks, $_registered_pages;
 
-		$temp_menu             = $menu;
+		$temp_menu             = array_values( $menu );
 		$temp_submenu          = $submenu;
 		$temp_admin_page_hooks = $admin_page_hooks;
 
 		$menu = $submenu = $_registered_pages = null;
 
 		// Iterate on the top level items
-		foreach ( $amm_menu as $priority => &$item ) {
+		foreach ( $amm_menu as $priority => $item ) {
 			// It was originally a top level item as well. It's a match!
 			foreach ( $temp_menu as $key => $m_item ) {
 				$item_slug = $item[2];
@@ -506,8 +506,8 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			}
 
 			// It must be a submenu item moved to the top level
-			foreach ( $temp_submenu as $key => &$parent ) {
-				foreach ( $parent as $sub_key => &$sub_item ) {
+			foreach ( $temp_submenu as $key => $parent ) {
+				foreach ( $parent as $sub_key => $sub_item ) {
 					if ( $item[2] === $sub_item[2] ) {
 						$hook_name = get_plugin_page_hookname( $sub_item[2], $key );
 
@@ -571,10 +571,10 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		}
 
 		// Iterate on all our submenu items
-		foreach ( $amm_submenu as $parent_page => &$page ) {
-			foreach ( $page as $priority => &$item ) {
+		foreach ( $amm_submenu as $parent_page => $page ) {
+			foreach ( $page as $priority => $item ) {
 				// Iterate on original top level menu items
-				foreach ( $temp_menu as $m_key => &$m_item ) {
+				foreach ( $temp_menu as $m_key => $m_item ) {
 					if ( $item[2] === $m_item[2] ) {
 						$hook_name = get_plugin_page_hookname( $m_item[2], $parent_page );
 
@@ -588,7 +588,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 
 						// Don't loose grand children
 						if ( isset( $temp_submenu[ $m_item[2] ] ) ) {
-							foreach ( $temp_submenu[ $m_item[2] ] as &$s_item ) {
+							foreach ( $temp_submenu[ $m_item[2] ] as $s_item ) {
 								$hook_name = get_plugin_page_hookname( $s_item[2], $m_item[2] );
 
 								$new_page = add_submenu_page(
@@ -659,8 +659,9 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			}
 		}
 
+
 		// Remove trashed items
-		foreach ( $amm_trash_menu as $priority => &$item ) {
+		foreach ( $amm_trash_menu as $priority => $item ) {
 			// It was originally a top level item as well. It's a match!
 			foreach ( $temp_menu as $key => $m_item ) {
 				if ( $item[2] === $m_item[2] ) {
@@ -670,23 +671,21 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			}
 
 			// It must be a submenu item moved to the top level
-			foreach ( $temp_submenu as $key => &$parent ) {
-				foreach ( $parent as $sub_key => &$sub_item ) {
+			foreach ( $temp_submenu as $key => $parent ) {
+				foreach ( $parent as $sub_key => $sub_item ) {
 					if ( $item[2] === $sub_item[2] ) {
 						unset( $temp_submenu[ $key ][ $sub_key ] );
 						continue 3;
 					}
 				}
 			}
-
-			unset( $temp_menu[ $priority ] );
 		}
 
-		foreach ( $amm_trash_submenu as $parent_page => &$page ) {
-			foreach ( $page as $priority => &$item ) {
+		foreach ( $amm_trash_submenu as $parent_page => $page ) {
+			foreach ( $page as $priority => $item ) {
 				// Iterate on original submenu items
-				foreach ( $temp_submenu as $s_parent_page => &$s_page ) {
-					foreach ( $s_page as $s_priority => &$s_item ) {
+				foreach ( $temp_submenu as $s_parent_page => $s_page ) {
+					foreach ( $s_page as $s_priority => $s_item ) {
 						if ( $item[2] === $s_item[2] && $parent_page == $s_parent_page ) {
 							unset( $temp_submenu[ $s_parent_page ][ $s_priority ] );
 							continue 2;
@@ -695,7 +694,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				}
 
 				// It must be a top level item moved to submenu
-				foreach ( $temp_menu as $m_key => &$m_item ) {
+				foreach ( $temp_menu as $m_key => $m_item ) {
 					if ( $item[2] === $m_item[2] ) {
 						unset( $temp_menu[ $m_key ] );
 						continue 2;
