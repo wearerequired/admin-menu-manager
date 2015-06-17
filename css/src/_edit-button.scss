@@ -33,8 +33,8 @@
 
 .amm-edit-option {
 	display: inline-block;
-	width: 30px;
-	height: 30px;
+	width: 27px;
+	height: 27px;
 	position: relative;
 
 	a {
@@ -45,20 +45,23 @@
 		#adminmenu & {
 			margin: 0;
 			float: none;
-			width: 30px;
-			height: 30px;
+			width: 27px;
+			height: 27px;
 			padding: 0;
 		}
 
 		&:before {
 			color: inherit !important;
+			padding: 0 !important;
+			width: 27px;
+			height: 27px;
 		}
 	}
 }
 
 #amm-edit-option-save .wp-menu-image:before {
-	font-size: 24px;
-	padding: 4px 0 !important;
+	font-size: 27px;
+	margin-top: -4px;
 }
 
 .amm-edit-option-choices {
