@@ -468,18 +468,19 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 
 		// Iterate on the top level items
 		foreach ( $amm_menu as $priority => $item ) {
+			$item_slug = $item[2];
+
+			if ( isset( $item['href'] ) ) {
+				preg_match( '/page=([a-z_0-9]*)/', $item['href'], $matches );
+				if ( isset( $matches[1] ) ) {
+					$item_slug = $matches[1];
+				} else {
+					$item_slug = $item['href'];
+				}
+			}
+
 			// It was originally a top level item as well. It's a match!
 			foreach ( $temp_menu as $key => $m_item ) {
-				$item_slug = $item[2];
-
-				if ( isset( $item['href'] ) ) {
-					preg_match( '/page=([a-z_0-9]*)/', $item['href'], $matches );
-					if ( isset( $matches[1] ) ) {
-						$item_slug = $matches[1];
-					} else {
-						$item_slug = $item['href'];
-					}
-				}
 
 				if ( $item[2] === $m_item[2] ) {
 					if ( 'wp-menu-separator' == $m_item[4] ) {
@@ -508,7 +509,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			// It must be a submenu item moved to the top level
 			foreach ( $temp_submenu as $key => $parent ) {
 				foreach ( $parent as $sub_key => $sub_item ) {
-					if ( $item[2] === $sub_item[2] ) {
+					if ( $item_slug === $sub_item[2] ) {
 						$hook_name = get_plugin_page_hookname( $sub_item[2], $key );
 
 						if ( ! isset( $sub_item[3] ) ) {
