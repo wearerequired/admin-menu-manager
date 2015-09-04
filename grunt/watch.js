@@ -9,7 +9,7 @@ module.exports = {
 
 	sass: {
 		files: ['css/src/*.scss'],
-		tasks: ['sass', 'autoprefixer', 'cssmin']
+		tasks: ['sass', 'postcss']
 	},
 
 	php: {

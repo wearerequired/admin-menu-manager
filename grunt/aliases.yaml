@@ -8,8 +8,7 @@ default:
 - 'browserify'
 - 'uglify'
 - 'sass'
-- 'autoprefixer'
-- 'cssmin'
+- 'postcss'
 - 'clean:js'
 
 # Build task
