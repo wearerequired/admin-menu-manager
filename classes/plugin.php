@@ -97,7 +97,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 *
 	 * @return string|false
 	 */
-	protected function get_inline_style(  ) {
+	protected function get_inline_style() {
 		global $_wp_admin_css_colors;
 
 		$current_color = get_user_option( 'admin_color' );
