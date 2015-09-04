@@ -66,30 +66,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 
 		wp_enqueue_style( 'admin-menu-manager', $this->get_url() . 'css/admin-menu-manager' . $suffix . '.css', array(), self::VERSION );
 
-		global $_wp_admin_css_colors, $parent_file, $submenu_file;
-
-		$current_color = get_user_option( 'admin_color' );
-		if ( isset( $_wp_admin_css_colors[ $current_color ] ) ) {
-			$border     = $_wp_admin_css_colors[ $current_color ]->icon_colors['base'];
-			$background = $_wp_admin_css_colors[ $current_color ]->colors[0];
-			$base       = $_wp_admin_css_colors[ $current_color ]->icon_colors['base'];
-			$focus      = $_wp_admin_css_colors[ $current_color ]->icon_colors['focus'];
-			$current    = $_wp_admin_css_colors[ $current_color ]->icon_colors['current'];
-
-			$inline_css = "
-			.amm-edit-option-choices { background-color: $border; }
-			.amm-edit-option-choices:after { border-bottom-color: $border; }
-			#admin-menu-manager-trash,
-			#amm-adminmenu:not(.ui-sortable-disabled) .wp-menu-separator.ui-sortable-handle { background-color: $background; border-color: $border !important; }
-			#admin-menu-manager-edit > .menu-top,
-			#admin-menu-manager-edit > .menu-top div.wp-menu-image:before,
-			.amm-edit-option a { color: $base; !important }
-			#admin-menu-manager-edit .menu-top:focus,
-			#admin-menu-manager-edit .menu-top:focus div.wp-menu-image:before { color: $focus !important; }
-			.amm-edit-option a:hover { color: $current !important; }
-			";
-			wp_add_inline_style( 'admin-menu-manager', $inline_css );
-		}
+		wp_add_inline_style( 'admin-menu-manager', $this->get_inline_style() );
 
 		wp_register_script(
 			'backbone-undo',
@@ -110,6 +87,53 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			self::VERSION
 		);
 
+		wp_localize_script( 'admin-menu-manager', 'AdminMenuManager', $this->get_localize_script_data() );
+	}
+
+	/**
+	 * Get the inline stylesheet if available.
+	 *
+	 * Returns false if the current color scheme isn't set.
+	 *
+	 * @return string|false
+	 */
+	protected function get_inline_style(  ) {
+		global $_wp_admin_css_colors;
+
+		$current_color = get_user_option( 'admin_color' );
+
+		if ( isset( $_wp_admin_css_colors[ $current_color ] ) ) {
+			$border     = $_wp_admin_css_colors[ $current_color ]->icon_colors['base'];
+			$background = $_wp_admin_css_colors[ $current_color ]->colors[0];
+			$base       = $_wp_admin_css_colors[ $current_color ]->icon_colors['base'];
+			$focus      = $_wp_admin_css_colors[ $current_color ]->icon_colors['focus'];
+			$current    = $_wp_admin_css_colors[ $current_color ]->icon_colors['current'];
+
+			return "
+			.amm-edit-option-choices { background-color: $border; }
+			.amm-edit-option-choices:after { border-bottom-color: $border; }
+			#admin-menu-manager-trash,
+			#amm-adminmenu:not(.ui-sortable-disabled) .wp-menu-separator.ui-sortable-handle { background-color: $background; border-color: $border !important; }
+			#admin-menu-manager-edit > .menu-top,
+			#admin-menu-manager-edit > .menu-top div.wp-menu-image:before,
+			.amm-edit-option a { color: $base; !important }
+			#admin-menu-manager-edit .menu-top:focus,
+			#admin-menu-manager-edit .menu-top:focus div.wp-menu-image:before { color: $focus !important; }
+			.amm-edit-option a:hover { color: $current !important; }
+			";
+		}
+
+		return false;
+	}
+
+	/*
+	 * Get the inline script data for use by `wp_localize_script`
+	 *
+	 * @return array
+	 */
+	protected function get_localize_script_data() {
+		global $parent_file, $submenu_file;
+
 		$plugin_page = null;
 
 		if ( isset( $_GET['page'] ) ) {
@@ -117,7 +141,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			$plugin_page = plugin_basename( $plugin_page );
 		}
 
-		wp_localize_script( 'admin-menu-manager', 'AdminMenuManager', array(
+		return array(
 			'templates'    => array(
 				'editButton'      => array(
 					'label'       => __( 'Edit Menu', 'admin-menu-manager' ),
@@ -165,7 +189,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			'plugin_page'  => $plugin_page,
 			'menu'         => $this->get_admin_menu(),
 			'trash'        => $this->get_admin_menu_trash(),
-		) );
+		);
 	}
 
 	/**
