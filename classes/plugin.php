@@ -200,7 +200,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * @return array
 	 */
 	public function get_admin_menu() {
-		global $menu, $submenu;
+		global $menu;
 
 		if ( null === $menu ) {
 			$menu = array();
@@ -209,49 +209,92 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		$menu_items = array();
 
 		foreach ( $menu as $menu_item ) {
-			$menu_file = $menu_item[2];
-			if ( false !== ( $pos = strpos( $menu_file, '?' ) ) ) {
-				$menu_file = substr( $menu_file, 0, $pos );
-			}
-
-			if ( file_exists( WP_PLUGIN_DIR . "/$menu_file" ) && ! file_exists( ABSPATH . "/wp-admin/$menu_file" ) ) {
-				$menu_item['is_plugin_item'] = true;
-			}
-
-			$admin_is_parent = false;
-
-			if ( ! empty( $submenu[ $menu_item[2] ] ) ) {
-
-				$submenu_items = array_values( $submenu[ $menu_item[2] ] );  // Re-index.
-				$menu_hook     = get_plugin_page_hook( $submenu_items[0][2], $menu_item[2] );
-
-				if ( ! empty( $menu_hook ) || ( ( 'index.php' != $submenu_items[0][2] ) && file_exists( WP_PLUGIN_DIR . "/$menu_file" ) && ! file_exists( ABSPATH . "/wp-admin/$menu_file" ) ) ) {
-					$admin_is_parent = true;
-				}
-
-				foreach ( $submenu[ $menu_item[2] ] as $sub_key => $sub_item ) {
-					$sub_file = $sub_item[2];
-					if ( false !== ( $pos = strpos( $sub_file, '?' ) ) ) {
-						$sub_file = substr( $sub_file, 0, $pos );
-					}
-
-					$menu_hook = get_plugin_page_hook( $sub_item[2], $menu_item[2] );
-
-					if ( ! empty( $menu_hook ) || ( ( 'index.php' != $sub_item[2] ) && file_exists( WP_PLUGIN_DIR . "/$sub_file" ) && ! file_exists( ABSPATH . "/wp-admin/$sub_file" ) ) ) {
-						// If admin.php is the current page or if the parent exists as a file in the plugins or admin dir
-						if ( ( ! $admin_is_parent && file_exists( WP_PLUGIN_DIR . "/$menu_file" ) && ! is_dir( WP_PLUGIN_DIR . "/{$menu_item[2]}" ) ) || file_exists( $menu_file ) ) {
-							$sub_item['inherit_parent'] = true;
-						}
-					}
-
-					$menu_item['children'][] = $sub_item;
-				}
-			}
-
-			$menu_items[] = $menu_item;
+			$menu_items[] = $this->get_admin_menu_item( $menu_item );
 		}
 
 		return $menu_items;
+	}
+
+	/**
+	 * Get the menu item slug without any query param.
+	 *
+	 * @param string $slug Menu item slug.
+	 *
+	 * @return string
+	 */
+	protected function get_menu_item_file( $slug ) {
+		$pos = strpos( $slug, '?' );
+		if ( false !== $pos ) {
+			$slug = substr( $slug, 0, $pos );
+		}
+
+		return $slug;
+	}
+
+	/**
+	 * Prepare a top-evel menu item.
+	 *
+	 * @param array $menu_item A single menu item.
+	 *
+	 * @return array
+	 */
+	protected function get_admin_menu_item( $menu_item ) {
+		$menu_file = $this->get_menu_item_file( $menu_item[2] );
+
+		if ( file_exists( WP_PLUGIN_DIR . "/$menu_file" ) && ! file_exists( ABSPATH . "/wp-admin/$menu_file" ) ) {
+			$menu_item['is_plugin_item'] = true;
+		}
+
+		$children = $this->get_admin_menu_sub_items( $menu_item, $menu_file );
+
+		if ( $children ) {
+			$menu_item['children'] = $children;
+		}
+
+		return $menu_item;
+	}
+
+	/**
+	 * Get the children of a top-level menu item.
+	 *
+	 * @param array  $menu_item A single menu-item.
+	 * @param string $menu_file The parent menu item's slug.
+	 *
+	 * @return array
+	 */
+	protected function get_admin_menu_sub_items( $menu_item, $menu_file ) {
+		global $submenu;
+
+		$children        = array();
+		$admin_is_parent = false;
+
+		if ( empty( $submenu[ $menu_item[2] ] ) ) {
+			return $children;
+		}
+
+		$submenu_items = array_values( $submenu[ $menu_item[2] ] );  // Re-index.
+		$menu_hook     = get_plugin_page_hook( $submenu_items[0][2], $menu_item[2] );
+
+		if ( ! empty( $menu_hook ) || ( ( 'index.php' != $submenu_items[0][2] ) && file_exists( WP_PLUGIN_DIR . "/$menu_file" ) && ! file_exists( ABSPATH . "/wp-admin/$menu_file" ) ) ) {
+			$admin_is_parent = true;
+		}
+
+		foreach ( $submenu[ $menu_item[2] ] as $sub_item ) {
+			$sub_file = $this->get_menu_item_file( $sub_item[2] );
+
+			$menu_hook = get_plugin_page_hook( $sub_item[2], $menu_item[2] );
+
+			if ( ! empty( $menu_hook ) || ( ( 'index.php' != $sub_item[2] ) && file_exists( WP_PLUGIN_DIR . "/$sub_file" ) && ! file_exists( ABSPATH . "/wp-admin/$sub_file" ) ) ) {
+				// If admin.php is the current page or if the parent exists as a file in the plugins or admin dir.
+				if ( ( ! $admin_is_parent && file_exists( WP_PLUGIN_DIR . "/$menu_file" ) && ! is_dir( WP_PLUGIN_DIR . "/{$menu_item[2]}" ) ) || file_exists( $menu_file ) ) {
+					$sub_item['inherit_parent'] = true;
+				}
+			}
+
+			$children[] = $sub_item;
+		}
+
+		return $children;
 	}
 
 	/**
