@@ -24,83 +24,83 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: classes/plugin.php:149
+#: classes/plugin.php:157
 msgid "Edit Menu"
 msgstr ""
 
-#: classes/plugin.php:150
+#: classes/plugin.php:158
 msgid "Saving&hellip;"
 msgstr ""
 
-#: classes/plugin.php:151
+#: classes/plugin.php:159
 msgid "Saved!"
 msgstr ""
 
-#: classes/plugin.php:153
+#: classes/plugin.php:161
 msgid "Save changes"
 msgstr ""
 
-#: classes/plugin.php:154
+#: classes/plugin.php:162
 msgid "Add new item"
 msgstr ""
 
-#: classes/plugin.php:155
+#: classes/plugin.php:163
 msgid "Separator"
 msgstr ""
 
-#: classes/plugin.php:156
+#: classes/plugin.php:164
 msgid "Custom item"
 msgstr ""
 
-#: classes/plugin.php:157 classes/plugin.php:173
+#: classes/plugin.php:165 classes/plugin.php:181
 msgid "Import"
 msgstr ""
 
-#: classes/plugin.php:158 classes/plugin.php:166
+#: classes/plugin.php:166 classes/plugin.php:174
 msgid "Export"
 msgstr ""
 
-#: classes/plugin.php:159
+#: classes/plugin.php:167
 msgid "Undo change"
 msgstr ""
 
-#: classes/plugin.php:160
+#: classes/plugin.php:168
 msgid "Redo change"
 msgstr ""
 
-#: classes/plugin.php:161
+#: classes/plugin.php:169
 msgid "Reset menu"
 msgstr ""
 
-#: classes/plugin.php:167
+#: classes/plugin.php:175
 msgid "Export your menu data to another site. Copy the text below:"
 msgstr ""
 
-#: classes/plugin.php:174
+#: classes/plugin.php:182
 msgid "Import your menu data from another site. Insert the data here:"
 msgstr ""
 
-#: classes/plugin.php:179
+#: classes/plugin.php:187
 msgid "Collapse menu"
 msgstr ""
 
-#: classes/plugin.php:182
+#: classes/plugin.php:190
 msgid "Edit item"
 msgstr ""
 
-#: classes/plugin.php:183
+#: classes/plugin.php:191
 msgid "Label:"
 msgstr ""
 
-#: classes/plugin.php:184
+#: classes/plugin.php:192
 msgid "Icon:"
 msgstr ""
 
-#: classes/plugin.php:185
+#: classes/plugin.php:193
 msgid "Link:"
 msgstr ""
 
-#: classes/plugin.php:186
+#: classes/plugin.php:194
 msgid "Save"
 msgstr ""
 
@@ -108,8 +108,8 @@ msgstr ""
 msgid "Admin Menu Manager"
 msgstr ""
 
-#. Author URI of the plugin/theme
-msgid "http://required.ch"
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/wearerequired/admin-menu-manager/"
 msgstr ""
 
 #. Description of the plugin/theme
@@ -120,22 +120,26 @@ msgstr ""
 msgid "required+"
 msgstr ""
 
-#: classes/plugin.php:165 classes/plugin.php:172
+#. Author URI of the plugin/theme
+msgid "http://required.ch"
+msgstr ""
+
+#: classes/plugin.php:173 classes/plugin.php:180
 msgctxt "modal close button"
 msgid "Close"
 msgstr ""
 
-#: classes/plugin.php:168 classes/plugin.php:175
+#: classes/plugin.php:176 classes/plugin.php:183
 msgctxt "form label"
 msgid "Menu data"
 msgstr ""
 
-#: classes/plugin.php:169
+#: classes/plugin.php:177
 msgctxt "button text"
 msgid "Done"
 msgstr ""
 
-#: classes/plugin.php:176
+#: classes/plugin.php:184
 msgctxt "button text"
 msgid "Import"
 msgstr ""
