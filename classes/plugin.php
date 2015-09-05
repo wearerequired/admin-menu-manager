@@ -532,11 +532,8 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			$amm_submenu = get_option( 'amm_submenu', array() );
 		}
 
-		if ( ! is_array( $amm_menu ) || empty( $amm_menu ) ) {
-			return;
-		}
-
-		if ( ! is_array( $amm_submenu ) || empty( $amm_submenu ) ) {
+		// Bail early when there's no custom menu data.
+		if ( ! is_array( $amm_menu ) || empty( $amm_menu ) || ! is_array( $amm_submenu ) || empty( $amm_submenu ) ) {
 			return;
 		}
 
@@ -548,7 +545,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			$amm_trash_submenu = array();
 		}
 
-		global $menu, $submenu, $admin_page_hooks, $_registered_pages;
+		global $menu, $submenu, $admin_page_hooks, $_registered_pages, $temp_menu, $temp_submenu, $temp_admin_page_hooks;
 
 		$temp_menu             = array_values( $menu );
 		$temp_submenu          = $submenu;
@@ -558,239 +555,23 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 
 		// Iterate on the top level items.
 		foreach ( $amm_menu as $priority => $item ) {
-			$item_slug = $item[2];
-
-			if ( isset( $item['href'] ) ) {
-				$item_slug = $item['href'];
-
-				preg_match( '/page=([a-z_0-9]*)/', $item['href'], $matches );
-				if ( isset( $matches[1] ) ) {
-					$item_slug = $matches[1];
-				}
-			}
-
-			// It was originally a top level item as well. It's a match!
-			foreach ( $temp_menu as $key => $m_item ) {
-
-				if ( $item_slug === $m_item[2] ) {
-					if ( $this->is_menu_separator( $m_item ) ) {
-						$menu[] = $m_item;
-					} else {
-						add_menu_page(
-							$m_item[3], // Page title.
-							$m_item[0], // Menu title.
-							$m_item[1], // Capability.
-							$item_slug, // Slug.
-							'', // Function.
-							$m_item[6], // Icon.
-							$priority // Position.
-						);
-
-						if ( isset( $amm_submenu[ $m_item[2] ] ) ) {
-							$amm_submenu[ $item_slug ] = $amm_submenu[ $m_item[2] ];
-						}
-					}
-
-					unset( $temp_menu[ $key ] );
-					continue 2;
-				}
-			}
-
-			// It must be a submenu item moved to the top level.
-			foreach ( $temp_submenu as $key => $parent ) {
-				foreach ( $parent as $sub_key => $sub_item ) {
-					if ( $item_slug === $sub_item[2] ) {
-						$hook_name = get_plugin_page_hookname( $sub_item[2], $key );
-
-						if ( ! isset( $sub_item[3] ) ) {
-							$sub_item[3] = $sub_item[0];
-						}
-
-						$new_page = add_menu_page(
-							$sub_item[3], // Page title.
-							$sub_item[0], // Menu title.
-							$sub_item[1], // Capability.
-							$sub_item[2], // Slug.
-							'', // Function.
-							$item[6], // Icon.
-							$priority // Position.
-						);
-
-						// Add hook name of the former parent as CSS class to the new item.
-						$menu[ $priority ][4] .= ' ' . get_plugin_page_hookname( $key, $key );
-
-						$this->switch_menu_item_filters( $hook_name, $new_page );
-
-						unset( $temp_submenu[ $key ][ $sub_key ] );
-
-						continue 3;
-					}
-				}
-			}
-
-			// It must be a custom menu item.
-			if ( isset( $item['id'] ) && false !== strpos( $item['id'], 'custom-item' ) ) {
-				$menu[] = array(
-					0    => $item[0],
-					1    => $item[1],
-					2    => $item['href'],
-					3    => $item[3],
-					4    => $item[4],
-					5    => $item[5],
-					6    => $item[6],
-					'id' => $item['id'],
-				);
-				continue;
-			}
-
-			// It must be a separator.
-			if ( $this->is_menu_separator( $item ) ) {
-				$menu[] = $item;
-				continue;
-			}
+			$this->maybe_match_top_level_menu_item( $item, $priority );
 		}
 
-		/**
-		 * Loop through admin page hooks.
-		 *
-		 * We want to keep the original, untranslated values.
-		 */
-		foreach ( $admin_page_hooks as $key => &$value ) {
-			if ( isset( $temp_admin_page_hooks[ $key ] ) ) {
-				$value = $temp_admin_page_hooks[ $key ];
-			}
-		}
+		$this->keep_admin_page_hooks();
 
 		// Iterate on all our submenu items.
 		foreach ( $amm_submenu as $parent_page => $page ) {
-			foreach ( $page as $priority => $item ) {
-				// Iterate on original top level menu items.
-				foreach ( $temp_menu as $m_key => $m_item ) {
-					if ( $item[2] === $m_item[2] ) {
-						$hook_name = get_plugin_page_hookname( $m_item[2], $parent_page );
-
-						$new_page = add_submenu_page(
-							$parent_page, // Parent Slug.
-							$m_item[0], // Page title.
-							$m_item[0], // Menu title.
-							$m_item[1], // Capability.
-							$m_item[2] // Slug.
-						);
-
-						// Don't loose grand children.
-						if ( isset( $temp_submenu[ $m_item[2] ] ) ) {
-							foreach ( $temp_submenu[ $m_item[2] ] as $s_item ) {
-								$hook_name = get_plugin_page_hookname( $s_item[2], $m_item[2] );
-
-								$new_page = add_submenu_page(
-									$parent_page, // Parent Slug.
-									$s_item[3], // Page title.
-									$s_item[0], // Menu title.
-									$s_item[1], // Capability.
-									$s_item[2] // Slug.
-								);
-
-								$this->switch_menu_item_filters( $hook_name, $new_page );
-
-								// Add original parent slug to sub menu item.
-								end( $submenu[ $parent_page ] );
-								$submenu[ $parent_page ][ key( $submenu[ $parent_page ] ) ]['original_parent'] = $m_item[2];
-
-								unset( $s_item );
-							}
-						}
-
-						$this->switch_menu_item_filters( $hook_name, $new_page );
-
-						unset( $temp_menu[ $m_key ] );
-
-						continue 2;
-					}
-				}
-
-				// Iterate on original submenu items.
-				foreach ( $temp_submenu as $s_parent_page => &$s_page ) {
-					foreach ( $s_page as $s_priority => &$s_item ) {
-						if ( $item[2] === $s_item[2] ) {
-							$hook_name = get_plugin_page_hookname( $s_item[2], $s_parent_page );
-
-							$new_page = add_submenu_page(
-								$parent_page, // Parent Slug.
-								isset( $s_item[3] ) ? $s_item[3] : $s_item[0], // Page title.
-								$s_item[0], // Menu title.
-								$s_item[1], // Capability.
-								$s_item[2] // Slug.
-							);
-
-							$this->switch_menu_item_filters( $hook_name, $new_page );
-
-							unset( $temp_submenu[ $s_parent_page ][ $s_priority ] );
-
-							continue 2;
-						}
-					}
-				}
-
-				// It must be a custom menu item.
-				if ( isset( $item['id'] ) && false !== strpos( $item['id'], 'custom-item' ) ) {
-					$submenu[ $parent_page ][] = array(
-						0    => $item[0],
-						1    => $item[1],
-						2    => $item['href'],
-						'id' => $item['id'],
-					);
-					continue;
-				}
-
-				// It must be a separator.
-				if ( $this->is_menu_separator( $item ) ) {
-					$submenu[ $parent_page ][] = $item;
-					continue;
-				}
-			}
+			$this->maybe_match_submenu_item( $page, $parent_page );
 		}
 
 		// Remove trashed items.
-		foreach ( $amm_trash_menu as $priority => $item ) {
-			// It was originally a top level item as well. It's a match!
-			foreach ( $temp_menu as $key => $m_item ) {
-				if ( $item[2] === $m_item[2] ) {
-					unset( $temp_menu[ $key ] );
-					continue 2;
-				}
-			}
-
-			// It must be a submenu item moved to the top level.
-			foreach ( $temp_submenu as $key => $parent ) {
-				foreach ( $parent as $sub_key => $sub_item ) {
-					if ( $item[2] === $sub_item[2] ) {
-						unset( $temp_submenu[ $key ][ $sub_key ] );
-						continue 3;
-					}
-				}
-			}
+		foreach ( $amm_trash_menu as $item ) {
+			$this->trash_menu_item( $item );
 		}
 
 		foreach ( $amm_trash_submenu as $parent_page => $page ) {
-			foreach ( $page as $priority => $item ) {
-				// Iterate on original submenu items.
-				foreach ( $temp_submenu as $s_parent_page => $s_page ) {
-					foreach ( $s_page as $s_priority => $s_item ) {
-						if ( $item[2] === $s_item[2] && $parent_page === $s_parent_page ) {
-							unset( $temp_submenu[ $s_parent_page ][ $s_priority ] );
-							continue 2;
-						}
-					}
-				}
-
-				// It must be a top level item moved to submenu.
-				foreach ( $temp_menu as $m_key => $m_item ) {
-					if ( $item[2] === $m_item[2] ) {
-						unset( $temp_menu[ $m_key ] );
-						continue 2;
-					}
-				}
-			}
+			$this->trash_submenu_item( $page, $parent_page );
 		}
 
 		/**
@@ -809,6 +590,289 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				$submenu[ $parent ] = array_merge( $submenu[ $parent ], $item );
 			} else {
 				$submenu[ $parent ] = $item;
+			}
+		}
+	}
+
+	/**
+	 * Move a menu item to the trash.
+	 *
+	 * @param array $item     The menu item.
+	 */
+	protected function trash_menu_item( $item ) {
+		global $temp_menu, $temp_submenu;
+		// It was originally a top level item as well. It's a match!
+		foreach ( $temp_menu as $key => $m_item ) {
+			if ( $item[2] === $m_item[2] ) {
+				unset( $temp_menu[ $key ] );
+				return;
+			}
+		}
+
+		// It must be a submenu item moved to the top level.
+		foreach ( $temp_submenu as $key => $parent ) {
+			foreach ( $parent as $sub_key => $sub_item ) {
+				if ( $item[2] === $sub_item[2] ) {
+					unset( $temp_submenu[ $key ][ $sub_key ] );
+					return;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Move a submenu item to the trash.
+	 *
+	 * @param array $page        The submenu item.
+	 * @param int   $parent_page The item's parent.
+	 */
+	protected function trash_submenu_item( $page, $parent_page ) {
+		global $temp_menu, $temp_submenu;
+
+		foreach ( $page as $item ) {
+			// Iterate on original submenu items.
+			foreach ( $temp_submenu as $s_parent_page => $s_page ) {
+				foreach ( $s_page as $s_priority => $s_item ) {
+					if ( $item[2] === $s_item[2] && $parent_page === $s_parent_page ) {
+						unset( $temp_submenu[ $s_parent_page ][ $s_priority ] );
+						continue 2;
+					}
+				}
+			}
+
+			// It must be a top level item moved to submenu.
+			foreach ( $temp_menu as $m_key => $m_item ) {
+				if ( $item[2] === $m_item[2] ) {
+					unset( $temp_menu[ $m_key ] );
+					continue 2;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Get the slug of a menu item.
+	 *
+	 * @param array $item Menu item.
+	 *
+	 * @return string
+	 */
+	protected function get_menu_item_slug( $item ) {
+		$item_slug = $item[2];
+
+		if ( isset( $item['href'] ) ) {
+			$item_slug = $item['href'];
+
+			preg_match( '/page=([a-z_0-9]*)/', $item['href'], $matches );
+			if ( isset( $matches[1] ) ) {
+				$item_slug = $matches[1];
+			}
+		}
+
+		return $item_slug;
+	}
+
+	/**
+	 * Try to match a menu item with its original entry.
+	 *
+	 * @param array $item     The menu item.
+	 * @param int   $priority The item's priority in the menu.
+	 */
+	protected function maybe_match_top_level_menu_item( $item, $priority ) {
+		global $menu, $temp_menu, $temp_submenu;
+
+		$item_slug = $this->get_menu_item_slug( $item );
+
+		// It was originally a top level item as well. It's a match!
+		foreach ( $temp_menu as $key => $m_item ) {
+			if ( $item_slug === $m_item[2] ) {
+				if ( $this->is_menu_separator( $m_item ) ) {
+					$menu[] = $m_item;
+				} else {
+					add_menu_page(
+						$m_item[3], // Page title.
+						$m_item[0], // Menu title.
+						$m_item[1], // Capability.
+						$item_slug, // Slug.
+						'', // Function.
+						$m_item[6], // Icon.
+						$priority // Position.
+					);
+
+					if ( isset( $amm_submenu[ $m_item[2] ] ) ) {
+						$amm_submenu[ $item_slug ] = $amm_submenu[ $m_item[2] ];
+					}
+				}
+
+				unset( $temp_menu[ $key ] );
+
+				return;
+			}
+		}
+
+		// It must be a submenu item moved to the top level.
+		foreach ( $temp_submenu as $key => $parent ) {
+			foreach ( $parent as $sub_key => $sub_item ) {
+				if ( $item_slug === $sub_item[2] ) {
+					$hook_name = get_plugin_page_hookname( $sub_item[2], $key );
+
+					if ( ! isset( $sub_item[3] ) ) {
+						$sub_item[3] = $sub_item[0];
+					}
+
+					$new_page = add_menu_page(
+						$sub_item[3], // Page title.
+						$sub_item[0], // Menu title.
+						$sub_item[1], // Capability.
+						$sub_item[2], // Slug.
+						'', // Function.
+						$item[6], // Icon.
+						$priority // Position.
+					);
+
+					// Add hook name of the former parent as CSS class to the new item.
+					$menu[ $priority ][4] .= ' ' . get_plugin_page_hookname( $key, $key );
+
+					$this->switch_menu_item_filters( $hook_name, $new_page );
+
+					unset( $temp_submenu[ $key ][ $sub_key ] );
+
+					return;
+				}
+			}
+		}
+
+		// It must be a custom menu item.
+		if ( isset( $item['id'] ) && false !== strpos( $item['id'], 'custom-item' ) ) {
+			$menu[] = array(
+				0    => $item[0],
+				1    => $item[1],
+				2    => $item['href'],
+				3    => $item[3],
+				4    => $item[4],
+				5    => $item[5],
+				6    => $item[6],
+				'id' => $item['id'],
+			);
+
+			return;
+		}
+
+		// It must be a separator.
+		if ( $this->is_menu_separator( $item ) ) {
+			$menu[] = $item;
+
+			return;
+		}
+	}
+
+	/**
+	 * Try to match a menu item with its original entry.
+	 *
+	 * @param array $page        The submenu item.
+	 * @param int   $parent_page The item's parent.
+	 */
+	protected function maybe_match_submenu_item( $page, $parent_page ) {
+		global $submenu, $temp_menu, $temp_submenu;
+
+		foreach ( $page as $item ) {
+			// Iterate on original top level menu items.
+			foreach ( $temp_menu as $m_key => $m_item ) {
+				if ( $item[2] === $m_item[2] ) {
+					$hook_name = get_plugin_page_hookname( $m_item[2], $parent_page );
+
+					$new_page = add_submenu_page(
+						$parent_page, // Parent Slug.
+						$m_item[0], // Page title.
+						$m_item[0], // Menu title.
+						$m_item[1], // Capability.
+						$m_item[2] // Slug.
+					);
+
+					// Don't loose grand children.
+					if ( isset( $temp_submenu[ $m_item[2] ] ) ) {
+						foreach ( $temp_submenu[ $m_item[2] ] as $s_item ) {
+							$hook_name = get_plugin_page_hookname( $s_item[2], $m_item[2] );
+
+							$new_page = add_submenu_page(
+								$parent_page, // Parent Slug.
+								$s_item[3], // Page title.
+								$s_item[0], // Menu title.
+								$s_item[1], // Capability.
+								$s_item[2] // Slug.
+							);
+
+							$this->switch_menu_item_filters( $hook_name, $new_page );
+
+							// Add original parent slug to sub menu item.
+							end( $submenu[ $parent_page ] );
+							$submenu[ $parent_page ][ key( $submenu[ $parent_page ] ) ]['original_parent'] = $m_item[2];
+
+							unset( $s_item );
+						}
+					}
+
+					$this->switch_menu_item_filters( $hook_name, $new_page );
+
+					unset( $temp_menu[ $m_key ] );
+
+					continue 2;
+				}
+			}
+
+			// Iterate on original submenu items.
+			foreach ( $temp_submenu as $s_parent_page => &$s_page ) {
+				foreach ( $s_page as $s_priority => &$s_item ) {
+					if ( $item[2] === $s_item[2] ) {
+						$hook_name = get_plugin_page_hookname( $s_item[2], $s_parent_page );
+
+						$new_page = add_submenu_page(
+							$parent_page, // Parent Slug.
+							isset( $s_item[3] ) ? $s_item[3] : $s_item[0], // Page title.
+							$s_item[0], // Menu title.
+							$s_item[1], // Capability.
+							$s_item[2] // Slug.
+						);
+
+						$this->switch_menu_item_filters( $hook_name, $new_page );
+
+						unset( $temp_submenu[ $s_parent_page ][ $s_priority ] );
+
+						continue 2;
+					}
+				}
+			}
+
+			// It must be a custom menu item.
+			if ( isset( $item['id'] ) && false !== strpos( $item['id'], 'custom-item' ) ) {
+				$submenu[ $parent_page ][] = array(
+					0    => $item[0],
+					1    => $item[1],
+					2    => $item['href'],
+					'id' => $item['id'],
+				);
+				continue;
+			}
+
+			// It must be a separator.
+			if ( $this->is_menu_separator( $item ) ) {
+				$submenu[ $parent_page ][] = $item;
+				continue;
+			}
+		}
+	}
+
+	/**
+	 * Loop through admin page hooks.
+	 *
+	 * We want to keep the original, untranslated values.
+	 */
+	protected function keep_admin_page_hooks() {
+		global $admin_page_hooks, $temp_admin_page_hooks;
+
+		foreach ( $admin_page_hooks as $key => &$value ) {
+			if ( isset( $temp_admin_page_hooks[ $key ] ) ) {
+				$value = $temp_admin_page_hooks[ $key ];
 			}
 		}
 	}
