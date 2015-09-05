@@ -561,11 +561,11 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			$item_slug = $item[2];
 
 			if ( isset( $item['href'] ) ) {
+				$item_slug = $item['href'];
+
 				preg_match( '/page=([a-z_0-9]*)/', $item['href'], $matches );
 				if ( isset( $matches[1] ) ) {
 					$item_slug = $matches[1];
-				} else {
-					$item_slug = $item['href'];
 				}
 			}
 
