@@ -242,7 +242,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	}
 
 	/**
-	 * Prepare a top-evel menu item.
+	 * Prepare a top-level menu item.
 	 *
 	 * @param array $menu_item A single menu item.
 	 *
@@ -350,7 +350,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	protected function get_raw_data() {
 		global $HTTP_RAW_POST_DATA;
 		// A bug in PHP < 5.2.2 makes $HTTP_RAW_POST_DATA not set by default,
-		// but we can do it ourself.
+		// but we can do it ourselves.
 		if ( ! isset( $HTTP_RAW_POST_DATA ) ) {
 			$HTTP_RAW_POST_DATA = file_get_contents( 'php://input' );
 		}
@@ -380,10 +380,8 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	/**
 	 * Update the menu.
 	 *
-	 * The passed array is splitted up in a menu and submenu array,
+	 * The passed array is split up in a menu and submenu array,
 	 * just like WordPress uses it in the backend.
-	 *
-	 * Borrows
 	 */
 	public function update_menu() {
 		$data = json_decode( $this->get_raw_data(), true );
@@ -564,13 +562,13 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 						$menu[] = $m_item;
 					} else {
 						add_menu_page(
-							$m_item[3], // Page title
-							$m_item[0], // Menu title
-							$m_item[1], // Capability
-							$item_slug, // Slug
-							'', // Function
-							$m_item[6], // Icon
-							$priority // Position
+							$m_item[3], // Page title.
+							$m_item[0], // Menu title.
+							$m_item[1], // Capability.
+							$item_slug, // Slug.
+							'', // Function.
+							$m_item[6], // Icon.
+							$priority // Position.
 						);
 
 						if ( isset( $amm_submenu[ $m_item[2] ] ) ) {
@@ -594,13 +592,13 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 						}
 
 						$new_page = add_menu_page(
-							$sub_item[3], // Page title
-							$sub_item[0], // Menu title
-							$sub_item[1], // Capability
-							$sub_item[2], // Slug
-							'', // Function
-							$item[6], // Icon
-							$priority // Position
+							$sub_item[3], // Page title.
+							$sub_item[0], // Menu title.
+							$sub_item[1], // Capability.
+							$sub_item[2], // Slug.
+							'', // Function.
+							$item[6], // Icon.
+							$priority // Position.
 						);
 
 						// Add hook name of the former parent as CSS class to the new item.
@@ -657,11 +655,11 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 						$hook_name = get_plugin_page_hookname( $m_item[2], $parent_page );
 
 						$new_page = add_submenu_page(
-							$parent_page, // Parent Slug
-							$m_item[0], // Page title
-							$m_item[0], // Menu title
-							$m_item[1], // Capability
-							$m_item[2] // Slug
+							$parent_page, // Parent Slug.
+							$m_item[0], // Page title.
+							$m_item[0], // Menu title.
+							$m_item[1], // Capability.
+							$m_item[2] // Slug.
 						);
 
 						// Don't loose grand children.
@@ -670,11 +668,11 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 								$hook_name = get_plugin_page_hookname( $s_item[2], $m_item[2] );
 
 								$new_page = add_submenu_page(
-									$parent_page, // Parent Slug
-									$s_item[3], // Page title
-									$s_item[0], // Menu title
-									$s_item[1], // Capability
-									$s_item[2] // Slug
+									$parent_page, // Parent Slug.
+									$s_item[3], // Page title.
+									$s_item[0], // Menu title.
+									$s_item[1], // Capability.
+									$s_item[2] // Slug.
 								);
 
 								$this->switch_menu_item_filters( $hook_name, $new_page );
@@ -702,11 +700,11 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 							$hook_name = get_plugin_page_hookname( $s_item[2], $s_parent_page );
 
 							$new_page = add_submenu_page(
-								$parent_page, // Parent Slug
-								isset( $s_item[3] ) ? $s_item[3] : $s_item[0], // Page title
-								$s_item[0], // Menu title
-								$s_item[1], // Capability
-								$s_item[2] // Slug
+								$parent_page, // Parent Slug.
+								isset( $s_item[3] ) ? $s_item[3] : $s_item[0], // Page title.
+								$s_item[0], // Menu title.
+								$s_item[1], // Capability.
+								$s_item[2] // Slug.
 							);
 
 							$this->switch_menu_item_filters( $hook_name, $new_page );
