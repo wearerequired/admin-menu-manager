@@ -495,6 +495,21 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	}
 
 	/**
+	 * Check if a menu item is a menu separator.
+	 *
+	 * @param array $item Top-level or sub-level menu item.
+	 *
+	 * @return bool
+	 */
+	protected function is_menu_separator( $item ) {
+		if ( isset( $item[4] ) && 'wp-menu-separator' === $item[4] ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Here's where the magic happens!
 	 *
 	 * Compare our menu structure with the original.
@@ -558,7 +573,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			foreach ( $temp_menu as $key => $m_item ) {
 
 				if ( $item_slug === $m_item[2] ) {
-					if ( 'wp-menu-separator' === $m_item[4] ) {
+					if ( $this->is_menu_separator( $m_item ) ) {
 						$menu[] = $m_item;
 					} else {
 						add_menu_page(
@@ -629,7 +644,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			}
 
 			// It must be a separator.
-			if ( 'wp-menu-separator' === $item[4] ) {
+			if ( $this->is_menu_separator( $item ) ) {
 				$menu[] = $item;
 				continue;
 			}
@@ -728,7 +743,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 				}
 
 				// It must be a separator.
-				if ( isset( $item[4] ) && 'wp-menu-separator' === $item[4] ) {
+				if ( $this->is_menu_separator( $item ) ) {
 					$submenu[ $parent_page ][] = $item;
 					continue;
 				}
