@@ -492,12 +492,13 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	}
 
 	/**
+	 * Get menu data from database.
 	 *
 	 * @param string $type Menu type.
 	 *
 	 * @return array
 	 */
-	protected function get_menu_data( $type  ) {
+	protected function get_menu_data( $type ) {
 		$menu = array();
 		switch ( $type ) {
 			case 'menu':
@@ -614,7 +615,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	/**
 	 * Move a menu item to the trash.
 	 *
-	 * @param array $item     The menu item.
+	 * @param array $item The menu item.
 	 */
 	protected function trash_menu_item( $item ) {
 		global $temp_menu, $temp_submenu;
@@ -622,6 +623,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 		foreach ( $temp_menu as $key => $m_item ) {
 			if ( $item[2] === $m_item[2] ) {
 				unset( $temp_menu[ $key ] );
+
 				return;
 			}
 		}
@@ -631,6 +633,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			foreach ( $parent as $sub_key => $sub_item ) {
 				if ( $item[2] === $sub_item[2] ) {
 					unset( $temp_submenu[ $key ][ $sub_key ] );
+
 					return;
 				}
 			}
