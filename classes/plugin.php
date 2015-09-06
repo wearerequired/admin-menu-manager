@@ -341,24 +341,6 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	}
 
 	/**
-	 * Retrieve the raw request entity (body)
-	 *
-	 * @see WP_REST_Server
-	 *
-	 * @return string
-	 */
-	protected function get_raw_data() {
-		global $HTTP_RAW_POST_DATA;
-		// A bug in PHP < 5.2.2 makes $HTTP_RAW_POST_DATA not set by default,
-		// but we can do it ourselves.
-		if ( ! isset( $HTTP_RAW_POST_DATA ) ) {
-			$HTTP_RAW_POST_DATA = file_get_contents( 'php://input' );
-		}
-
-		return $HTTP_RAW_POST_DATA;
-	}
-
-	/**
 	 * Ajax Handler.
 	 *
 	 * Works for saving and resetting the menu.
@@ -384,7 +366,7 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * just like WordPress uses it in the backend.
 	 */
 	public function update_menu() {
-		$data = json_decode( $this->get_raw_data(), true );
+		$data = json_decode( file_get_contents( 'php://input' ), true );
 
 		if ( ! is_array( $data ) || empty( $data ) ) {
 			die( 1 );
