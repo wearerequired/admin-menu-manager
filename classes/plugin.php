@@ -596,12 +596,25 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 			$this->trash_submenu_item( $page, $parent_page );
 		}
 
-		/**
+		/*
 		 * Append elements that haven't been added to a menu yet.
 		 *
 		 * This happens when installing a new plugin for example.
 		 */
 		$menu = array_merge( $menu, $temp_menu );
+
+		// Move old submenu items to the new submenu array.
+		$this->move_submenu_items();
+	}
+
+	/**
+	 * Move old submenu items to the new submenu array.
+	 *
+	 * They may not have been added to the submenu yet,
+	 * which happens when installing a new plugin for example.
+	 */
+	protected function move_submenu_items() {
+		global $temp_submenu, $submenu;
 
 		foreach ( $temp_submenu as $parent => $item ) {
 			if ( '' === $parent || empty( $item ) || ! is_array( $item ) ) {
