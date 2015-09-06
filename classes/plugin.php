@@ -510,6 +510,44 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	}
 
 	/**
+	 *
+	 * @param string $type Menu type.
+	 *
+	 * @return array
+	 */
+	protected function get_menu_data( $type  ) {
+		$menu = array();
+		switch ( $type ) {
+			case 'menu':
+				$menu = get_user_option( 'amm_menu' );
+
+				if ( ! $menu ) {
+					$menu = get_option( 'amm_menu', array() );
+				}
+				break;
+			case 'submenu':
+				$menu = get_user_option( 'amm_submenu' );
+
+				if ( ! $menu ) {
+					$menu = get_option( 'amm_submenu', array() );
+				}
+				break;
+			case 'trash_menu':
+				$menu = get_user_option( 'amm_trash_menu' );
+				break;
+			case 'trash_submenu':
+				$menu = get_user_option( 'amm_trash_submenu' );
+				break;
+		}
+
+		if ( false === $menu ) {
+			$menu = array();
+		}
+
+		return (array) apply_filters( 'amm_menu_data', $menu, $type );
+	}
+
+	/**
 	 * Here's where the magic happens!
 	 *
 	 * Compare our menu structure with the original.
@@ -519,30 +557,14 @@ class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
 	 * 0 = menu_title, 1 = capability, 2 = menu_slug, 3 = page_title, 4 = classes
 	 */
 	public function alter_admin_menu() {
-		$amm_menu          = apply_filters( 'amm_menu_data', get_user_option( 'amm_menu' ), 'menu' );
-		$amm_submenu       = apply_filters( 'amm_menu_data', get_user_option( 'amm_submenu' ), 'submenu' );
-		$amm_trash_menu    = apply_filters( 'amm_menu_data', get_user_option( 'amm_trash_menu' ), 'trash_menu' );
-		$amm_trash_submenu = apply_filters( 'amm_menu_data', get_user_option( 'amm_trash_submenu' ), 'trash_submenu' );
-
-		if ( ! $amm_menu ) {
-			$amm_menu = get_option( 'amm_menu', array() );
-		}
-
-		if ( ! $amm_submenu ) {
-			$amm_submenu = get_option( 'amm_submenu', array() );
-		}
+		$amm_menu          = $this->get_menu_data( 'menu' );
+		$amm_submenu       = $this->get_menu_data( 'submenu' );
+		$amm_trash_menu    = $this->get_menu_data( 'trash_menu' );
+		$amm_trash_submenu = $this->get_menu_data( 'trash_submenu' );
 
 		// Bail early when there's no custom menu data.
-		if ( ! is_array( $amm_menu ) || empty( $amm_menu ) || ! is_array( $amm_submenu ) || empty( $amm_submenu ) ) {
+		if ( empty( $amm_menu ) || empty( $amm_submenu ) ) {
 			return;
-		}
-
-		if ( ! is_array( $amm_trash_menu ) ) {
-			$amm_trash_menu = array();
-		}
-
-		if ( ! is_array( $amm_trash_submenu ) ) {
-			$amm_trash_submenu = array();
 		}
 
 		global $menu, $submenu, $admin_page_hooks, $_registered_pages, $temp_menu, $temp_submenu, $temp_admin_page_hooks;
