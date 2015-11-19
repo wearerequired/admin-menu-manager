@@ -212,18 +212,14 @@ class Admin_Menu_Manager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array
+	 * @return array Top level menu items.
 	 */
 	public function get_admin_menu() {
 		global $menu;
 
-		if ( null === $menu ) {
-			$menu = array();
-		}
-
 		$menu_items = array();
 
-		foreach ( $menu as $menu_item ) {
+		foreach ( (array) $menu as $menu_item ) {
 			$menu_items[] = $this->get_admin_menu_item( $menu_item );
 		}
 
