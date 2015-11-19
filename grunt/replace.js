@@ -8,7 +8,7 @@ module.exports = {
 		}]
 	},
 	plugin    : {
-		src         : ['classes/plugin.php'],
+		src         : ['classes/class-admin-menu-manager.php'],
 		overwrite   : true,
 		replacements: [
 			{

@@ -44,9 +44,9 @@ $admin_menu_manager_requirements_check = new Admin_Menu_Manager_Requirements_Che
 
 if ( $admin_menu_manager_requirements_check->passes() ) {
 	// Pull in the plugin classes and initialize.
-	include( dirname( __FILE__ ) . '/lib/wp-stack-plugin.php' );
-	include( dirname( __FILE__ ) . '/classes/plugin.php' );
-	Admin_Menu_Manager_Plugin::start( __FILE__ );
+	include( dirname( __FILE__ ) . '/classes/class-admin-menu-manager.php' );
+	$admin_menu_manager = new Admin_Menu_Manager();
+	add_action( 'plugins_loaded', array( $admin_menu_manager, 'add_hooks' ) );
 }
 
 unset( $admin_menu_manager_requirements_check );

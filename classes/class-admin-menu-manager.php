@@ -10,64 +10,69 @@ defined( 'WPINC' ) or die;
 /**
  * Admin_Menu_Manager_Plugin class.
  */
-class Admin_Menu_Manager_Plugin extends WP_Stack_Plugin2 {
-	/**
-	 * Instance of this class.
-	 *
-	 * @var self
-	 */
-	protected static $instance;
-
+class Admin_Menu_Manager {
 	/**
 	 * Plugin version.
 	 */
 	const VERSION = '2.0.0-alpha';
 
 	/**
-	 * Constructs the object, hooks in to `plugins_loaded`.
-	 */
-	protected function __construct() {
-		$this->hook( 'plugins_loaded', 'add_hooks' );
-	}
-
-	/**
 	 * Adds hooks.
 	 */
 	public function add_hooks() {
-		$this->hook( 'init' );
+		// Load the plugin textdomain.
+		add_action( 'init', array( $this, 'load_textdomain' ) );
 
 		// Load admin CSS and JavaScript.
-		$this->hook( 'admin_enqueue_scripts', 5 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 5 );
 
 		// Handle form submissions.
-		$this->hook( 'wp_ajax_adminmenu', 'ajax_handler' );
+		add_action( 'wp_ajax_adminmenu', array( $this, 'ajax_handler' ) );
 
 		// Modify admin menu.
-		$this->hook( 'admin_menu', 'alter_admin_menu', 999 );
+		add_action( 'admin_menu', array( $this, 'alter_admin_menu' ), 999 );
 
 		// Tell WordPress we're changing the menu order.
 		add_filter( 'custom_menu_order', '__return_true' );
 
 		// Add our filter way later, after other plugins have defined the menu.
-		$this->hook( 'menu_order', 'alter_admin_menu_order', 9999 );
+		add_action( 'menu_order', array( $this, 'alter_admin_menu_order' ), 9999 );
+	}
+
+	/**
+	 * Returns the URL to the plugin directory
+	 *
+	 * @return string The URL to the plugin directory.
+	 */
+	public function get_url() {
+		return plugin_dir_url( __DIR__ );
+	}
+
+	/**
+	 * Returns the path to the plugin directory.
+	 *
+	 * @return string The absolute path to the plugin directory.
+	 */
+	public function get_path() {
+		return plugin_dir_path( __DIR__ );
 	}
 
 	/**
 	 * Initializes the plugin, registers textdomain, etc.
 	 */
-	public function init() {
-		$this->load_textdomain( 'admin-menu-manager', '/languages' );
+	public function load_textdomain() {
+		load_plugin_textdomain( 'admin-menu-manager', false, basename( $this->get_path() ) . '/languages' );
 	}
 
 	/**
 	 * Load our JavaScript and CSS if the user has enough capabilities to edit the menu.
 	 */
 	public function admin_enqueue_scripts() {
-		if ( is_network_admin() || is_customize_preview() ) {
-			return;
-		}
-
-		if ( ! apply_filters( 'amm_user_can_change_menu', current_user_can( 'read' ) ) ) {
+		if (
+			is_network_admin() ||
+			is_customize_preview() ||
+			! (bool) apply_filters( 'amm_user_can_change_menu', current_user_can( 'read' ) )
+		) {
 			return;
 		}
 
