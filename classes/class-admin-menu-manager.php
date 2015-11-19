@@ -71,6 +71,15 @@ class Admin_Menu_Manager {
 		if (
 			is_network_admin() ||
 			is_customize_preview() ||
+			/**
+			 * Filter whether the user is allowed to change the menu.
+			 *
+			 * Defaults to true if the user has the permission to read posts.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param bool $can_change_menu Whether the user can change the menu.
+			 */
 			! (bool) apply_filters( 'amm_user_can_change_menu', current_user_can( 'read' ) )
 		) {
 			return;
@@ -347,6 +356,7 @@ class Admin_Menu_Manager {
 	 * Works for saving and resetting the menu.
 	 */
 	public function ajax_handler() {
+		/* This filter is documented in classes/class-admin-menu-manager.php */
 		if ( ! apply_filters( 'amm_user_can_change_menu', current_user_can( 'read' ) ) ) {
 			return;
 		}
@@ -376,6 +386,16 @@ class Admin_Menu_Manager {
 		$menu = $this->update_menu_loop( $data );
 		$type = isset( $_REQUEST['type'] ) && 'trash' === $_REQUEST['type'] ? 'trash' : 'menu';
 
+		/**
+		 * Runs before the menu is updated.
+		 *
+		 * Use this hook to modify the menu before it's saved.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param string $type Either 'trash' or 'menu'.
+		 * @param array  $menu The menu data.
+		 */
 		do_action( 'amm_before_menu_update', $type, $menu );
 
 		if ( 'trash' === $type ) {
@@ -466,6 +486,13 @@ class Admin_Menu_Manager {
 	public function reset_menu() {
 		$type = isset( $_REQUEST['type'] ) && 'trash' === $_REQUEST['type'] ? 'trash' : 'menu';
 
+		/**
+		 * Fires before the menu is reset.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param string $type Either 'trash' or 'menu'.
+		 */
 		do_action( 'amm_before_menu_reset', $type );
 
 		if ( 'trash' === $type ) {
@@ -528,6 +555,14 @@ class Admin_Menu_Manager {
 			$menu = array();
 		}
 
+		/**
+		 * Filter the menu data.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param array  $menu The menu data.
+		 * @param string $type Either 'trash' or 'menu'.
+		 */
 		return (array) apply_filters( 'amm_menu_data', $menu, $type );
 	}
 
