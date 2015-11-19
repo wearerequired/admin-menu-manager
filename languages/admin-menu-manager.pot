@@ -11,7 +11,7 @@ msgstr ""
 "PO-Revision-Date: 2015-MO-DA HO:MI+ZONE\n"
 "Last-Translator: required+\n"
 "Language-Team: required+ <support@required.ch>\n"
-"X-Generator: grunt-wp-i18n 0.5.2\n"
+"X-Generator: grunt-wp-i18n 0.5.3\n"
 "X-Poedit-KeywordsList: "
 "__;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_"
 "attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
@@ -24,83 +24,85 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: classes/plugin.php:157
+#: classes/class-admin-menu-manager.php:162
 msgid "Edit Menu"
 msgstr ""
 
-#: classes/plugin.php:158
+#: classes/class-admin-menu-manager.php:163
 msgid "Saving&hellip;"
 msgstr ""
 
-#: classes/plugin.php:159
+#: classes/class-admin-menu-manager.php:164
 msgid "Saved!"
 msgstr ""
 
-#: classes/plugin.php:161
+#: classes/class-admin-menu-manager.php:166
 msgid "Save changes"
 msgstr ""
 
-#: classes/plugin.php:162
+#: classes/class-admin-menu-manager.php:167
 msgid "Add new item"
 msgstr ""
 
-#: classes/plugin.php:163
+#: classes/class-admin-menu-manager.php:168
 msgid "Separator"
 msgstr ""
 
-#: classes/plugin.php:164
+#: classes/class-admin-menu-manager.php:169
 msgid "Custom item"
 msgstr ""
 
-#: classes/plugin.php:165 classes/plugin.php:181
+#: classes/class-admin-menu-manager.php:170
+#: classes/class-admin-menu-manager.php:186
 msgid "Import"
 msgstr ""
 
-#: classes/plugin.php:166 classes/plugin.php:174
+#: classes/class-admin-menu-manager.php:171
+#: classes/class-admin-menu-manager.php:179
 msgid "Export"
 msgstr ""
 
-#: classes/plugin.php:167
+#: classes/class-admin-menu-manager.php:172
 msgid "Undo change"
 msgstr ""
 
-#: classes/plugin.php:168
+#: classes/class-admin-menu-manager.php:173
 msgid "Redo change"
 msgstr ""
 
-#: classes/plugin.php:169
+#: classes/class-admin-menu-manager.php:174
 msgid "Reset menu"
 msgstr ""
 
-#: classes/plugin.php:175
+#: classes/class-admin-menu-manager.php:180
 msgid "Export your menu data to another site. Copy the text below:"
 msgstr ""
 
-#: classes/plugin.php:182
+#: classes/class-admin-menu-manager.php:187
 msgid "Import your menu data from another site. Insert the data here:"
 msgstr ""
 
-#: classes/plugin.php:187
+#: classes/class-admin-menu-manager.php:192
 msgid "Collapse menu"
 msgstr ""
 
-#: classes/plugin.php:190
+#: classes/class-admin-menu-manager.php:195
 msgid "Edit item"
 msgstr ""
 
-#: classes/plugin.php:191
+#: classes/class-admin-menu-manager.php:196
 msgid "Label:"
 msgstr ""
 
-#: classes/plugin.php:192
+#: classes/class-admin-menu-manager.php:197
 msgid "Icon:"
 msgstr ""
 
-#: classes/plugin.php:193
+#: classes/class-admin-menu-manager.php:198
 msgid "Link:"
 msgstr ""
 
-#: classes/plugin.php:194
+#: classes/class-admin-menu-manager.php:199
 msgid "Save"
 msgstr ""
 
@@ -124,22 +126,24 @@ msgstr ""
 msgid "http://required.ch"
 msgstr ""
 
-#: classes/plugin.php:173 classes/plugin.php:180
+#: classes/class-admin-menu-manager.php:178
+#: classes/class-admin-menu-manager.php:185
 msgctxt "modal close button"
 msgid "Close"
 msgstr ""
 
-#: classes/plugin.php:176 classes/plugin.php:183
+#: classes/class-admin-menu-manager.php:181
+#: classes/class-admin-menu-manager.php:188
 msgctxt "form label"
 msgid "Menu data"
 msgstr ""
 
-#: classes/plugin.php:177
+#: classes/class-admin-menu-manager.php:182
 msgctxt "button text"
 msgid "Done"
 msgstr ""
 
-#: classes/plugin.php:184
+#: classes/class-admin-menu-manager.php:189
 msgctxt "button text"
 msgid "Import"
 msgstr ""
