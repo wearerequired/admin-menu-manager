@@ -31,8 +31,6 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-defined( 'WPINC' ) or die;
-
 include( dirname( __FILE__ ) . '/lib/requirements-check.php' );
 
 $admin_menu_manager_requirements_check = new Admin_Menu_Manager_Requirements_Check( array(
@@ -40,10 +38,9 @@ $admin_menu_manager_requirements_check = new Admin_Menu_Manager_Requirements_Che
 	'php'   => '5.3',
 	'wp'    => '4.1',
 	'file'  => __FILE__,
-));
+) );
 
 if ( $admin_menu_manager_requirements_check->passes() ) {
-	// Pull in the plugin classes and initialize.
 	include( dirname( __FILE__ ) . '/classes/class-admin-menu-manager.php' );
 	$admin_menu_manager = new Admin_Menu_Manager();
 	add_action( 'plugins_loaded', array( $admin_menu_manager, 'add_hooks' ) );

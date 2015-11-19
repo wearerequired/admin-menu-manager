@@ -5,8 +5,6 @@
  * @package Admin_Menu_Manager
  */
 
-defined( 'WPINC' ) or die;
-
 /**
  * Admin_Menu_Manager_Plugin class.
  */
