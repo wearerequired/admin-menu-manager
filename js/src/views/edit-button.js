@@ -1,29 +1,29 @@
-var EditButton = Backbone.View.extend({
-	id      : 'admin-menu-manager-edit',
-	tagName : 'li',
-	template: require('templates/edit-button'),
+var EditButton = Backbone.View.extend( {
+	id:       'admin-menu-manager-edit',
+	tagName:  'li',
+	template: require( 'templates/edit-button' ),
 	isActive: false,
 
 	render: function () {
-		this.$el.html(this.template(AdminMenuManager.templates.editButton));
+		this.$el.html( this.template( AdminMenuManager.templates.editButton ) );
 		this.delegateEvents();
 		return this;
 	},
 
 	events: {
-		'click [href=#edit]'                  : 'edit',
-		'click #amm-edit-option-save'         : 'save',
-		'click #amm-edit-option-add'          : 'add',
+		'click [href=#edit]':                   'edit',
+		'click #amm-edit-option-save':          'save',
+		'click #amm-edit-option-add':           'add',
 		'click #amm-edit-option-add-separator': 'addSeparator',
-		'click #amm-edit-option-add-custom'   : 'addCustomItem',
-		'click #amm-edit-option-add-import'   : 'import',
-		'click #amm-edit-option-add-export'   : 'export',
-		'click #amm-edit-option-undo'         : 'undo',
-		'click #amm-edit-option-redo'         : 'redo',
-		'click #amm-edit-option-reset'        : 'reset'
+		'click #amm-edit-option-add-custom':    'addCustomItem',
+		'click #amm-edit-option-add-import':    'import',
+		'click #amm-edit-option-add-export':    'export',
+		'click #amm-edit-option-undo':          'undo',
+		'click #amm-edit-option-redo':          'redo',
+		'click #amm-edit-option-reset':         'reset'
 	},
 
-	edit: function (e) {
+	edit: function ( e ) {
 		e.preventDefault();
 
 		this.initEditing();
@@ -32,66 +32,66 @@ var EditButton = Backbone.View.extend({
 	initEditing: function () {
 		this.isActive = !this.isActive;
 
-		this.trigger('active', this.isActive);
-		this.$el.toggleClass('active', this.isActive);
+		this.trigger( 'active', this.isActive );
+		this.$el.toggleClass( 'active', this.isActive );
 	},
 
-	save: function (e) {
+	save: function ( e ) {
 		e.preventDefault();
 
 		this.isActive = !this.isActive;
 
-		this.trigger('active', this.isActive);
-		this.$el.toggleClass('active', this.isActive);
-		this.trigger('save', this);
+		this.trigger( 'active', this.isActive );
+		this.$el.toggleClass( 'active', this.isActive );
+		this.trigger( 'save', this );
 	},
 
-	add: function (e) {
+	add: function ( e ) {
 		e.preventDefault();
 
-		this.$el.find('#amm-edit-option-add + .amm-edit-option-choices').toggleClass('hidden');
+		this.$el.find( '#amm-edit-option-add + .amm-edit-option-choices' ).toggleClass( 'hidden' );
 
 		// Trigger the WordPress admin menu resize event
-		jQuery(document).trigger('wp-window-resized.pin-menu');
+		jQuery( document ).trigger( 'wp-window-resized.pin-menu' );
 	},
 
-	addSeparator: function (e) {
+	addSeparator: function ( e ) {
 		e.preventDefault();
 
-		this.trigger('addSeparator', this);
+		this.trigger( 'addSeparator', this );
 	},
 
-	addCustomItem: function (e) {
+	addCustomItem: function ( e ) {
 		e.preventDefault();
 
-		this.trigger('addCustomItem', this);
+		this.trigger( 'addCustomItem', this );
 	},
 
-	import: function (e) {
+	import: function ( e ) {
 		e.preventDefault();
-		this.trigger('import', this);
+		this.trigger( 'import', this );
 	},
 
-	export: function (e) {
+	export: function ( e ) {
 		e.preventDefault();
-		this.trigger('export', this);
+		this.trigger( 'export', this );
 	},
 
-	undo: function (e) {
+	undo: function ( e ) {
 		e.preventDefault();
-		this.trigger('undo', this);
+		this.trigger( 'undo', this );
 	},
 
-	redo: function (e) {
+	redo: function ( e ) {
 		e.preventDefault();
-		this.trigger('redo', this);
+		this.trigger( 'redo', this );
 	},
 
-	reset: function (e) {
+	reset: function ( e ) {
 		e.preventDefault();
-		this.trigger('reset');
+		this.trigger( 'reset' );
 	}
 
-});
+} );
 
 module.exports = EditButton;

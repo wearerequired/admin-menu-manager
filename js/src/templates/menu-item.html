@@ -3,13 +3,13 @@
 		<div></div>
 	</div>
 	<% if ( icon.indexOf('dashicons') > -1 ) { %>
-	<div class='wp-menu-image dashicons-before <%- icon %>'><br /></div>
+	<div class='wp-menu-image dashicons-before <%- icon %>'><br/></div>
 	<% } else if ( icon.indexOf('image/svg') > -1 || icon.indexOf('http') > -1 ) { %>
-	<div class="wp-menu-image svg" style="background-image:url('<%= icon %>') !important;"><br /></div>
+	<div class="wp-menu-image svg" style="background-image:url('<%= icon %>') !important;"><br/></div>
 	<% } else if ('div' === icon || 'none' === icon) { %>
-	<div class="wp-menu-image dashicons-before"><br /></div>
+	<div class="wp-menu-image dashicons-before"><br/></div>
 	<% } else { %>
-	<div class="wp-menu-image dashicons-before dashicons-admin-settings"><br /></div>
+	<div class="wp-menu-image dashicons-before dashicons-admin-settings"><br/></div>
 	<% } %>
 	<div class="wp-menu-name"><%= label %></div>
 </a>

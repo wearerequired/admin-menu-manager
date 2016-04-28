@@ -6,14 +6,14 @@
  */
 
 // Load required modules
-var App = require('views/app');
+var App = require( 'views/app' );
 
-(function ($) {
-	$(function () {
+(function ( $ ) {
+	$( function () {
 		'use strict';
 
 		// Run Boy Run
 		var app = new App();
 		app.render();
-	});
-})(jQuery, Backbone);
+	} );
+})( jQuery, Backbone );

@@ -1,21 +1,21 @@
-var Modal = require('views/modal');
+var Modal = require( 'views/modal' );
 
-var ExportModal = Modal.extend({
-	template: require('templates/modal'),
+var ExportModal = Modal.extend( {
+	template: require( 'templates/modal' ),
 	isActive: false,
 
-	initialize: function (options) {
+	initialize: function ( options ) {
 		this.options = options;
 
-		this.options.templateData = AdminMenuManager.templates.exportModal;
+		this.options.templateData         = AdminMenuManager.templates.exportModal;
 		this.options.templateData.content = this.options.content;
 
-		_.bindAll(this, 'render');
+		_.bindAll( this, 'render' );
 	},
 
 	render: function () {
-		this.$el.html(this.template(this.options.templateData));
-		this.$el.find('#amm-modal-toolbar-button').removeAttr('disabled');
+		this.$el.html( this.template( this.options.templateData ) );
+		this.$el.find( '#amm-modal-toolbar-button' ).removeAttr( 'disabled' );
 
 		this.delegateEvents();
 
@@ -23,22 +23,22 @@ var ExportModal = Modal.extend({
 	},
 
 	events: {
-		'click #amm-modal-close'         : 'close',
+		'click #amm-modal-close':          'close',
 		'click #amm-modal-toolbar-button': 'close',
-		'focus #amm-modal-textarea'      : 'selectText',
+		'focus #amm-modal-textarea':       'selectText',
 	},
 
-	close: function (e) {
+	close: function ( e ) {
 		e.preventDefault();
 
-		this.trigger('close', this);
+		this.trigger( 'close', this );
 		this.remove();
 	},
 
-	selectText: function (e) {
-		jQuery(e.target).select();
+	selectText: function ( e ) {
+		jQuery( e.target ).select();
 	}
 
-});
+} );
 
 module.exports = ExportModal;

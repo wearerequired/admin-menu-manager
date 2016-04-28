@@ -1,8 +1,8 @@
-var CollectionView = require('views/collectionview'),
-		Menu = require('collections/menu');
+var CollectionView = require( 'views/collectionview' ),
+    Menu           = require( 'collections/menu' );
 
-var AdminMenu = CollectionView.extend(/** @lends AdminMenu.prototype */{
-	id       : 'amm-adminmenu',
+var AdminMenu = CollectionView.extend( /** @lends AdminMenu.prototype */{
+	id:        'amm-adminmenu',
 	isEditing: false,
 
 	/**s
@@ -17,11 +17,11 @@ var AdminMenu = CollectionView.extend(/** @lends AdminMenu.prototype */{
 	 */
 	initialize: function () {
 		// Ensure our methods keep the `this` reference to the view itself
-		_.bindAll(this, 'render');
+		_.bindAll( this, 'render' );
 
 		this.collection = new Menu();
-		this.collection.reset(AdminMenuManager.menu);
+		this.collection.reset( AdminMenuManager.menu );
 	}
-});
+} );
 
 module.exports = AdminMenu;
