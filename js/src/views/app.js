@@ -281,6 +281,43 @@ var AppView = wp.Backbone.View.extend({
 	 * @see /wp-admin/js/common.js for the source of this.
 	 */
 	hoverIntent: function () {
+		/**
+		 * Ensure an admin submenu is within the visual viewport.
+		 *
+		 * @see WordPres 4.1.0
+		 *
+		 * @param {jQuery} $menuItem The parent menu item containing the submenu.
+		 */
+		function adjustSubmenu($menuItem) {
+			var bottomOffset, pageHeight, adjustment, theFold, menutop, wintop, maxtop,
+			    $submenu = $menuItem.find('.wp-submenu'),
+			    $window = jQuery(window),
+			    $wpwrap = jQuery('#wpwrap');
+
+			menutop = $menuItem.offset().top;
+			wintop = $window.scrollTop();
+			maxtop = menutop - wintop - 30; // max = make the top of the sub almost touch admin bar
+
+			bottomOffset = menutop + $submenu.height() + 1; // Bottom offset of the menu
+			pageHeight = $wpwrap.height(); // Height of the entire page
+			adjustment = 60 + bottomOffset - pageHeight;
+			theFold = $window.height() + wintop - 50; // The fold
+
+			if (theFold < ( bottomOffset - adjustment )) {
+				adjustment = bottomOffset - theFold;
+			}
+
+			if (adjustment > maxtop) {
+				adjustment = maxtop;
+			}
+
+			if (adjustment > 1) {
+				$submenu.css('margin-top', '-' + adjustment + 'px');
+			} else {
+				$submenu.css('margin-top', '');
+			}
+		}
+
 		var $adminmenu = this.$el.find('#adminmenu');
 		$adminmenu.find('li.wp-has-submenu').hoverIntent({
 			over: function () {
@@ -315,43 +352,6 @@ var AppView = wp.Backbone.View.extend({
 			sensitivity: 7,
 			interval   : 90
 		});
-
-		/**
-		 * Ensure an admin submenu is within the visual viewport.
-		 *
-		 * @see WordPres 4.1.0
-		 *
-		 * @param {jQuery} $menuItem The parent menu item containing the submenu.
-		 */
-		function adjustSubmenu($menuItem) {
-			var bottomOffset, pageHeight, adjustment, theFold, menutop, wintop, maxtop,
-					$submenu = $menuItem.find('.wp-submenu'),
-					$window = jQuery(window),
-					$wpwrap = jQuery('#wpwrap');
-
-			menutop = $menuItem.offset().top;
-			wintop = $window.scrollTop();
-			maxtop = menutop - wintop - 30; // max = make the top of the sub almost touch admin bar
-
-			bottomOffset = menutop + $submenu.height() + 1; // Bottom offset of the menu
-			pageHeight = $wpwrap.height(); // Height of the entire page
-			adjustment = 60 + bottomOffset - pageHeight;
-			theFold = $window.height() + wintop - 50; // The fold
-
-			if (theFold < ( bottomOffset - adjustment )) {
-				adjustment = bottomOffset - theFold;
-			}
-
-			if (adjustment > maxtop) {
-				adjustment = maxtop;
-			}
-
-			if (adjustment > 1) {
-				$submenu.css('margin-top', '-' + adjustment + 'px');
-			} else {
-				$submenu.css('margin-top', '');
-			}
-		}
 	}
 });
 
