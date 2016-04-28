@@ -1,6 +1,9 @@
 <?php
 
 class Admin_Menu_Manager_Test extends Admin_Menu_Manager_TestCase {
+	/**
+	 * @var Admin_Menu_Manager
+	 */
 	protected $plugin;
 
 	function setUp() {
@@ -34,5 +37,12 @@ class Admin_Menu_Manager_Test extends Admin_Menu_Manager_TestCase {
 		$menu_items = $this->plugin->get_admin_menu();
 		$this->assertInternalType( 'array', $menu_items );
 		$this->assertNotEmpty( $menu_items );
+	}
+
+	function test_admin_enqueue_scripts() {
+		$this->plugin->admin_enqueue_scripts();
+
+		$this->assertTrue( wp_style_is( 'admin-menu-manager', 'enqueued' ) );
+		$this->assertTrue( wp_script_is( 'admin-menu-manager', 'enqueued' ) );
 	}
 }
