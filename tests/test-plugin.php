@@ -1,10 +1,13 @@
 <?php
 
-class Admin_Menu_Manager_Plugin_Test extends Admin_Menu_Manager_TestCase {
+class Admin_Menu_Manager_Test extends Admin_Menu_Manager_TestCase {
+	protected $plugin;
+
 	function setUp() {
 		parent::setUp();
 		$this->current_user = get_current_user_id();
 		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+		$this->plugin = new Admin_Menu_Manager();
 	}
 
 	function tearDown() {
@@ -17,7 +20,7 @@ class Admin_Menu_Manager_Plugin_Test extends Admin_Menu_Manager_TestCase {
 	}
 
 	function test_get_admin_menu_empty() {
-		$menu_items = $this->plugin()->get_admin_menu();
+		$menu_items = $this->plugin->get_admin_menu();
 		$this->assertInternalType( 'array', $menu_items );
 		$this->assertEmpty( $menu_items );
 	}
@@ -28,7 +31,7 @@ class Admin_Menu_Manager_Plugin_Test extends Admin_Menu_Manager_TestCase {
 
 		require_once ABSPATH . '/wp-admin/menu.php';
 
-		$menu_items = $this->plugin()->get_admin_menu();
+		$menu_items = $this->plugin->get_admin_menu();
 		$this->assertInternalType( 'array', $menu_items );
 		$this->assertNotEmpty( $menu_items );
 	}
