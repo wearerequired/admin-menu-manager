@@ -1,7 +1,6 @@
 # Default task
 default:
 - 'checktextdomain'
-- 'makepot'
 - 'replace:header'
 - 'replace:plugin'
 - 'jshint'

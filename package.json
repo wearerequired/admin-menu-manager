@@ -32,7 +32,6 @@
     "grunt-postcss":          "~0.8.0",
     "grunt-text-replace":     "~0.4.0",
     "grunt-wp-deploy":        "~1.1.0",
-    "grunt-wp-i18n":          "~0.5.0",
     "load-grunt-config":      "~0.19.0",
     "node-underscorify":      "~0.0.14",
     "pkgify":                 "~1.1.0",
