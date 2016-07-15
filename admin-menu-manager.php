@@ -43,27 +43,7 @@ $requirements_check = new WP_Requirements_Check( array(
 ) );
 
 if ( $requirements_check->passes() ) {
-	include( dirname( __FILE__ ) . '/classes/class-admin-menu-manager.php' );
-
-	/**
-	 * Get the Admin Menu Manager controller instance.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @return Admin_Menu_Manager
-	 */
-	function admin_menu_manager() {
-		static $controller = null;
-
-		if ( null === $controller ) {
-			$controller = new Admin_Menu_Manager( __FILE__ );
-		}
-
-		return $controller;
-	}
-
-	// Initialize the plugin.
-	add_action( 'plugins_loaded', array( admin_menu_manager(), 'add_hooks' ) );
+	include( dirname( __FILE__ ) . '/init.php' );
 }
 
 unset( $requirements_check );

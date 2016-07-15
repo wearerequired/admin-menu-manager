@@ -5,10 +5,12 @@
  * @package Admin_Menu_Manager
  */
 
+namespace Required\Admin_Menu_Manager;
+
 /**
  * Admin_Menu_Manager_Plugin class.
  */
-class Admin_Menu_Manager {
+class Controller {
 	/**
 	 * Plugin version.
 	 */
@@ -22,12 +24,25 @@ class Admin_Menu_Manager {
 	protected $file;
 
 	/**
+	 * @var \Required\Admin_Menu_Manager\Data_Provider
+	 */
+	protected $data_provider;
+
+	/**
+	 * @var \Required\Admin_Menu_Manager\Ajax_Handler
+	 */
+	protected $ajax_handler;
+
+	/**
 	 * Controller constructor.
 	 *
 	 * @param string $file The full path and filename of the main plugin file.
 	 */
 	public function __construct( $file ) {
 		$this->file = $file;
+
+		$this->ajax_handler  = new Ajax_Handler();
+		$this->data_provider = new Data_Provider();
 	}
 
 	/**
@@ -41,7 +56,7 @@ class Admin_Menu_Manager {
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ], 5 );
 
 		// Handle form submissions.
-		add_action( 'wp_ajax_adminmenu', [ $this, 'ajax_handler' ] );
+		add_action( 'wp_ajax_adminmenu', [ $this->ajax_handler, 'receive' ] );
 
 		// Modify admin menu.
 		add_action( 'admin_menu', [ $this, 'alter_admin_menu' ], 999 );
@@ -136,7 +151,7 @@ class Admin_Menu_Manager {
 			self::VERSION
 		);
 
-		wp_localize_script( 'admin-menu-manager', 'AdminMenuManager', $this->get_localize_script_data() );
+		wp_localize_script( 'admin-menu-manager', 'AdminMenuManager', $this->data_provider->get_data() );
 	}
 
 	/**
@@ -175,71 +190,7 @@ class Admin_Menu_Manager {
 		return false;
 	}
 
-	/**
-	 * Get the inline script data for use by `wp_localize_script`
-	 *
-	 * @return array
-	 */
-	protected function get_localize_script_data() {
-		global $parent_file, $submenu_file;
 
-		$plugin_page = null;
-
-		if ( isset( $_GET['page'] ) ) {
-			$plugin_page = wp_unslash( $_GET['page'] );
-			$plugin_page = plugin_basename( $plugin_page );
-		}
-
-		return [
-			'templates'    => [
-				'editButton'      => [
-					'label'       => __( 'Edit Menu', 'admin-menu-manager' ),
-					'labelSaving' => __( 'Saving&hellip;', 'admin-menu-manager' ),
-					'labelSaved'  => __( 'Saved!', 'admin-menu-manager' ),
-					'options'     => [
-						'save'          => __( 'Save changes', 'admin-menu-manager' ),
-						'add'           => __( 'Add new item', 'admin-menu-manager' ),
-						'addSeparator'  => __( 'Separator', 'admin-menu-manager' ),
-						'addCustomItem' => __( 'Custom item', 'admin-menu-manager' ),
-						'addImport'     => __( 'Import', 'admin-menu-manager' ),
-						'addExport'     => __( 'Export', 'admin-menu-manager' ),
-						'undo'          => __( 'Undo change', 'admin-menu-manager' ),
-						'redo'          => __( 'Redo change', 'admin-menu-manager' ),
-						'reset'         => __( 'Reset menu', 'admin-menu-manager' ),
-					],
-				],
-				'exportModal'     => [
-					'close'       => _x( 'Close', 'modal close button', 'admin-menu-manager' ),
-					'title'       => __( 'Export', 'admin-menu-manager' ),
-					'description' => __( 'Export your menu data to another site. Copy the text below:', 'admin-menu-manager' ),
-					'formLabel'   => _x( 'Menu data', 'form label', 'admin-menu-manager' ),
-					'buttonText'  => _x( 'Done', 'button text', 'admin-menu-manager' ),
-				],
-				'importModal'     => [
-					'close'       => _x( 'Close', 'modal close button', 'admin-menu-manager' ),
-					'title'       => __( 'Import', 'admin-menu-manager' ),
-					'description' => __( 'Import your menu data from another site. Insert the data here:', 'admin-menu-manager' ),
-					'formLabel'   => _x( 'Menu data', 'form label', 'admin-menu-manager' ),
-					'buttonText'  => _x( 'Import', 'button text', 'admin-menu-manager' ),
-				],
-				'collapseButton'  => [
-					'label' => __( 'Collapse menu', 'admin-menu-manager' ),
-				],
-				'menuItemOptions' => [
-					'title'      => __( 'Edit item', 'admin-menu-manager' ),
-					'labelLabel' => __( 'Label:', 'admin-menu-manager' ),
-					'iconLabel'  => __( 'Icon:', 'admin-menu-manager' ),
-					'linkLabel'  => __( 'Link:', 'admin-menu-manager' ),
-					'save'       => __( 'Save', 'admin-menu-manager' ),
-				],
-			],
-			'parent_file'  => $parent_file,
-			'submenu_file' => $submenu_file,
-			'plugin_page'  => $plugin_page,
-			'menu'         => $this->get_admin_menu(),
-			'trash'        => $this->get_admin_menu_trash(),
-		];
-	}
 
 	/**
 	 * Grab a list of all registered admin pages.
@@ -377,160 +328,6 @@ class Admin_Menu_Manager {
 	}
 
 	/**
-	 * Ajax Handler.
-	 *
-	 * Works for saving and resetting the menu.
-	 */
-	public function ajax_handler() {
-		/* This filter is documented in classes/class-admin-menu-manager.php */
-		if ( ! apply_filters( 'amm_user_can_change_menu', current_user_can( 'read' ) ) ) {
-			return;
-		}
-
-		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
-			$this->update_menu();
-		} else if ( 'DELETE' === $_SERVER['REQUEST_METHOD'] ) {
-			$this->reset_menu();
-		}
-
-		die( 1 );
-	}
-
-	/**
-	 * Update the menu.
-	 *
-	 * The passed array is split up in a menu and submenu array,
-	 * just like WordPress uses it in the backend.
-	 */
-	public function update_menu() {
-		$data = json_decode( file_get_contents( 'php://input' ), true );
-
-		if ( ! is_array( $data ) || empty( $data ) ) {
-			die( 1 );
-		}
-
-		$menu = $this->update_menu_loop( $data );
-		$type = isset( $_REQUEST['type'] ) && 'trash' === $_REQUEST['type'] ? 'trash' : 'menu';
-
-		/**
-		 * Runs before the menu is updated.
-		 *
-		 * Use this hook to modify the menu before it's saved.
-		 *
-		 * @since 2.0.0
-		 *
-		 * @param string $type Either 'trash' or 'menu'.
-		 * @param array  $menu The menu data.
-		 */
-		do_action( 'amm_before_menu_update', $type, $menu );
-
-		if ( 'trash' === $type ) {
-			update_user_option( wp_get_current_user()->ID, 'amm_trash_menu', $menu['menu'], false );
-			update_user_option( wp_get_current_user()->ID, 'amm_trash_submenu', $menu['submenu'], false );
-		} else {
-			update_user_option( wp_get_current_user()->ID, 'amm_menu', $menu['menu'], false );
-			update_user_option( wp_get_current_user()->ID, 'amm_submenu', $menu['submenu'], false );
-		}
-	}
-
-	/**
-	 * Loop through all menu items to update the menu.
-	 *
-	 * @param array $menu The new admin menu data.
-	 *
-	 * @return array An array containing top level and sub level menu items.
-	 */
-	protected function update_menu_loop( $menu ) {
-		$items   = [];
-		$submenu = [];
-
-		$separatorIndex = 1;
-		$last_separator  = null;
-
-		foreach ( $menu as $item ) {
-			if ( false !== strpos( $item[2], '=' ) ) {
-				$item[2] = str_replace( '=', '', strstr( $item[2], '=' ) );
-			}
-
-			$item = [
-				0          => wp_unslash( $item[0] ),
-				1          => $item[1],
-				2          => $item[2],
-				3          => $item[3],
-				4          => $item[4],
-				5          => $item[5],
-				6          => $item[6],
-				'children' => isset( $item['children'] ) ? $item['children'] : [],
-				'href'     => $item['href'],
-				'id'       => $item['id'],
-			];
-
-			if ( ! empty( $item['children'] ) ) {
-				$submenu[ $item[2] ] = [];
-				foreach ( $item['children'] as $subitem ) {
-					if ( false !== strpos( $subitem[2], '=' ) ) {
-						$subitem[2] = str_replace( '=', '', strstr( $subitem[2], '=' ) );
-					}
-
-					$subitem = [
-						0      => wp_unslash( $subitem[0] ),
-						1      => $subitem[1],
-						2      => $subitem[2],
-						3      => $subitem[3],
-						4      => $subitem[4],
-						'href' => $subitem['href'],
-						'id'   => $subitem['id'],
-					];
-
-					$submenu[ $item[2] ][] = $subitem;
-				}
-				unset( $item['children'] );
-			}
-
-			// Store separators in correct order.
-			if ( false !== strpos( $item[2], 'separator' ) ) {
-				$item          = [ '', 'read', 'separator' . $separatorIndex ++, '', 'wp-menu-separator' ];
-				$last_separator = count( $items );
-			}
-
-			$items[] = $item;
-		}
-
-		if ( null !== $last_separator ) {
-			$items[ $last_separator ][2] = 'separator-last';
-		}
-
-		return [
-			'menu'    => $items,
-			'submenu' => $submenu,
-		];
-	}
-
-	/**
-	 * Reset the menu completely.
-	 */
-	public function reset_menu() {
-		$type = isset( $_REQUEST['type'] ) && 'trash' === $_REQUEST['type'] ? 'trash' : 'menu';
-
-		/**
-		 * Fires before the menu is reset.
-		 *
-		 * @since 2.0.0
-		 *
-		 * @param string $type Either 'trash' or 'menu'.
-		 */
-		do_action( 'amm_before_menu_reset', $type );
-
-		if ( 'trash' === $type ) {
-			delete_user_option( wp_get_current_user()->ID, 'amm_trash_menu' );
-			delete_user_option( wp_get_current_user()->ID, 'amm_trash_submenu' );
-		} else {
-			delete_user_option( wp_get_current_user()->ID, 'amm_menu' );
-			delete_user_option( wp_get_current_user()->ID, 'amm_submenu' );
-		}
-	}
-
-	/**
 	 * Check if a menu item is a menu separator.
 	 *
 	 * @param array $item Top-level or sub-level menu item.
@@ -608,11 +405,11 @@ class Admin_Menu_Manager {
 			return;
 		}
 
-		global $menu, $submenu, $admin_page_hooks, $_registered_pages, $temp_menu, $temp_submenu, $temp_admin_page_hooks;
+		global $menu, $submenu, $admin_page_hooks, $_registered_pages, $temp_menu, $temp_submenu;
 
 		$temp_menu             = array_values( $menu );
 		$temp_submenu          = $submenu;
-		$temp_admin_page_hooks = $admin_page_hooks;
+		$temp_hooks = $admin_page_hooks;
 
 		$menu = $submenu = $_registered_pages = null;
 
@@ -621,7 +418,7 @@ class Admin_Menu_Manager {
 			$this->maybe_match_top_level_menu_item( $item, $priority );
 		}
 
-		$this->keep_admin_page_hooks();
+		$admin_page_hooks = $this->keep_admin_page_hooks( $admin_page_hooks, $temp_hooks);
 
 		// Iterate on all our submenu items.
 		foreach ( $amm_submenu as $parent_page => $page ) {
@@ -950,15 +747,18 @@ class Admin_Menu_Manager {
 	 * Loop through admin page hooks.
 	 *
 	 * We want to keep the original, untranslated values.
+	 *
+	 * @param array $admin_page_hooks An array of admin page hooks.
+	 * @param array $temp_hooks       Temporary copy of the first array.
 	 */
-	protected function keep_admin_page_hooks() {
-		global $admin_page_hooks, $temp_admin_page_hooks;
-
+	protected function keep_admin_page_hooks( $admin_page_hooks, $temp_hooks ) {
 		foreach ( $admin_page_hooks as $key => &$value ) {
-			if ( isset( $temp_admin_page_hooks[ $key ] ) ) {
-				$value = $temp_admin_page_hooks[ $key ];
+			if ( isset( $temp_hooks[ $key ] ) ) {
+				$value = $temp_hooks[ $key ];
 			}
 		}
+
+		return $admin_page_hooks;
 	}
 
 	/**
