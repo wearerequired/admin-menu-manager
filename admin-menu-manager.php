@@ -1,14 +1,16 @@
 <?php
 /**
  * Plugin Name: Admin Menu Manager
- * Plugin URI:  http://required.ch
+ * Plugin URI:  https://github.com/wearerequired/admin-menu-manager/
  * Description: Manage the WordPress admin menu using a simple drag & drop interface.
- * Version:     1.0.3
+ * Version:     2.0.0-alpha
  * Author:      required+
  * Author URI:  http://required.ch
  * License:     GPLv2+
  * Text Domain: admin-menu-manager
  * Domain Path: /languages
+ *
+ * @package Admin_Menu_Manager
  */
 
 /**
@@ -29,22 +31,21 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-defined( 'WPINC' ) or die;
-
-include( dirname( __FILE__ ) . '/lib/requirements-check.php' );
-
-$admin_menu_manager_requirements_check = new Admin_Menu_Manager_Requirements_Check( array(
-	'title' => 'Admin Menu Manager',
-	'php'   => '5.3',
-	'wp'    => '4.0',
-	'file'  => __FILE__,
-));
-
-if ( $admin_menu_manager_requirements_check->passes() ) {
-	// Pull in the plugin classes and initialize
-	include( dirname( __FILE__ ) . '/lib/wp-stack-plugin.php' );
-	include( dirname( __FILE__ ) . '/classes/plugin.php' );
-	Admin_Menu_Manager_Plugin::start( __FILE__ );
+if ( file_exists( dirname( __FILE__ ) . '/vendor/autoload.php' ) ) {
+	require dirname( __FILE__ ) . '/vendor/autoload.php';
 }
 
-unset( $admin_menu_manager_requirements_check );
+$requirements_check = new WP_Requirements_Check( array(
+	'title' => 'Admin Menu Manager',
+	'php'   => '5.3',
+	'wp'    => '4.4',
+	'file'  => __FILE__,
+) );
+
+if ( $requirements_check->passes() ) {
+	include( dirname( __FILE__ ) . '/classes/class-admin-menu-manager.php' );
+	$admin_menu_manager = new Admin_Menu_Manager();
+	add_action( 'plugins_loaded', array( $admin_menu_manager, 'add_hooks' ) );
+}
+
+unset( $requirements_check );

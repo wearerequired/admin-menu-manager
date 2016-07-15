@@ -1,17 +1,34 @@
 {
-  "name": "wearerequired/admin-menu-manager",
-  "description": "Manage the WordPress admin menu using a simple drag & drop interface.",
-  "version": "1.0.1",
-  "type": "wordpress-plugin",
-  "license": "GPL-2.0+",
-  "authors": [
-	{
-	  "name": "required+",
-	  "email": "support@required.ch",
-	  "homepage": "http://required.ch",
-	  "role": "Developer"
+	"name":         "wearerequired/admin-menu-manager",
+	"description":  "Manage the WordPress admin menu using a simple drag & drop interface.",
+	"version":      "2.0.0-alpha",
+	"type":         "wordpress-plugin",
+	"license":      "GPL-2.0+",
+	"authors":      [
+		{
+			"name":     "required+",
+			"email":    "support@required.ch",
+			"homepage": "http://required.ch",
+			"role":     "Developer"
+		}
+	],
+	"repositories": [
+		{
+			"type": "vcs",
+			"url":  "https://github.com/wearerequired/wp-requirements-check"
+		}
+	],
+	"require":      {
+		"php":                                 ">=5.3",
+		"wearerequired/wp-requirements-check": "dev-master"
+	},
+	"require-dev":  {
+		"phpmd/phpmd":              "@stable",
+		"phpunit/phpunit":          "@stable",
+		"wp-coding-standards/wpcs": "dev-develop"
+	},
+	"scripts":      {
+		"post-install-cmd": "\"vendor/bin/phpcs\" --config-set installed_paths vendor/wp-coding-standards/wpcs",
+		"post-update-cmd":  "\"vendor/bin/phpcs\" --config-set installed_paths vendor/wp-coding-standards/wpcs"
 	}
-  ],
-  "require": {
-  }
 }

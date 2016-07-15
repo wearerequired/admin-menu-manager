@@ -10,27 +10,11 @@
 	overflow: hidden;
 }
 
-#adminmenu #admin-menu-manager-edit {
-	margin-top: 20px;
-	cursor: pointer !important;
-}
-
-.folded #adminmenu #admin-menu-manager-edit .wp-menu-name {
-	display: none !important;
-}
-
-#adminmenu:not(.ui-sortable-disabled) #admin-menu-manager-edit .menu-top,
-#admin-menu-manager-edit .menu-top {
-	background: transparent !important;
-	font-size: 13px !important;
-	cursor: pointer !important;
-}
-
-#adminmenu:not(.ui-sortable-disabled) .ui-sortable-handle a {
+#amm-adminmenu:not(.ui-sortable-disabled) .ui-sortable-handle a {
 	cursor: move !important;
 }
 
-#adminmenu:not(.ui-sortable-disabled) .wp-menu-separator.ui-sortable-handle {
+#amm-adminmenu:not(.ui-sortable-disabled) .wp-menu-separator.ui-sortable-handle {
 	height: 26px;
 	border: 2px dashed;
 	margin: 0;
@@ -40,3 +24,8 @@
 #adminmenu .wp-menu-separator.ui-sortable-handle {
 	transition: height .5s ease-in-out, border .5s ease-in-out, margin .5s ease-in-out;
 }
+
+@import "menu-item";
+@import "edit-button";
+@import "trash";
+@import "modal";

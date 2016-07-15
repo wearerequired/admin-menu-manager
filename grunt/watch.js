@@ -9,7 +9,7 @@ module.exports = {
 
 	sass: {
 		files: ['css/src/*.scss'],
-		tasks: ['sass', 'autoprefixer', 'cssmin']
+		tasks: ['sass', 'postcss']
 	},
 
 	php: {
@@ -22,6 +22,6 @@ module.exports = {
 
 	scripts: {
 		files: 'js/src/**/*.*',
-		tasks: ['jshint', 'concat', 'uglify', 'clean:js']
+		tasks: ['jshint', 'browserify', 'uglify', 'clean:js']
 	}
 }
