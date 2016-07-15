@@ -445,7 +445,7 @@ class Admin_Menu_Manager {
 		$submenu = [];
 
 		$separatorIndex = 1;
-		$lastSeparator  = null;
+		$last_separator  = null;
 
 		foreach ( $menu as $item ) {
 			if ( false !== strpos( $item[2], '=' ) ) {
@@ -490,14 +490,14 @@ class Admin_Menu_Manager {
 			// Store separators in correct order.
 			if ( false !== strpos( $item[2], 'separator' ) ) {
 				$item          = [ '', 'read', 'separator' . $separatorIndex ++, '', 'wp-menu-separator' ];
-				$lastSeparator = count( $items );
+				$last_separator = count( $items );
 			}
 
 			$items[] = $item;
 		}
 
-		if ( null !== $lastSeparator ) {
-			$items[ $lastSeparator ][2] = 'separator-last';
+		if ( null !== $last_separator ) {
+			$items[ $last_separator ][2] = 'separator-last';
 		}
 
 		return [
