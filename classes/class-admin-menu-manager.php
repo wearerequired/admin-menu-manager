@@ -113,7 +113,7 @@ class Admin_Menu_Manager {
 		// Use minified libraries if SCRIPT_DEBUG is turned off.
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-		wp_enqueue_style( 'admin-menu-manager', $this->get_url() . 'css/admin-menu-manager' . $suffix . '.css', [ ], self::VERSION );
+		wp_enqueue_style( 'admin-menu-manager', $this->get_url() . 'css/admin-menu-manager' . $suffix . '.css', [], self::VERSION );
 
 		wp_add_inline_style( 'admin-menu-manager', $this->get_inline_style() );
 
@@ -251,7 +251,7 @@ class Admin_Menu_Manager {
 	public function get_admin_menu() {
 		global $menu;
 
-		$menu_items = [ ];
+		$menu_items = [];
 
 		foreach ( (array) $menu as $menu_item ) {
 			$menu_items[] = $this->get_admin_menu_item( $menu_item );
@@ -311,7 +311,7 @@ class Admin_Menu_Manager {
 	protected function get_admin_menu_sub_items( $menu_item, $menu_file ) {
 		global $submenu;
 
-		$children        = [ ];
+		$children        = [];
 		$admin_is_parent = false;
 
 		if ( empty( $submenu[ $menu_item[2] ] ) ) {
@@ -353,10 +353,10 @@ class Admin_Menu_Manager {
 		$submenu = get_user_option( 'amm_trash_submenu' );
 
 		if ( ! is_array( $menu ) ) {
-			$menu = [ ];
+			$menu = [];
 		}
 
-		$menu_items = [ ];
+		$menu_items = [];
 
 		foreach ( $menu as $menu_item ) {
 			if ( ! empty( $submenu[ $menu_item[2] ] ) ) {
@@ -441,8 +441,8 @@ class Admin_Menu_Manager {
 	 * @return array An array containing top level and sub level menu items.
 	 */
 	protected function update_menu_loop( $menu ) {
-		$items   = [ ];
-		$submenu = [ ];
+		$items   = [];
+		$submenu = [];
 
 		$separatorIndex = 1;
 		$lastSeparator  = null;
@@ -460,13 +460,13 @@ class Admin_Menu_Manager {
 				4          => $item[4],
 				5          => $item[5],
 				6          => $item[6],
-				'children' => isset( $item['children'] ) ? $item['children'] : [ ],
+				'children' => isset( $item['children'] ) ? $item['children'] : [],
 				'href'     => $item['href'],
 				'id'       => $item['id'],
 			];
 
 			if ( ! empty( $item['children'] ) ) {
-				$submenu[ $item[2] ] = [ ];
+				$submenu[ $item[2] ] = [];
 				foreach ( $item['children'] as $subitem ) {
 					if ( false !== strpos( $subitem[2], '=' ) ) {
 						$subitem[2] = str_replace( '=', '', strstr( $subitem[2], '=' ) );
@@ -549,20 +549,20 @@ class Admin_Menu_Manager {
 	 * @return array
 	 */
 	protected function get_menu_data( $type ) {
-		$menu = [ ];
+		$menu = [];
 		switch ( $type ) {
 			case 'menu':
 				$menu = get_user_option( 'amm_menu' );
 
 				if ( ! $menu ) {
-					$menu = get_option( 'amm_menu', [ ] );
+					$menu = get_option( 'amm_menu', [] );
 				}
 				break;
 			case 'submenu':
 				$menu = get_user_option( 'amm_submenu' );
 
 				if ( ! $menu ) {
-					$menu = get_option( 'amm_submenu', [ ] );
+					$menu = get_option( 'amm_submenu', [] );
 				}
 				break;
 			case 'trash_menu':
@@ -574,7 +574,7 @@ class Admin_Menu_Manager {
 		}
 
 		if ( false === $menu ) {
-			$menu = [ ];
+			$menu = [];
 		}
 
 		/**
@@ -971,7 +971,7 @@ class Admin_Menu_Manager {
 	protected function get_menu_item_filters( $hook_name ) {
 		global $wp_filter;
 
-		$old_filters = [ ];
+		$old_filters = [];
 
 		foreach ( $wp_filter as $filter => $value ) {
 			if ( false !== strpos( $filter, $hook_name ) ) {
@@ -1020,7 +1020,7 @@ class Admin_Menu_Manager {
 			return $menu_order;
 		}
 
-		$new_order = [ ];
+		$new_order = [];
 		foreach ( $menu as $item ) {
 			$new_order[] = $item[2];
 		}
