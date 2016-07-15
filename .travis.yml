@@ -52,19 +52,11 @@ before_install:
   - node --version
   - npm --version
   - grunt --version
+  - composer self-update
 
 # Clones WordPress and configures our testing environment.
 before_script:
-  - |
-    if [[ "$WP_TRAVISCI" == "travis:phpvalidate" ]] ; then
-     composer self-update
-     composer install --no-interaction
-    fi
-  - |
-     if [[ "$WP_TRAVISCI" == "travis:codecoverage" ]] ; then
-       composer self-update
-       composer install --no-interaction
-     fi
+  - composer install --no-interaction
   - |
      if [[ "$WP_TRAVISCI" == "travis:checktextdomain" ]] ; then
        grunt checktextdomain
