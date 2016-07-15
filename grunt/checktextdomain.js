@@ -1,10 +1,10 @@
 module.exports = {
 	dist: {
 		options: {
-			text_domain   : 'admin-menu-manager',
+			text_domain:    'admin-menu-manager',
 			report_missing: true,
 			correct_domain: true,
-			keywords      : [
+			keywords:       [
 				'__:1,2d',
 				'_e:1,2d',
 				'_x:1,2c,3d',
@@ -21,9 +21,9 @@ module.exports = {
 				'_nx_noop:1,2,3c,4d'
 			]
 		},
-		files  : [{
-			src   : ['*.php', '**/*.php', '!node_modules/**', '!tests/**', '!release/**'],
+		files:   [ {
+			src:    [ '*.php', '**/*.php', '!node_modules/**', '!tests/**', '!release/**' ],
 			expand: true
-		}]
+		} ]
 	}
-}
+};

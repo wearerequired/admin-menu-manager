@@ -1,3 +1,3 @@
 module.exports = {
-	files: ['assets/js/test/**/*.js']
-}
+	files: [ 'assets/js/test/**/*.js' ]
+};

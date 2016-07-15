@@ -2,7 +2,7 @@ module.exports = {
 	options: {
 		// or
 		map: {
-			inline: false, // save all source maps as separate files...
+			inline:     false, // save all source maps as separate files...
 			annotation: 'css/' // ...to the specified directory
 		},
 
@@ -17,8 +17,8 @@ module.exports = {
 			require( 'cssnano' )() // minify the result
 		]
 	},
-	dist: {
-		src: 'css/admin-menu-manager.css',
+	dist:    {
+		src:  'css/admin-menu-manager.css',
 		dest: 'css/admin-menu-manager.min.css'
 	}
 };
