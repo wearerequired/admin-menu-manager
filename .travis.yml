@@ -74,8 +74,8 @@ script:
   - |
     if [[ "$WP_TRAVISCI" == "travis:phpvalidate" ]] ; then
       grunt checktextdomain
-     vendor/bin/phpmd includes text codesize,naming,unusedcode
-     vendor/bin/phpcs -n --report=emacs --standard=phpcs.ruleset.xml includes
+     vendor/bin/phpmd classes text codesize,naming,unusedcode
+     vendor/bin/phpcs -n --report=emacs --standard=phpcs.ruleset.xml classes
     fi
   - |
      if [[ "$WP_TRAVISCI" == "travis:codecoverage" ]] ; then
