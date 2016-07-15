@@ -50,3 +50,10 @@ after_script:
   # Push coverage off to Codecov
   - bash <(curl -s https://codecov.io/bash)
   - vendor/bin/test-reporter
+notifications:
+  slack:
+    rooms:
+      secure: dVNKRk+6ptcuFn6SiT5SD0Rij5to3z3CETgNMAN1bdrczvYcMgyhZrW/51ihlGpMfdB45HuKI42tyLeNPOy6eMUg2weqonW5K+iVWw26toaVN5SV1hg7517A6f3GY5pLLCqV8uH5TKCvinGpPophf1upoHdTwnbAlQrlE2wPLg6oTsifqL73+mq5ieDizbu+1YJe6OHGhod7X64W8lB71QSN+6IXAbbqF1B7eCajzfa3BhAFRKSA7kCQwXuTNMCGhNPWeZBb8ljlcuTit9zFApmrDuI/JFK+ksDydhctygXrogZl8lj4Wg086vU4vphEPp+LJwU7T84J0shcxqVBI8/dW67ucZDP8Ghd5frj821EM41mnHz628nc1EFgIxgIdDr4bTQVh++bE5rnRMsi814p5tqu9gD1agbeXaQoZvqKofjamgLjV0JgEdsjl8L2+sKkgnq5KtZ0pZ919+G0xuUPlcAiuCa4SVLMJS64nxAYKEPIvlc1MU5Ue2yPCQBYD1hD552L0AyimEw9QExB3tBJm2XhwC6WHCi6m+T9E6+8n46a/he0HVAh89gLUpm3RHQc5i2THO7QLjIia4qG1pN4pQ7b+4lwCfuYzoSrDwxJ2BO8ha0tzLmcUl7EntxahmELQc48E/fxWgg374vOBTdqWVSrod4YvEdrcr1YKyQ=
+    on_start: never
+    on_failure: always
+    on_success: change
