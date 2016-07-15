@@ -1,25 +1,46 @@
+# Travis CI Configuration File
+
 language: php
 
-php:
-  - 5.2
-  - 5.3
-  - 5.4
-  - 5.5
-  - 5.6
-  - 7.0
-  - hhvm
+sudo: false
 
 matrix:
+  include:
+  - php: 7.0
+    env: WP_TRAVISCI=travis:phpvalidate
+  - php: 7.0
+    env: WP_TRAVISCI=travis:phpvalidate
+  - php: 7.0
+    env: WP_TRAVISCI=travis:jshint
+  - php: 7.0
+    env: WP_TRAVISCI=travis:phpunit WP_VERSION=nightly
+  - php: 7.0
+    env: WP_TRAVISCI=travis:phpunit WP_VERSION=latest
+  - php: 5.6
+    env: WP_TRAVISCI=travis:phpunit WP_VERSION=nightly
+  - php: 5.6
+    env: WP_TRAVISCI=travis:phpunit WP_VERSION=latest
+  - php: 5.5
+    env: WP_TRAVISCI=travis:phpunit WP_VERSION=nightly
+  - php: 5.4
+    env: WP_TRAVISCI=travis:phpunit WP_VERSION=nightly
+  - php: 5.3
+    env: WP_TRAVISCI=travis:phpunit WP_VERSION=nightly
+  - php: 5.2
+    env: WP_TRAVISCI=travis:phpunit WP_VERSION=nightly
+  - php: hhvm
+    env: WP_TRAVISCI=travis:phpunit WP_VERSION=nightly
   allow_failures:
     - php: hhvm
+  fast_finish: true
 
 env:
-  - WP_VERSION=latest WP_MULTISITE=0
-  - WP_VERSION=latest WP_MULTISITE=1
-  - WP_VERSION=4.5.3 WP_MULTISITE=0
-  - WP_VERSION=4.5.3 WP_MULTISITE=1
-  - WP_VERSION=4.4.4 WP_MULTISITE=0
-  - WP_VERSION=4.4.4 WP_MULTISITE=1
+  - WP_VERSION=latest WP_MULTISITE=0 TRAVIS_NODE_VERSION="6"
+  - WP_VERSION=latest WP_MULTISITE=1 TRAVIS_NODE_VERSION="6"
+  - WP_VERSION=4.5.3 WP_MULTISITE=0 TRAVIS_NODE_VERSION="6"
+  - WP_VERSION=4.5.3 WP_MULTISITE=1 TRAVIS_NODE_VERSION="6"
+  - WP_VERSION=4.4.4 WP_MULTISITE=0 TRAVIS_NODE_VERSION="6"
+  - WP_VERSION=4.4.4 WP_MULTISITE=1 TRAVIS_NODE_VERSION="6"
 
 cache:
   apt: true
@@ -29,27 +50,59 @@ cache:
   - $HOME/.composer/cache
   - node_modules
 
-# Clones WordPress and configures our testing environment.
-before_script:
-  # Setup Coveralls
-  - phpenv local 5.6
-  - composer install --no-interaction
-  - phpenv local --unset
-
-  - npm install
-
+before_install:
   - bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 $WP_VERSION
 
+  - cd $TRAVIS_BUILD_DIR
+  - npm install -g npm
+  - npm install -g grunt-cli
+  - npm install
+  - node --version
+  - npm --version
+  - grunt --version
+
+# Clones WordPress and configures our testing environment.
+before_script:
+  - |
+    if [[ "$WP_TRAVISCI" == "travis:phpvalidate" ]] ; then
+     composer self-update
+     composer install --no-interaction
+    fi
+  - |
+     if [[ "$WP_TRAVISCI" == "travis:codecoverage" ]] ; then
+       composer self-update
+       composer install --no-interaction
+     fi
+  - |
+     if [[ "$WP_TRAVISCI" == "travis:checktextdomain" ]] ; then
+       grunt checktextdomain
+     fi
+
 script:
-  - grunt checktextdomain
-  - vendor/bin/phpmd includes text codesize,naming,unusedcode
-  - vendor/bin/phpcs -n --report=emacs --standard=phpcs.ruleset.xml includes
-  - phpunit --coverage-clover build/logs/clover.xml
+  - |
+    if [[ "$WP_TRAVISCI" == "travis:phpvalidate" ]] ; then
+      grunt checktextdomain
+     vendor/bin/phpmd includes text codesize,naming,unusedcode
+     vendor/bin/phpcs -n --report=emacs --standard=phpcs.ruleset.xml includes
+    fi
+  - |
+     if [[ "$WP_TRAVISCI" == "travis:codecoverage" ]] ; then
+       phpunit --coverage-clover build/logs/clover.xml
+     fi
+  - |
+     if [[ "$WP_TRAVISCI" == "travis:jshint" ]] ; then
+       grunt jshint
+     fi
+  - phpunit
 
 after_script:
   # Push coverage off to Codecov
-  - bash <(curl -s https://codecov.io/bash)
-  - vendor/bin/test-reporter
+- |
+  if [[ "$WP_TRAVISCI" == "travis:codecoverage" ]] ; then
+    bash <(curl -s https://codecov.io/bash)
+    vendor/bin/test-reporter
+  fi
+
 notifications:
   slack:
     rooms:
