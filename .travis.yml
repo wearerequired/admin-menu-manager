@@ -9,7 +9,7 @@ matrix:
   - php: 7.0
     env: WP_TRAVISCI=travis:phpvalidate
   - php: 7.0
-    env: WP_TRAVISCI=travis:phpvalidate
+    env: WP_TRAVISCI=travis:codecoverage
   - php: 7.0
     env: WP_TRAVISCI=travis:jshint
   - php: 7.0
