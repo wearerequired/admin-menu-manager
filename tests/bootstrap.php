@@ -15,13 +15,3 @@ function _manually_load_plugin() {
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
 require $_tests_dir . '/includes/bootstrap.php';
-
-class Admin_Menu_Manager_TestCase extends WP_UnitTestCase {
-	function set_post( $key, $value ) {
-		$_POST[ $key ] = $_REQUEST[ $key ] = addslashes( $value );
-	}
-
-	function unset_post( $key ) {
-		unset( $_POST[ $key ], $_REQUEST[ $key ] );
-	}
-}

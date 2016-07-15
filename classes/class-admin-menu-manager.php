@@ -15,51 +15,78 @@ class Admin_Menu_Manager {
 	const VERSION = '2.0.0-alpha';
 
 	/**
+	 * The full path and filename of the main plugin file.
+	 *
+	 * @var string
+	 */
+	protected $file;
+
+	/**
+	 * Controller constructor.
+	 *
+	 * @param string $file The full path and filename of the main plugin file.
+	 */
+	public function __construct( $file ) {
+		$this->file = $file;
+	}
+
+	/**
 	 * Adds hooks.
 	 */
 	public function add_hooks() {
 		// Load the plugin textdomain.
-		add_action( 'init', array( $this, 'load_textdomain' ) );
+		add_action( 'init', [ $this, 'load_textdomain' ] );
 
 		// Load admin CSS and JavaScript.
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 5 );
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ], 5 );
 
 		// Handle form submissions.
-		add_action( 'wp_ajax_adminmenu', array( $this, 'ajax_handler' ) );
+		add_action( 'wp_ajax_adminmenu', [ $this, 'ajax_handler' ] );
 
 		// Modify admin menu.
-		add_action( 'admin_menu', array( $this, 'alter_admin_menu' ), 999 );
+		add_action( 'admin_menu', [ $this, 'alter_admin_menu' ], 999 );
 
 		// Tell WordPress we're changing the menu order.
 		add_filter( 'custom_menu_order', '__return_true' );
 
 		// Add our filter way later, after other plugins have defined the menu.
-		add_action( 'menu_order', array( $this, 'alter_admin_menu_order' ), 9999 );
+		add_action( 'menu_order', [ $this, 'alter_admin_menu_order' ], 9999 );
 	}
 
 	/**
-	 * Returns the URL to the plugin directory
+	 * Returns the URL to the plugin directory (with trailing slash).
 	 *
 	 * @return string The URL to the plugin directory.
 	 */
 	public function get_url() {
-		return plugin_dir_url( __DIR__ );
+		return plugin_dir_url( $this->file );
 	}
 
 	/**
-	 * Returns the path to the plugin directory.
+	 * Returns the absolute path to the plugin directory (with trailing slash).
 	 *
 	 * @return string The absolute path to the plugin directory.
 	 */
 	public function get_path() {
-		return plugin_dir_path( __DIR__ );
+		return plugin_dir_path( $this->file );
+	}
+
+	/**
+	 * Returns the basename of the plugin.
+	 *
+	 * @return string The name of the plugin.
+	 */
+	public function get_basename() {
+		return plugin_basename( $this->file );
 	}
 
 	/**
 	 * Initializes the plugin, registers textdomain, etc.
+	 *
+	 * @return bool True if the textdomain was loaded successfully, false otherwise.
 	 */
 	public function load_textdomain() {
-		load_plugin_textdomain( 'admin-menu-manager', false, basename( $this->get_path() ) . '/languages' );
+		return load_plugin_textdomain( 'admin-menu-manager', false, $this->get_path() . 'languages' );
 	}
 
 	/**
@@ -86,26 +113,26 @@ class Admin_Menu_Manager {
 		// Use minified libraries if SCRIPT_DEBUG is turned off.
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-		wp_enqueue_style( 'admin-menu-manager', $this->get_url() . 'css/admin-menu-manager' . $suffix . '.css', array(), self::VERSION );
+		wp_enqueue_style( 'admin-menu-manager', $this->get_url() . 'css/admin-menu-manager' . $suffix . '.css', [ ], self::VERSION );
 
 		wp_add_inline_style( 'admin-menu-manager', $this->get_inline_style() );
 
 		wp_register_script(
 			'backbone-undo',
 			$this->get_url() . 'js/vendor/backbone.undo.min.js',
-			array( 'backbone' ),
+			[ 'backbone' ],
 			self::VERSION
 		);
 
 		wp_enqueue_script(
 			'admin-menu-manager',
 			$this->get_url() . 'js/admin-menu-manager' . $suffix . '.js',
-			array(
+			[
 				'jquery-ui-sortable',
 				'jquery-ui-droppable',
 				'wp-backbone',
 				'backbone-undo',
-			),
+			],
 			self::VERSION
 		);
 
@@ -163,13 +190,13 @@ class Admin_Menu_Manager {
 			$plugin_page = plugin_basename( $plugin_page );
 		}
 
-		return array(
-			'templates'    => array(
-				'editButton'      => array(
+		return [
+			'templates'    => [
+				'editButton'      => [
 					'label'       => __( 'Edit Menu', 'admin-menu-manager' ),
 					'labelSaving' => __( 'Saving&hellip;', 'admin-menu-manager' ),
 					'labelSaved'  => __( 'Saved!', 'admin-menu-manager' ),
-					'options'     => array(
+					'options'     => [
 						'save'          => __( 'Save changes', 'admin-menu-manager' ),
 						'add'           => __( 'Add new item', 'admin-menu-manager' ),
 						'addSeparator'  => __( 'Separator', 'admin-menu-manager' ),
@@ -179,39 +206,39 @@ class Admin_Menu_Manager {
 						'undo'          => __( 'Undo change', 'admin-menu-manager' ),
 						'redo'          => __( 'Redo change', 'admin-menu-manager' ),
 						'reset'         => __( 'Reset menu', 'admin-menu-manager' ),
-					),
-				),
-				'exportModal'     => array(
+					],
+				],
+				'exportModal'     => [
 					'close'       => _x( 'Close', 'modal close button', 'admin-menu-manager' ),
 					'title'       => __( 'Export', 'admin-menu-manager' ),
 					'description' => __( 'Export your menu data to another site. Copy the text below:', 'admin-menu-manager' ),
 					'formLabel'   => _x( 'Menu data', 'form label', 'admin-menu-manager' ),
 					'buttonText'  => _x( 'Done', 'button text', 'admin-menu-manager' ),
-				),
-				'importModal'     => array(
+				],
+				'importModal'     => [
 					'close'       => _x( 'Close', 'modal close button', 'admin-menu-manager' ),
 					'title'       => __( 'Import', 'admin-menu-manager' ),
 					'description' => __( 'Import your menu data from another site. Insert the data here:', 'admin-menu-manager' ),
 					'formLabel'   => _x( 'Menu data', 'form label', 'admin-menu-manager' ),
 					'buttonText'  => _x( 'Import', 'button text', 'admin-menu-manager' ),
-				),
-				'collapseButton'  => array(
+				],
+				'collapseButton'  => [
 					'label' => __( 'Collapse menu', 'admin-menu-manager' ),
-				),
-				'menuItemOptions' => array(
+				],
+				'menuItemOptions' => [
 					'title'      => __( 'Edit item', 'admin-menu-manager' ),
 					'labelLabel' => __( 'Label:', 'admin-menu-manager' ),
 					'iconLabel'  => __( 'Icon:', 'admin-menu-manager' ),
 					'linkLabel'  => __( 'Link:', 'admin-menu-manager' ),
 					'save'       => __( 'Save', 'admin-menu-manager' ),
-				),
-			),
+				],
+			],
 			'parent_file'  => $parent_file,
 			'submenu_file' => $submenu_file,
 			'plugin_page'  => $plugin_page,
 			'menu'         => $this->get_admin_menu(),
 			'trash'        => $this->get_admin_menu_trash(),
-		);
+		];
 	}
 
 	/**
@@ -224,7 +251,7 @@ class Admin_Menu_Manager {
 	public function get_admin_menu() {
 		global $menu;
 
-		$menu_items = array();
+		$menu_items = [ ];
 
 		foreach ( (array) $menu as $menu_item ) {
 			$menu_items[] = $this->get_admin_menu_item( $menu_item );
@@ -242,6 +269,7 @@ class Admin_Menu_Manager {
 	 */
 	protected function get_menu_item_file( $slug ) {
 		$pos = strpos( $slug, '?' );
+
 		if ( false !== $pos ) {
 			$slug = substr( $slug, 0, $pos );
 		}
@@ -283,7 +311,7 @@ class Admin_Menu_Manager {
 	protected function get_admin_menu_sub_items( $menu_item, $menu_file ) {
 		global $submenu;
 
-		$children        = array();
+		$children        = [ ];
 		$admin_is_parent = false;
 
 		if ( empty( $submenu[ $menu_item[2] ] ) ) {
@@ -325,10 +353,10 @@ class Admin_Menu_Manager {
 		$submenu = get_user_option( 'amm_trash_submenu' );
 
 		if ( ! is_array( $menu ) ) {
-			$menu = array();
+			$menu = [ ];
 		}
 
-		$menu_items = array();
+		$menu_items = [ ];
 
 		foreach ( $menu as $menu_item ) {
 			if ( ! empty( $submenu[ $menu_item[2] ] ) ) {
@@ -413,8 +441,8 @@ class Admin_Menu_Manager {
 	 * @return array An array containing top level and sub level menu items.
 	 */
 	protected function update_menu_loop( $menu ) {
-		$items   = array();
-		$submenu = array();
+		$items   = [ ];
+		$submenu = [ ];
 
 		$separatorIndex = 1;
 		$lastSeparator  = null;
@@ -424,7 +452,7 @@ class Admin_Menu_Manager {
 				$item[2] = str_replace( '=', '', strstr( $item[2], '=' ) );
 			}
 
-			$item = array(
+			$item = [
 				0          => wp_unslash( $item[0] ),
 				1          => $item[1],
 				2          => $item[2],
@@ -432,19 +460,19 @@ class Admin_Menu_Manager {
 				4          => $item[4],
 				5          => $item[5],
 				6          => $item[6],
-				'children' => isset( $item['children'] ) ? $item['children'] : array(),
+				'children' => isset( $item['children'] ) ? $item['children'] : [ ],
 				'href'     => $item['href'],
 				'id'       => $item['id'],
-			);
+			];
 
 			if ( ! empty( $item['children'] ) ) {
-				$submenu[ $item[2] ] = array();
+				$submenu[ $item[2] ] = [ ];
 				foreach ( $item['children'] as $subitem ) {
 					if ( false !== strpos( $subitem[2], '=' ) ) {
 						$subitem[2] = str_replace( '=', '', strstr( $subitem[2], '=' ) );
 					}
 
-					$subitem = array(
+					$subitem = [
 						0      => wp_unslash( $subitem[0] ),
 						1      => $subitem[1],
 						2      => $subitem[2],
@@ -452,7 +480,7 @@ class Admin_Menu_Manager {
 						4      => $subitem[4],
 						'href' => $subitem['href'],
 						'id'   => $subitem['id'],
-					);
+					];
 
 					$submenu[ $item[2] ][] = $subitem;
 				}
@@ -461,7 +489,7 @@ class Admin_Menu_Manager {
 
 			// Store separators in correct order.
 			if ( false !== strpos( $item[2], 'separator' ) ) {
-				$item          = array( '', 'read', 'separator' . $separatorIndex ++, '', 'wp-menu-separator' );
+				$item          = [ '', 'read', 'separator' . $separatorIndex ++, '', 'wp-menu-separator' ];
 				$lastSeparator = count( $items );
 			}
 
@@ -472,10 +500,10 @@ class Admin_Menu_Manager {
 			$items[ $lastSeparator ][2] = 'separator-last';
 		}
 
-		return array(
+		return [
 			'menu'    => $items,
 			'submenu' => $submenu,
-		);
+		];
 	}
 
 	/**
@@ -521,20 +549,20 @@ class Admin_Menu_Manager {
 	 * @return array
 	 */
 	protected function get_menu_data( $type ) {
-		$menu = array();
+		$menu = [ ];
 		switch ( $type ) {
 			case 'menu':
 				$menu = get_user_option( 'amm_menu' );
 
 				if ( ! $menu ) {
-					$menu = get_option( 'amm_menu', array() );
+					$menu = get_option( 'amm_menu', [ ] );
 				}
 				break;
 			case 'submenu':
 				$menu = get_user_option( 'amm_submenu' );
 
 				if ( ! $menu ) {
-					$menu = get_option( 'amm_submenu', array() );
+					$menu = get_option( 'amm_submenu', [ ] );
 				}
 				break;
 			case 'trash_menu':
@@ -546,7 +574,7 @@ class Admin_Menu_Manager {
 		}
 
 		if ( false === $menu ) {
-			$menu = array();
+			$menu = [ ];
 		}
 
 		/**
@@ -798,7 +826,7 @@ class Admin_Menu_Manager {
 
 		// It must be a custom menu item.
 		if ( isset( $item['id'] ) && false !== strpos( $item['id'], 'custom-item' ) ) {
-			$menu[] = array(
+			$menu[] = [
 				0    => $item[0],
 				1    => $item[1],
 				2    => $item['href'],
@@ -807,7 +835,7 @@ class Admin_Menu_Manager {
 				5    => $item[5],
 				6    => $item[6],
 				'id' => $item['id'],
-			);
+			];
 
 			return;
 		}
@@ -901,12 +929,12 @@ class Admin_Menu_Manager {
 
 			// It must be a custom menu item.
 			if ( isset( $item['id'] ) && false !== strpos( $item['id'], 'custom-item' ) ) {
-				$submenu[ $parent_page ][] = array(
+				$submenu[ $parent_page ][] = [
 					0    => $item[0],
 					1    => $item[1],
 					2    => $item['href'],
 					'id' => $item['id'],
-				);
+				];
 				continue;
 			}
 
@@ -943,7 +971,7 @@ class Admin_Menu_Manager {
 	protected function get_menu_item_filters( $hook_name ) {
 		global $wp_filter;
 
-		$old_filters = array();
+		$old_filters = [ ];
 
 		foreach ( $wp_filter as $filter => $value ) {
 			if ( false !== strpos( $filter, $hook_name ) ) {
@@ -992,7 +1020,7 @@ class Admin_Menu_Manager {
 			return $menu_order;
 		}
 
-		$new_order = array();
+		$new_order = [ ];
 		foreach ( $menu as $item ) {
 			$new_order[] = $item[2];
 		}

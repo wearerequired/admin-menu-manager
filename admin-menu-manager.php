@@ -37,15 +37,33 @@ if ( file_exists( dirname( __FILE__ ) . '/vendor/autoload.php' ) ) {
 
 $requirements_check = new WP_Requirements_Check( array(
 	'title' => 'Admin Menu Manager',
-	'php'   => '5.3',
+	'php'   => '5.4',
 	'wp'    => '4.4',
 	'file'  => __FILE__,
 ) );
 
 if ( $requirements_check->passes() ) {
 	include( dirname( __FILE__ ) . '/classes/class-admin-menu-manager.php' );
-	$admin_menu_manager = new Admin_Menu_Manager();
-	add_action( 'plugins_loaded', array( $admin_menu_manager, 'add_hooks' ) );
+
+	/**
+	 * Get the Admin Menu Manager controller instance.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return Admin_Menu_Manager
+	 */
+	function admin_menu_manager() {
+		static $controller = null;
+
+		if ( null === $controller ) {
+			$controller = new Admin_Menu_Manager( __FILE__ );
+		}
+
+		return $controller;
+	}
+
+	// Initialize the plugin.
+	add_action( 'plugins_loaded', array( admin_menu_manager(), 'add_hooks' ) );
 }
 
 unset( $requirements_check );
