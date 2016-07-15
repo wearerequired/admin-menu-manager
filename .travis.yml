@@ -22,10 +22,12 @@ env:
   - WP_VERSION=4.4.4 WP_MULTISITE=1
 
 cache:
+  apt: true
   bundler: true
   directories:
-  - node_modules # NPM packages
-  - vendor # Composer packages
+  - vendor
+  - $HOME/.composer/cache
+  - node_modules
 
 # Clones WordPress and configures our testing environment.
 before_script:
