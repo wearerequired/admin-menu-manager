@@ -1,19 +1,25 @@
 var CollapseButton = Backbone.View.extend( {
 	tagName:    'li',
 	template:   require( 'templates/collapse-button' ),
-	attributes: function () {
+	attributes: function() {
 		return {
 			class: 'ui-sortable-handle',
 			id:    'collapse-menu'
 		};
 	},
 
-	render: function () {
+	render: function() {
 		this.$el.html( this.template( AdminMenuManager.templates.collapseButton ) );
 		return this;
 	},
 
-	events: {},
+	events: {
+		'click #collapse-menu': 'collapse'
+	},
+
+	collapse: function() {
+		this.trigger( 'collapse' );
+	}
 
 } );
 

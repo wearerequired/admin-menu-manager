@@ -5,7 +5,7 @@ var AdminMenu = CollectionView.extend( {
 	id:        'amm-adminmenu',
 	isEditing: false,
 
-	/**s
+	/**
 	 * Initialize the admin menu.
 	 *
 	 * This class creates and renders the whole menu

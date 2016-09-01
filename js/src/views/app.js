@@ -238,7 +238,7 @@ var AppView = wp.Backbone.View.extend( {
 		 * Find the item's last position and move it to the new one.
 		 */
 
-		    // Iterate on menu items
+		// Iterate on menu items
 		var item = this.views.first( '#admin-menu-manager-menu' ).collection.getRecursively( itemId ) ||
 			this.views.first( '#admin-menu-manager-trash-view' ).collection.getRecursively( itemId );
 

@@ -1,15 +1,13 @@
-// Create the view for the admin bar
 var MenuItemView = require( 'views/menu-item' );
 
 var CollectionView = Backbone.View.extend( {
-	collectionView: MenuItemView,
 
 	/**
-	 * Render the admin menu including edit buttons and trash.
+	 * Render the collection.
 	 *
 	 * @returns {AdminMenu}
 	 */
-	render: function () {
+	render: function() {
 		this.$el.html( this.renderCollection() );
 		this.delegateEvents();
 
