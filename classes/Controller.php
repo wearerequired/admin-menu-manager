@@ -190,8 +190,6 @@ class Controller {
 		return false;
 	}
 
-
-
 	/**
 	 * Grab a list of all registered admin pages.
 	 *
@@ -328,17 +326,6 @@ class Controller {
 	}
 
 	/**
-	 * Check if a menu item is a menu separator.
-	 *
-	 * @param array $item Top-level or sub-level menu item.
-	 *
-	 * @return bool
-	 */
-	protected function is_menu_separator( $item ) {
-		return isset( $item[4] ) && 'wp-menu-separator' === $item[4];
-	}
-
-	/**
 	 * Get menu data from database.
 	 *
 	 * @param string $type Menu type.
@@ -407,32 +394,23 @@ class Controller {
 
 		global $menu, $submenu, $admin_page_hooks, $_registered_pages, $temp_menu, $temp_submenu;
 
-		$temp_menu             = array_values( $menu );
-		$temp_submenu          = $submenu;
-		$temp_hooks = $admin_page_hooks;
+		$temp_menu    = array_values( $menu ); // Do not preserve keys.
+		$temp_submenu = $submenu;
+		$temp_hooks   = $admin_page_hooks;
 
 		$menu = $submenu = $_registered_pages = null;
 
-		// Iterate on the top level items.
-		foreach ( $amm_menu as $priority => $item ) {
-			$this->maybe_match_top_level_menu_item( $item, $priority );
-		}
+		$menu_iterator = new Parent_Menu_Iterator( $amm_menu, $temp_menu, $temp_submenu );
+		$menu_iterator->maybe_match_menu_items();
 
-		$admin_page_hooks = $this->keep_admin_page_hooks( $admin_page_hooks, $temp_hooks);
+		$admin_page_hooks = $this->keep_admin_page_hooks( $admin_page_hooks, $temp_hooks );
 
 		// Iterate on all our submenu items.
-		foreach ( $amm_submenu as $parent_page => $page ) {
-			$this->maybe_match_submenu_item( $page, $parent_page );
-		}
+		$menu_iterator = new Sub_Menu_Iterator( $amm_submenu, $amm_menu );
+		$menu_iterator->maybe_match_menu_items();
 
-		// Remove trashed items.
-		foreach ( $amm_trash_menu as $item ) {
-			$this->trash_menu_item( $item );
-		}
-
-		foreach ( $amm_trash_submenu as $parent_page => $page ) {
-			$this->trash_submenu_item( $page, $parent_page );
-		}
+		$this->trash_menu_items( $amm_trash_menu );
+		$this->trash_submenu_items( $amm_trash_submenu );
 
 		/*
 		 * Append elements that haven't been added to a menu yet.
@@ -468,7 +446,31 @@ class Controller {
 	}
 
 	/**
-	 * Move a menu item to the trash.
+	 * Moves menu items to the trash.
+	 *
+	 * @param array $items The menu items.
+	 */
+	protected function trash_menu_items( $items ) {
+		// Remove trashed items.
+		foreach ( $items as $item ) {
+			$this->trash_menu_item( $item );
+		}
+	}
+
+	/**
+	 * Moves submenu items to the trash.
+	 *
+	 * @param array $items The menu items.
+	 */
+	protected function trash_submenu_items( $items ) {
+		// Remove trashed items.
+		foreach ( $items as $parent_page => $page ) {
+			$this->trash_submenu_item( $page, $parent_page );
+		}
+	}
+
+	/**
+	 * Moves a single menu item to the trash.
 	 *
 	 * @param array $item The menu item.
 	 */
@@ -496,7 +498,7 @@ class Controller {
 	}
 
 	/**
-	 * Move a submenu item to the trash.
+	 * Moves a single submenu item to the trash.
 	 *
 	 * @param array $page        The submenu item.
 	 * @param int   $parent_page The item's parent.
@@ -526,230 +528,13 @@ class Controller {
 	}
 
 	/**
-	 * Get the slug of a menu item.
-	 *
-	 * @param array $item Menu item.
-	 *
-	 * @return string
-	 */
-	protected function get_menu_item_slug( $item ) {
-		$item_slug = $item[2];
-
-		if ( isset( $item['href'] ) ) {
-			$item_slug = $item['href'];
-
-			preg_match( '/page=([a-z_0-9]*)/', $item['href'], $matches );
-			if ( isset( $matches[1] ) ) {
-				$item_slug = $matches[1];
-			}
-		}
-
-		return $item_slug;
-	}
-
-	/**
-	 * Try to match a menu item with its original entry.
-	 *
-	 * @param array $item     The menu item.
-	 * @param int   $priority The item's priority in the menu.
-	 */
-	protected function maybe_match_top_level_menu_item( $item, $priority ) {
-		global $menu, $temp_menu, $temp_submenu;
-
-		$item_slug = $this->get_menu_item_slug( $item );
-
-		// It was originally a top level item as well. It's a match!
-		foreach ( $temp_menu as $key => $m_item ) {
-			if ( $item_slug !== $m_item[2] ) {
-				continue;
-			}
-
-			if ( $this->is_menu_separator( $m_item ) ) {
-				$menu[] = $m_item;
-			} else {
-				add_menu_page(
-					$m_item[3], // Page title.
-					$m_item[0], // Menu title.
-					$m_item[1], // Capability.
-					$item_slug, // Slug.
-					'', // Function.
-					$m_item[6], // Icon.
-					$priority // Position.
-				);
-
-				if ( isset( $amm_submenu[ $m_item[2] ] ) ) {
-					$amm_submenu[ $item_slug ] = $amm_submenu[ $m_item[2] ];
-				}
-			}
-
-			unset( $temp_menu[ $key ] );
-
-			return;
-		}
-
-		// It must be a submenu item moved to the top level.
-		foreach ( $temp_submenu as $key => $parent ) {
-			foreach ( $parent as $sub_key => $sub_item ) {
-				if ( $item_slug !== $sub_item[2] ) {
-					continue;
-				}
-
-				$hook_name = get_plugin_page_hookname( $sub_item[2], $key );
-
-				if ( ! isset( $sub_item[3] ) ) {
-					$sub_item[3] = $sub_item[0];
-				}
-
-				$new_page = add_menu_page(
-					$sub_item[3], // Page title.
-					$sub_item[0], // Menu title.
-					$sub_item[1], // Capability.
-					$sub_item[2], // Slug.
-					'', // Function.
-					$item[6], // Icon.
-					$priority // Position.
-				);
-
-				// Add hook name of the former parent as CSS class to the new item.
-				$menu[ $priority ][4] .= ' ' . get_plugin_page_hookname( $key, $key );
-
-				$this->switch_menu_item_filters( $hook_name, $new_page );
-
-				unset( $temp_submenu[ $key ][ $sub_key ] );
-
-				return;
-			}
-		}
-
-		// It must be a custom menu item.
-		if ( isset( $item['id'] ) && false !== strpos( $item['id'], 'custom-item' ) ) {
-			$menu[] = [
-				0    => $item[0],
-				1    => $item[1],
-				2    => $item['href'],
-				3    => $item[3],
-				4    => $item[4],
-				5    => $item[5],
-				6    => $item[6],
-				'id' => $item['id'],
-			];
-
-			return;
-		}
-
-		// It must be a separator.
-		if ( $this->is_menu_separator( $item ) ) {
-			$menu[] = $item;
-
-			return;
-		}
-	}
-
-	/**
-	 * Try to match a menu item with its original entry.
-	 *
-	 * @param array $page        The submenu item.
-	 * @param int   $parent_page The item's parent.
-	 */
-	protected function maybe_match_submenu_item( $page, $parent_page ) {
-		global $submenu, $temp_menu, $temp_submenu;
-
-		foreach ( $page as $item ) {
-			// Iterate on original top level menu items.
-			foreach ( $temp_menu as $m_key => $m_item ) {
-				if ( $item[2] !== $m_item[2] ) {
-					continue;
-				}
-
-				$hook_name = get_plugin_page_hookname( $m_item[2], $parent_page );
-
-				$new_page = add_submenu_page(
-					$parent_page, // Parent Slug.
-					$m_item[0], // Page title.
-					$m_item[0], // Menu title.
-					$m_item[1], // Capability.
-					$m_item[2] // Slug.
-				);
-
-				// Don't loose grand children.
-				if ( isset( $temp_submenu[ $m_item[2] ] ) ) {
-					foreach ( $temp_submenu[ $m_item[2] ] as $s_item ) {
-						$hook_name = get_plugin_page_hookname( $s_item[2], $m_item[2] );
-
-						$new_page = add_submenu_page(
-							$parent_page, // Parent Slug.
-							$s_item[3], // Page title.
-							$s_item[0], // Menu title.
-							$s_item[1], // Capability.
-							$s_item[2] // Slug.
-						);
-
-						$this->switch_menu_item_filters( $hook_name, $new_page );
-
-						// Add original parent slug to sub menu item.
-						end( $submenu[ $parent_page ] );
-						$submenu[ $parent_page ][ key( $submenu[ $parent_page ] ) ]['original_parent'] = $m_item[2];
-
-						unset( $s_item );
-					}
-				}
-
-				$this->switch_menu_item_filters( $hook_name, $new_page );
-
-				unset( $temp_menu[ $m_key ] );
-
-				continue 2;
-			}
-
-			// Iterate on original submenu items.
-			foreach ( $temp_submenu as $s_parent_page => &$s_page ) {
-				foreach ( $s_page as $s_priority => &$s_item ) {
-					if ( $item[2] === $s_item[2] ) {
-						$hook_name = get_plugin_page_hookname( $s_item[2], $s_parent_page );
-
-						$new_page = add_submenu_page(
-							$parent_page, // Parent Slug.
-							isset( $s_item[3] ) ? $s_item[3] : $s_item[0], // Page title.
-							$s_item[0], // Menu title.
-							$s_item[1], // Capability.
-							$s_item[2] // Slug.
-						);
-
-						$this->switch_menu_item_filters( $hook_name, $new_page );
-
-						unset( $temp_submenu[ $s_parent_page ][ $s_priority ] );
-
-						continue 2;
-					}
-				}
-			}
-
-			// It must be a custom menu item.
-			if ( isset( $item['id'] ) && false !== strpos( $item['id'], 'custom-item' ) ) {
-				$submenu[ $parent_page ][] = [
-					0    => $item[0],
-					1    => $item[1],
-					2    => $item['href'],
-					'id' => $item['id'],
-				];
-				continue;
-			}
-
-			// It must be a separator.
-			if ( $this->is_menu_separator( $item ) ) {
-				$submenu[ $parent_page ][] = $item;
-				continue;
-			}
-		}
-	}
-
-	/**
 	 * Loop through admin page hooks.
 	 *
 	 * We want to keep the original, untranslated values.
 	 *
 	 * @param array $admin_page_hooks An array of admin page hooks.
 	 * @param array $temp_hooks       Temporary copy of the first array.
+	 * @return array The merged hooks array.
 	 */
 	protected function keep_admin_page_hooks( $admin_page_hooks, $temp_hooks ) {
 		foreach ( $admin_page_hooks as $key => &$value ) {
@@ -759,42 +544,6 @@ class Controller {
 		}
 
 		return $admin_page_hooks;
-	}
-
-	/**
-	 * Get all the filters hooked to an admin menu page.
-	 *
-	 * @param string $hook_name The plugin page hook name.
-	 *
-	 * @return array
-	 */
-	protected function get_menu_item_filters( $hook_name ) {
-		global $wp_filter;
-
-		$old_filters = [];
-
-		foreach ( $wp_filter as $filter => $value ) {
-			if ( false !== strpos( $filter, $hook_name ) ) {
-				$old_filters[ $filter ] = $value;
-				unset( $wp_filter[ $filter ] );
-			}
-		}
-
-		return $old_filters;
-	}
-
-	/**
-	 * Add the hooks attached to the original menu item to the new one.
-	 *
-	 * @param string $old_hook Old hook name.
-	 * @param string $new_hook New hook name.
-	 */
-	protected function switch_menu_item_filters( $old_hook, $new_hook ) {
-		global $wp_filter;
-
-		foreach ( $this->get_menu_item_filters( $old_hook ) as $filter => $value ) {
-			$wp_filter[ str_replace( $old_hook, $new_hook, $filter ) ] = $value;
-		}
 	}
 
 	/**

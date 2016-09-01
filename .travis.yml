@@ -84,7 +84,6 @@ after_script:
 - |
   if [[ "$WP_TRAVISCI" == "travis:codecoverage" ]] ; then
     bash <(curl -s https://codecov.io/bash)
-    vendor/bin/test-reporter
   fi
 
 notifications:

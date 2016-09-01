@@ -75,8 +75,8 @@ class Ajax_Handler {
 	 * @return array An array containing top level and sub level menu items.
 	 */
 	protected function update_menu_loop( $menu ) {
-		$items   = [ ];
-		$submenu = [ ];
+		$items   = [];
+		$submenu = [];
 
 		$separatorIndex = 1;
 		$last_separator = null;
@@ -94,13 +94,13 @@ class Ajax_Handler {
 				4          => $item[4],
 				5          => $item[5],
 				6          => $item[6],
-				'children' => isset( $item['children'] ) ? $item['children'] : [ ],
+				'children' => isset( $item['children'] ) ? $item['children'] : [],
 				'href'     => $item['href'],
 				'id'       => $item['id'],
 			];
 
 			if ( ! empty( $item['children'] ) ) {
-				$submenu[ $item[2] ] = [ ];
+				$submenu[ $item[2] ] = [];
 				foreach ( $item['children'] as $subitem ) {
 					if ( false !== strpos( $subitem[2], '=' ) ) {
 						$subitem[2] = str_replace( '=', '', strstr( $subitem[2], '=' ) );
