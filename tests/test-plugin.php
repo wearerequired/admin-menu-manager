@@ -2,11 +2,6 @@
 
 class Admin_Menu_Manager_Test extends WP_UnitTestCase {
 	/**
-	 * @var Admin_Menu_Manager
-	 */
-	protected $plugin;
-
-	/**
 	 * @var int Current user ID.
 	 */
 	protected $current_user;
@@ -29,7 +24,7 @@ class Admin_Menu_Manager_Test extends WP_UnitTestCase {
 	}
 
 	public function test_add_admin_menu() {
-		global $hook_suffix, $menu, $_wp_submenu_nopriv;
+		global $hook_suffix;
 		$hook_suffix = '';
 
 		require_once ABSPATH . '/wp-admin/menu.php';
