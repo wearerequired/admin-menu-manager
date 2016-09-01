@@ -7,16 +7,16 @@ var TrashView = CollectionView.extend( {
 	className: 'dashicons-before dashicons-trash',
 
 	/**
-	 * Initialize the admin menu.
+	 * Initialize the trashed admin menu.
 	 *
-	 * This class creates andrenders the whole menu
+	 * This class creates and renders the whole menu
 	 * based on the data provided by the PHP part.
 	 *
 	 * @class AdminMenu
 	 * @augments Backbone.View
 	 * @constructs AdminMenu object
 	 */
-	initialize: function () {
+	initialize: function() {
 		// Ensure our methods keep the `this` reference to the view itself
 		_.bindAll( this, 'render' );
 
