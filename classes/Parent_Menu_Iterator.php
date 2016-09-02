@@ -14,10 +14,10 @@ class Parent_Menu_Iterator extends Menu_Iterator {
 	protected $old_menu;
 	protected $old_submenu;
 
-	public function __construct( array &$new_menu, array &$old_menu, array &$old_submenu ) {
+	public function __construct( array $new_menu, array &$old_menu, array &$old_submenu ) {
 		$this->new_menu = $new_menu;
-		$this->old_menu = $old_menu;
-		$this->old_submenu = $old_submenu;
+		$this->old_menu = &$old_menu;
+		$this->old_submenu = &$old_submenu;
 	}
 
 	public function maybe_match_menu_items() {
