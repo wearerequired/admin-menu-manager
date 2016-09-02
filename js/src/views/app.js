@@ -261,6 +261,13 @@ var AppView = wp.Backbone.View.extend( {
 			this.views.first( '#admin-menu-manager-menu' ).collection
 				.at( newPosition[ 0 ] ).children
 				.add( item, { at: newPosition[ 1 ] } );
+
+			/**
+			 * Reset parent view as this doesn't trigger a reset.
+			 *
+			 * Todo: Add listener to subview instead.
+			 */
+			this.views.first( '#admin-menu-manager-menu' ).reset();
 		}
 
 		// Re-bind hoverIntent
