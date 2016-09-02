@@ -263,9 +263,6 @@ var AppView = wp.Backbone.View.extend( {
 				.add( item, { at: newPosition[ 1 ] } );
 		}
 
-		this.views.first( '#admin-menu-manager-menu' ).reset().render();
-		this.views.first( '#admin-menu-manager-trash-view' ).reset().render();
-
 		// Re-bind hoverIntent
 		this.hoverIntent();
 

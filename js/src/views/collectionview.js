@@ -29,8 +29,8 @@ var CollectionView = Backbone.View.extend( {
 		this.collection.each( this.add );
 
 		// Bind collection changes to re-rendering
-		this.collection.on( 'add', this.add );
-		this.collection.on( 'remove', this.remove );
+		this.collection.on( 'add', this.reset );
+		this.collection.on( 'remove', this.reset );
 		this.collection.on( 'reset', this.reset );
 	},
 
@@ -74,29 +74,11 @@ var CollectionView = Backbone.View.extend( {
 	},
 
 	/**
-	 * Removes a model from the collection view.
-	 *
-	 * @param {MenuItem} model
-	 */
-	remove: function( model ) {
-		var menuItemView = _( this._views ).find( function( view ) {
-			return view.model === model;
-		} );
-
-		this._views = _( this._views ).without( menuItemView );
-
-		if ( this.rendered ) {
-			menuItemView.el.remove();
-		}
-
-		return this;
-	},
-
-	/**
 	 * Resets the whole collection view.
 	 */
 	reset: function() {
 		this._views = [];
+		this.$el.empty();
 
 		this.collection.each( this.add );
 
