@@ -71,9 +71,9 @@ var CollectionView = Backbone.View.extend( {
 	 */
 	reset: function() {
 		this._views = [];
-		this.$el.empty();
 
 		this.collection.each( this.add );
+		this.render();
 
 		return this;
 	}
