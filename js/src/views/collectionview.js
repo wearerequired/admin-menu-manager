@@ -2,8 +2,7 @@ var MenuItemView = require( 'views/menu-item' );
 
 var CollectionView = Backbone.View.extend( {
 	// Can't be named views because wp.Backbone would think it's a wp.Backbone subview.
-	_views:   [],
-	rendered: false,
+	_views: [],
 
 	/**
 	 * Initializes a collection view.
@@ -40,8 +39,6 @@ var CollectionView = Backbone.View.extend( {
 	 * @returns {AdminMenu}
 	 */
 	render: function() {
-		this.rendered = true;
-
 		this.$el.empty();
 
 		_.each( this._views, function( view ) {
@@ -65,10 +62,6 @@ var CollectionView = Backbone.View.extend( {
 		} );
 
 		this._views.push( menuItemView );
-
-		if ( this.rendered ) {
-			this.$el.append( menuItemView.render().el );
-		}
 
 		return this;
 	},
