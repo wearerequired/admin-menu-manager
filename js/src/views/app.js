@@ -2,8 +2,9 @@
 var AdminMenu      = require( 'views/adminmenu' ),
     CollapseButton = require( 'views/collapse-button' ),
     EditButton     = require( 'views/edit-button' ),
-    TrashView      = require( 'views/trash' ),
-    MenuItem       = require( 'models/menu-item' );
+    Trash          = require( 'views/trash' ),
+    MenuItem       = require( 'models/menu-item' ),
+    Menu           = require( 'collections/menu' );
 
 var AppView = wp.Backbone.View.extend( {
 	el:           '#adminmenuwrap',
@@ -11,32 +12,32 @@ var AppView = wp.Backbone.View.extend( {
 	isEditing:    false,
 	dropReceiver: undefined,
 
-	initialize: function () {
+	initialize: function() {
 		_.bindAll( this, 'sortableUpdate', 'sortableStop' );
 		this.delegateEvents();
 
-		this.views.set( '#admin-menu-manager-menu', new AdminMenu() );
+		this.views.set( '#admin-menu-manager-menu', new AdminMenu( { collection: new Menu() } ) );
 		this.views.set( '#admin-menu-manager-collapse', new CollapseButton() );
 		this.views.set( '#admin-menu-manager-edit', new EditButton() );
-		this.views.set( '#admin-menu-manager-trash-view', new TrashView() );
+		this.views.set( '#admin-menu-manager-trash-view', new Trash( { collection: new Menu( [], { type: 'trash' } ) } ) );
 
 		// Listen to edit button activation
-		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'active', function ( isActive ) {
+		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'active', function( isActive ) {
 			this.toggleSortable( isActive );
 			this.views.first( '#admin-menu-manager-menu' ).isEditing = isActive;
 		} );
 
 		// Listen to the reset event
-		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'reset', function () {
-			this.views.first( '#admin-menu-manager-menu' ).collection.destroy( _.bind( function () {
-				this.views.first( '#admin-menu-manager-trash-view' ).collection.destroy( function () {
+		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'reset', function() {
+			this.views.first( '#admin-menu-manager-menu' ).collection.destroy( _.bind( function() {
+				this.views.first( '#admin-menu-manager-trash-view' ).collection.destroy( function() {
 					window.location.reload( true );
 				} );
 			}, this ) );
 		} );
 
 		// Listen to the save event
-		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'save', function ( view ) {
+		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'save', function( view ) {
 			this.views.first( '#admin-menu-manager-menu' ).collection.save();
 			this.views.first( '#admin-menu-manager-trash-view' ).collection.save();
 
@@ -46,7 +47,7 @@ var AppView = wp.Backbone.View.extend( {
 		} );
 
 		// Listen to the export event
-		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'export', function ( view ) {
+		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'export', function( view ) {
 			var menu  = this.views.first( '#admin-menu-manager-menu' ).collection.toJSON();
 			var trash = this.views.first( '#admin-menu-manager-trash-view' ).collection.toJSON();
 
@@ -59,14 +60,14 @@ var AppView = wp.Backbone.View.extend( {
 		} );
 
 		// Listen to the import event
-		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'import', function ( view ) {
+		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'import', function( view ) {
 			var menu  = this.views.first( '#admin-menu-manager-menu' ).collection;
 			var trash = this.views.first( '#admin-menu-manager-trash-view' ).collection;
 
 			var ImportModal = require( 'views/import-modal' );
 			this.views.set( '#admin-menu-manager-modal-view', new ImportModal() );
 
-			this.listenTo( this.views.first( '#admin-menu-manager-modal-view' ), 'import', function ( data ) {
+			this.listenTo( this.views.first( '#admin-menu-manager-modal-view' ), 'import', function( data ) {
 				data = JSON.parse( data );
 
 				if ( data.menu ) {
@@ -85,7 +86,7 @@ var AppView = wp.Backbone.View.extend( {
 			} );
 		} );
 
-		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'addSeparator', function ( view ) {
+		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'addSeparator', function( view ) {
 			this.views.first( '#admin-menu-manager-menu' ).collection.add( new MenuItem( {
 				'2': 'separator' + Math.floor( Math.random() * (100 - 1) ) + 1, // todo: count instead of random
 				'4': 'wp-menu-separator'
@@ -95,7 +96,7 @@ var AppView = wp.Backbone.View.extend( {
 			this.initSortable( this.isEditing );
 		} );
 
-		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'addCustomItem', function ( view ) {
+		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'addCustomItem', function( view ) {
 			this.views.first( '#admin-menu-manager-menu' ).collection.add( new MenuItem( {
 				'0':    'Custom item',
 				'1':    'read',
@@ -118,14 +119,14 @@ var AppView = wp.Backbone.View.extend( {
 			track:    true
 		} );
 
-		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'undo', function ( view ) {
+		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'undo', function( view ) {
 			this.undoManager.undo( true );
 			this.views.first( '#admin-menu-manager-menu' ).render();
 			this.views.first( '#admin-menu-manager-trash-view' ).render();
 			this.initSortable( this.isEditing );
 		} );
 
-		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'redo', function ( view ) {
+		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'redo', function( view ) {
 			this.undoManager.redo( true );
 			this.views.first( '#admin-menu-manager-menu' ).render();
 			this.views.first( '#admin-menu-manager-trash-view' ).render();
@@ -140,7 +141,7 @@ var AppView = wp.Backbone.View.extend( {
 	 *
 	 * @param bool isActive Whether we are currently editing the menu or not.
 	 */
-	toggleSortable: function ( isActive ) {
+	toggleSortable: function( isActive ) {
 		this.isEditing = isActive;
 		this.initSortable( isActive );
 	},
@@ -152,7 +153,7 @@ var AppView = wp.Backbone.View.extend( {
 	 *
 	 * @param bool isEditing Whether we are currently editing the menu or not.
 	 */
-	initSortable: function ( isEditing ) {
+	initSortable: function( isEditing ) {
 		// Default sortable options
 		var options = {
 			// If defined, the items can be dragged only horizontally or vertically. Possible values: "x", "y".
@@ -179,7 +180,7 @@ var AppView = wp.Backbone.View.extend( {
 
 		var that = this;
 		this.$el.find( '.menu-top' ).droppable( {
-			drop: function ( e, ui ) {
+			drop: function( e, ui ) {
 				if ( !that.dropReceiver ) {
 					that.dropReceiver = jQuery( this ).find( '.wp-submenu' );
 				}
@@ -203,7 +204,7 @@ var AppView = wp.Backbone.View.extend( {
 		wp.svgPainter.init();
 	},
 
-	sortableStop: function ( e, ui ) {
+	sortableStop: function( e, ui ) {
 		if ( this.dropReceiver ) {
 			this.dropReceiver.append( ui.item );
 			this.dropReceiver = null;
@@ -217,7 +218,7 @@ var AppView = wp.Backbone.View.extend( {
 	 * @param event e
 	 * @param object ui
 	 */
-	sortableUpdate: function ( e, ui ) {
+	sortableUpdate: function( e, ui ) {
 		var itemId      = ui.item.attr( 'data-id' ),
 		    newPosition = [ ui.item.index() ];
 
@@ -238,9 +239,8 @@ var AppView = wp.Backbone.View.extend( {
 		 * Find the item's last position and move it to the new one.
 		 */
 
-		// Iterate on menu items
 		var item = this.views.first( '#admin-menu-manager-menu' ).collection.getRecursively( itemId ) ||
-			this.views.first( '#admin-menu-manager-trash-view' ).collection.getRecursively( itemId );
+			    this.views.first( '#admin-menu-manager-trash-view' ).collection.getRecursively( itemId );
 
 		if ( !item ) {
 			return;
@@ -263,8 +263,8 @@ var AppView = wp.Backbone.View.extend( {
 				.add( item, { at: newPosition[ 1 ] } );
 		}
 
-		this.views.first( '#admin-menu-manager-menu' ).render();
-		this.views.first( '#admin-menu-manager-trash-view' ).render();
+		this.views.first( '#admin-menu-manager-menu' ).reset().render();
+		this.views.first( '#admin-menu-manager-trash-view' ).reset().render();
 
 		// Re-bind hoverIntent
 		this.hoverIntent();
@@ -280,7 +280,7 @@ var AppView = wp.Backbone.View.extend( {
 	 *
 	 * @see /wp-admin/js/common.js for the source of this.
 	 */
-	hoverIntent: function () {
+	hoverIntent: function() {
 		/**
 		 * Ensure an admin submenu is within the visual viewport.
 		 *
@@ -320,7 +320,7 @@ var AppView = wp.Backbone.View.extend( {
 
 		var $adminmenu = this.$el.find( '#adminmenu' );
 		$adminmenu.find( 'li.wp-has-submenu' ).hoverIntent( {
-			over: function () {
+			over: function() {
 				var $menuItem = jQuery( this ),
 				    $submenu  = $menuItem.find( '.wp-submenu' ),
 				    top       = parseInt( $submenu.css( 'top' ), 10 );
@@ -339,7 +339,7 @@ var AppView = wp.Backbone.View.extend( {
 				$menuItem.addClass( 'opensub' );
 			},
 
-			out: function () {
+			out: function() {
 				if ( $adminmenu.data( 'wp-responsive' ) ) {
 					// The menu is in responsive mode, bail
 					return;

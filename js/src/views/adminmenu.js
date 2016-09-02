@@ -1,25 +1,19 @@
-var CollectionView = require( 'views/collectionview' ),
-    Menu           = require( 'collections/menu' );
+var CollectionView = require( 'views/collectionview' );
 
 var AdminMenu = CollectionView.extend( {
 	id:        'amm-adminmenu',
 	isEditing: false,
 
 	/**
-	 * Initialize the admin menu.
-	 *
-	 * This class creates and renders the whole menu
-	 * based on the data provided by the PHP part.
+	 * Initializes the admin menu.
 	 *
 	 * @class AdminMenu
 	 * @augments Backbone.View
 	 * @constructs AdminMenu object
 	 */
-	initialize: function() {
-		// Ensure our methods keep the `this` reference to the view itself
-		_.bindAll( this, 'render' );
+	initialize: function( options ) {
+		CollectionView.prototype.initialize.apply( this, [ options ] );
 
-		this.collection = new Menu();
 		this.collection.reset( AdminMenuManager.menu );
 	}
 } );

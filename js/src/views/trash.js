@@ -1,7 +1,6 @@
-var CollectionView = require( 'views/collectionview' ),
-    Menu           = require( 'collections/menu' );
+var CollectionView = require( 'views/collectionview' );
 
-var TrashView = CollectionView.extend( {
+var Trash = CollectionView.extend( {
 	tagName:   'ul',
 	id:        'admin-menu-manager-trash',
 	className: 'dashicons-before dashicons-trash',
@@ -9,26 +8,16 @@ var TrashView = CollectionView.extend( {
 	/**
 	 * Initialize the trashed admin menu.
 	 *
-	 * This class creates and renders the whole menu
-	 * based on the data provided by the PHP part.
-	 *
 	 * @class AdminMenu
 	 * @augments Backbone.View
 	 * @constructs AdminMenu object
 	 */
-	initialize: function() {
-		// Ensure our methods keep the `this` reference to the view itself
-		_.bindAll( this, 'render' );
+	initialize: function( options ) {
+		CollectionView.prototype.initialize.apply( this, [ options ] );
 
-		this.collection = new Menu( [], { type: 'trash' } );
 		this.collection.reset( AdminMenuManager.trash );
-
-		// Bind collection changes to re-rendering
-		this.collection.on( 'reset', this.render );
-		this.collection.on( 'add', this.render );
-		this.collection.on( 'remove', this.render );
-	},
+	}
 
 } );
 
-module.exports = TrashView;
+module.exports = Trash;
