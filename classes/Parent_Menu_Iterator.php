@@ -58,28 +58,6 @@ class Parent_Menu_Iterator extends Menu_Iterator {
 		}
 	}
 
-	/**
-	 * Get the slug of a menu item.
-	 *
-	 * @param array $item Menu item.
-	 *
-	 * @return string
-	 */
-	protected function get_menu_item_slug( $item ) {
-		$item_slug = $item[2];
-
-		if ( isset( $item['href'] ) ) {
-			$item_slug = $item['href'];
-
-			preg_match( '/page=([a-z_0-9]*)/', $item['href'], $matches );
-			if ( isset( $matches[1] ) ) {
-				$item_slug = $matches[1];
-			}
-		}
-
-		return $item_slug;
-	}
-
 	protected function is_top_level_item( $item, $priority ) {
 		global $menu;
 

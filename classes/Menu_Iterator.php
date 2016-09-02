@@ -56,4 +56,26 @@ class Menu_Iterator {
 	protected function is_menu_separator( $item ) {
 		return isset( $item[4] ) && 'wp-menu-separator' === $item[4];
 	}
+
+	/**
+	 * Get the slug of a menu item.
+	 *
+	 * @param array $item Menu item.
+	 *
+	 * @return string
+	 */
+	protected function get_menu_item_slug( $item ) {
+		$item_slug = $item[2];
+
+		if ( isset( $item['href'] ) ) {
+			$item_slug = $item['href'];
+
+			preg_match( '/page=([a-z_0-9]*)/', $item['href'], $matches );
+			if ( isset( $matches[1] ) ) {
+				$item_slug = $matches[1];
+			}
+		}
+
+		return $item_slug;
+	}
 }
