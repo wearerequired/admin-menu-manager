@@ -42,7 +42,7 @@ var Menu = Backbone.Collection.extend( {
 		if ( ( AdminMenuManager.parent_file && slug === AdminMenuManager.parent_file ) ||
 			( ( !window.typenow) && self === slug)
 		) {
-			if ( model.children ) {
+			if ( model.children.length ) {
 				classes.push( 'wp-has-current-submenu' );
 				classes.push( 'wp-menu-open' );
 			} else {
@@ -56,7 +56,7 @@ var Menu = Backbone.Collection.extend( {
 			model.set( 'href', 'admin.php?page=' + slug );
 		}
 
-		if ( model.children ) {
+		if ( model.children.length ) {
 			classes.push( 'wp-has-submenu' );
 
 			model.children.each( function( model ) {
@@ -132,7 +132,7 @@ var Menu = Backbone.Collection.extend( {
 	 */
 	getRecursively: function( obj ) {
 		var allChildren = _.flatten( this.map( function( model ) {
-			return model.children ? [ model.children.models ] : [];
+			return model.children.length ? [ model.children.models ] : [];
 		} ) );
 
 		return this.get( obj ) ||
