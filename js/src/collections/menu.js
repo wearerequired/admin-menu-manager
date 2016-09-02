@@ -3,26 +3,26 @@ var MenuItem = require( 'models/menu-item' );
 var Menu = Backbone.Collection.extend( {
 	model: MenuItem,
 
-	initialize: function ( models, options ) {
+	initialize: function( models, options ) {
 		this.options = this.options || options;
 
 		this.bind( 'reset', this.onReset );
 		this.bind( 'add', this.parseModel );
 	},
 
-	onReset: function () {
+	onReset: function() {
 		if ( this.length === 0 ) {
 			return;
 		}
 
 		this.first().set( 4, this.first().get( 4 ) + ' wp-first-item' );
 
-		this.each( function ( model ) {
+		this.each( function( model ) {
 			this.parseModel( model );
 		}, this );
 	},
 
-	parseModel: function ( model ) {
+	parseModel: function( model ) {
 		var classes,
 		    self = location.pathname.split( '/' ).pop(),
 		    slug = model.get( 'href' ) ? model.get( 'href' ) : model.get( 2 );
@@ -59,7 +59,7 @@ var Menu = Backbone.Collection.extend( {
 		if ( model.children ) {
 			classes.push( 'wp-has-submenu' );
 
-			model.children.each( function ( model ) {
+			model.children.each( function( model ) {
 				var slug = model.get( 2 ), parentHref = this.parent.get( 'href' ) ? this.parent.get( 'href' ) : this.parent.get( 2 );
 
 				if ( parentHref.search( '\\?page=' ) > -1 ) {
@@ -99,44 +99,44 @@ var Menu = Backbone.Collection.extend( {
 		model.set( 4, _.uniq( classes ).join( ' ' ) );
 	},
 
-	url: function () {
+	url: function() {
 		var type = this.options && this.options.type ? this.options.type : '';
 		return ajaxurl + '?action=adminmenu&type=' + type;
 	},
 
-	save: function ( callback ) {
+	save: function( callback ) {
 		Backbone.sync( 'create', this, {
-			success: function () {
+			success: function() {
 				if ( typeof(callback) === typeof(Function) ) {
 					callback();
 				}
-			},
+			}
 		} );
 	},
 
-	destroy: function ( callback ) {
+	destroy: function( callback ) {
 		Backbone.sync( 'delete', this, {
-			success: function () {
+			success: function() {
 				if ( typeof(callback) === typeof(Function) ) {
 					callback();
 				}
-			},
+			}
 		} );
 	},
 
 	/**
-	 * Get a model of this collection or a matching child.
+	 * Returns a model of this collection or a matching child.
 	 *
-	 * @param obj
-	 * @returns {*}
+	 * @param {Object} obj
+	 * @returns {MenuItem}
 	 */
-	getRecursively: function ( obj ) {
-		var allChildren = _.flatten( this.map( function ( model ) {
+	getRecursively: function( obj ) {
+		var allChildren = _.flatten( this.map( function( model ) {
 			return model.children ? [ model.children.models ] : [];
 		} ) );
 
 		return this.get( obj ) ||
-			_.find( allChildren, function ( model ) {
+			_.find( allChildren, function( model ) {
 				return model.id === obj;
 			} );
 	}
