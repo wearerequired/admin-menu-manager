@@ -406,7 +406,7 @@ class Controller {
 		$admin_page_hooks = $this->keep_admin_page_hooks( $admin_page_hooks, $temp_hooks );
 
 		// Iterate on all our submenu items.
-		$menu_iterator = new Sub_Menu_Iterator( $amm_submenu, $amm_menu );
+		$menu_iterator = new Sub_Menu_Iterator( $amm_submenu, $amm_menu, $temp_submenu );
 		$menu_iterator->maybe_match_menu_items();
 
 		$this->trash_menu_items( $amm_trash_menu );
@@ -426,8 +426,7 @@ class Controller {
 	/**
 	 * Move old submenu items to the new submenu array.
 	 *
-	 * They may not have been added to the submenu yet,
-	 * which happens when installing a new plugin for example.
+	 * They may not have been added to the submenu yet, which happens when installing a new plugin for example.
 	 */
 	protected function move_submenu_items() {
 		global $temp_submenu, $submenu;

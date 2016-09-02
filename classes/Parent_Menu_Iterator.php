@@ -87,7 +87,13 @@ class Parent_Menu_Iterator extends Menu_Iterator {
 				}
 			}
 
-			unset( $this->new_menu[ $key ] );
+			// We can't do a simple unset() as the key is likely not the same.
+			foreach( $this->old_menu as $old_key => $old_item ) {
+				if ( $item_slug === $old_item[2] ) {
+					unset( $this->old_menu[ $old_key ] );
+					break;
+				}
+			}
 
 			return true;
 		}
