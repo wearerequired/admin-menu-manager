@@ -429,17 +429,23 @@ class Controller {
 	 * They may not have been added to the submenu yet, which happens when installing a new plugin for example.
 	 */
 	protected function move_submenu_items() {
-		global $temp_submenu, $submenu;
+		global $temp_submenu, $submenu, $_registered_pages;
 
-		foreach ( $temp_submenu as $parent => $item ) {
-			if ( '' === $parent || empty( $item ) || ! is_array( $item ) ) {
+		foreach ( $temp_submenu as $parent => $items ) {
+			if ( '' === $parent || empty( $items ) || ! is_array( $items ) ) {
 				continue;
 			}
 
-			if ( isset( $submenu[ $parent ] ) ) {
-				$submenu[ $parent ] = array_merge( $submenu[ $parent ], $item );
-			} else {
-				$submenu[ $parent ] = $item;
+			// Do not preserve keys.
+			$items = array_values( $items );
+
+			if ( ! isset( $submenu[ $parent ] ) ) {
+				$submenu[ $parent ] = array();
+			}
+
+			foreach( $items as $s_item ) {
+				$_registered_pages[get_plugin_page_hookname( $s_item[2], $parent )] = true;
+				$submenu[ $parent ][] = $s_item;
 			}
 		}
 	}
