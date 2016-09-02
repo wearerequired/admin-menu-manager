@@ -316,7 +316,7 @@ var AppView = wp.Backbone.View.extend( {
 		}
 
 		var $adminmenu = this.$el.find( '#adminmenu' );
-		$adminmenu.find( 'li.wp-has-submenu' ).hoverIntent( {
+		$adminmenu.find( 'li.menu-top' ).hoverIntent( {
 			over: function() {
 				var $menuItem = jQuery( this ),
 				    $submenu  = $menuItem.find( '.wp-submenu' ),
