@@ -262,6 +262,8 @@ var AppView = wp.Backbone.View.extend( {
 				.at( newPosition[ 0 ] ).children
 				.add( item, { at: newPosition[ 1 ] } );
 
+			this.views.first( '#admin-menu-manager-menu' ).collection.parseModels();
+
 			/**
 			 * Reset parent view as this doesn't trigger a reset.
 			 *

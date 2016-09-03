@@ -7,7 +7,8 @@ var Menu = Backbone.Collection.extend( {
 		this.options = this.options || options;
 
 		this.bind( 'reset', this.onReset );
-		this.bind( 'add', this.parseModel );
+		this.bind( 'add', this.onReset );
+		this.bind( 'remove', this.onReset );
 	},
 
 	onReset: function() {
@@ -17,6 +18,10 @@ var Menu = Backbone.Collection.extend( {
 
 		this.first().set( 4, this.first().get( 4 ) + ' wp-first-item' );
 
+		this.parseModels();
+	},
+
+	parseModels: function() {
 		this.each( function( model ) {
 			this.parseModel( model );
 		}, this );
