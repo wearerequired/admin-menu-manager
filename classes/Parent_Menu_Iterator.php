@@ -64,7 +64,7 @@ class Parent_Menu_Iterator extends Menu_Iterator {
 		$item_slug = $this->get_menu_item_slug( $item );
 
 		// It was originally a top level item as well. It's a match!
-		foreach ( $this->new_menu as $key => $m_item ) {
+		foreach ( $this->old_menu as $key => $m_item ) {
 			if ( $item_slug !== $this->get_menu_item_slug( $m_item ) ) {
 				continue;
 			}

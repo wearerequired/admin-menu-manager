@@ -34,8 +34,8 @@ class Sub_Menu_Iterator extends Menu_Iterator {
 		$item_slug = $this->get_menu_item_slug( $item );
 
 		// Iterate on original top level menu items.
-		foreach ( $this->new_menu as $m_key => $m_item ) {
-			if ( $item_slug !== $m_item[2] ) {
+		foreach ( $this->old_menu as $m_key => $m_item ) {
+			if ( $item_slug !== $this->get_menu_item_slug( $m_item ) ) {
 				continue;
 			}
 
@@ -74,13 +74,7 @@ class Sub_Menu_Iterator extends Menu_Iterator {
 
 			$this->switch_menu_item_filters( $hook_name, $new_page );
 
-			// We can't do a simple unset() as the key is likely not the same.
-			foreach( $this->new_menu as $new_key => $new_item ) {
-				if ( $item_slug === $new_item[2] ) {
-					unset( $this->new_menu[ $new_key ] );
-					break;
-				}
-			}
+			unset( $this->old_menu[ $m_key ] );
 
 			return true;
 		}
@@ -92,9 +86,13 @@ class Sub_Menu_Iterator extends Menu_Iterator {
 		$item_slug = $this->get_menu_item_slug( $item );
 
 		// Iterate on original submenu items.
-		foreach ( $this->new_submenu as $s_parent_page => &$s_page ) {
+		foreach ( $this->old_submenu as $s_parent_page => &$s_page ) {
 			foreach ( $s_page as $s_priority => &$s_item ) {
-				if ( $item_slug !== $s_item[2] ) {
+				if ( $item_slug !== $this->get_menu_item_slug( $s_item ) ) {
+					continue;
+				}
+
+				if ( $item_slug === $s_parent_page && 1 <= count( $s_page ) && false !== strpos( $item[4], 'toplevel_page' ) ) {
 					continue;
 				}
 
@@ -110,13 +108,7 @@ class Sub_Menu_Iterator extends Menu_Iterator {
 
 				$this->switch_menu_item_filters( $hook_name, $new_page );
 
-				// We can't do a simple unset() as the key is likely not the same.
-				foreach ( $this->old_submenu[ $s_parent_page ] as $key => $new_item ) {
-					if ( $item_slug === $new_item[2] ) {
-						unset( $this->old_submenu[ $s_parent_page ][ $key ] );
-						break;
-					}
-				}
+				unset( $this->old_submenu[ $s_parent_page ][ $s_priority ] );
 
 				return true;
 			}
