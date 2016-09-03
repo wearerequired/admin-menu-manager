@@ -100,6 +100,7 @@ class Ajax_Handler {
 			];
 
 			if ( ! empty( $item['children'] ) ) {
+				// Todo: Ensure $item[2] is correct for things like 'edit.php?post_type=page'
 				$submenu[ $item[2] ] = [];
 				foreach ( $item['children'] as $subitem ) {
 					if ( false !== strpos( $subitem[2], '=' ) ) {
