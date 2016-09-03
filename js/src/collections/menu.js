@@ -27,7 +27,7 @@ var Menu = Backbone.Collection.extend( {
 		    self = location.pathname.split( '/' ).pop(),
 		    slug = model.get( 'href' ) ? model.get( 'href' ) : model.get( 2 );
 
-		// If it's empty then we're most probably on the dashboard
+		// If it's empty then we're most probably on the dashboard.
 		if ( '' === self ) {
 			self = 'index.php';
 		}
@@ -73,8 +73,8 @@ var Menu = Backbone.Collection.extend( {
 				) {
 					model.set( 4, model.get( 4 ) + ' current' );
 
-					// Mark parent as active if child is the current item
-					if ( !_.contains( classes, 'wp-has-current-submenu' ) ) {
+					// Mark parent as active if child is the current item.
+					if ( !_.contains( classes, 'wp-has-current-submenu' ) && !_.contains( classes, 'wp-not-current-submenu' ) ) {
 						classes.push( 'wp-has-current-submenu' );
 						classes.push( 'wp-menu-open' );
 					}
