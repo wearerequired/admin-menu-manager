@@ -406,7 +406,7 @@ class Controller {
 		$admin_page_hooks = $this->keep_admin_page_hooks( $admin_page_hooks, $temp_hooks );
 
 		// Iterate on all our submenu items.
-		$menu_iterator = new Sub_Menu_Iterator( $amm_submenu, $amm_menu, $temp_submenu );
+		$menu_iterator = new Sub_Menu_Iterator( $amm_menu, $temp_menu, $amm_submenu, $temp_submenu );
 		$menu_iterator->maybe_match_menu_items();
 
 		$this->trash_menu_items( $amm_trash_menu );

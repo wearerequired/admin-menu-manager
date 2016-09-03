@@ -10,13 +10,15 @@ namespace Required\Admin_Menu_Manager;
  * Sub menu items iterator.
  */
 class Sub_Menu_Iterator extends Menu_Iterator {
-	protected $new_submenu;
 	protected $new_menu;
+	protected $old_menu;
+	protected $new_submenu;
 	protected $old_submenu;
 
-	public function __construct( array $new_submenu, array $new_menu, array &$old_submenu ) {
-		$this->new_submenu = $new_submenu;
+	public function __construct( array $new_menu, array &$old_menu, array $new_submenu, array &$old_submenu ) {
 		$this->new_menu    = $new_menu;
+		$this->old_menu = &$old_menu;
+		$this->new_submenu = $new_submenu;
 		$this->old_submenu = &$old_submenu;
 	}
 
