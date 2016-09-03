@@ -65,7 +65,7 @@ class Parent_Menu_Iterator extends Menu_Iterator {
 
 		// It was originally a top level item as well. It's a match!
 		foreach ( $this->new_menu as $key => $m_item ) {
-			if ( $item_slug !== $m_item[2] ) {
+			if ( $item_slug !== $this->get_menu_item_slug( $m_item ) ) {
 				continue;
 			}
 
@@ -108,7 +108,7 @@ class Parent_Menu_Iterator extends Menu_Iterator {
 
 		foreach ( $this->old_submenu as $key => $parent ) {
 			foreach ( $parent as $sub_key => $sub_item ) {
-				if ( $item_slug !== $sub_item[2] ) {
+				if ( $item_slug !== $this->get_menu_item_slug( $sub_item ) ) {
 					continue;
 				}
 
@@ -133,7 +133,13 @@ class Parent_Menu_Iterator extends Menu_Iterator {
 
 				$this->switch_menu_item_filters( $hook_name, $new_page );
 
-				unset( $this->old_submenu[ $key ][ $sub_key ] );
+				// We can't do a simple unset() as the key is likely not the same.
+				foreach( $this->old_submenu[ $key ][ $sub_key ] as $old_key => $old_item ) {
+					if ( $item_slug === $old_item[2] ) {
+						unset( $this->old_submenu[ $key ][ $sub_key ][ $old_key ] );
+						break;
+					}
+				}
 
 				return true;
 			}
