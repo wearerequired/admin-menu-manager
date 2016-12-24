@@ -1,6 +1,5 @@
 # Admin Menu Manager #
 Contributors:      wearerequired, swissspidy  
-Donate link:       http://required.ch  
 Tags:              admin, menu, admin menus, dashboard, order  
 Requires at least: 4.4  
 Tested up to:      4.6  
