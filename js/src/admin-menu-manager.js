@@ -1,7 +1,7 @@
 /**
  * Admin Menu Manager
  *
- * Copyright (c) 2015 required+
+ * Copyright (c) 2015 required
  * Licensed under the GPLv2+ license.
  */
 

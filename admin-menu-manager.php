@@ -4,8 +4,8 @@
  * Plugin URI:  https://github.com/wearerequired/admin-menu-manager/
  * Description: Manage the WordPress admin menu using a simple drag & drop interface.
  * Version:     2.0.0-alpha
- * Author:      required+
- * Author URI:  http://required.ch
+ * Author:      required
+ * Author URI:  https://required.com
  * License:     GPLv2+
  * Text Domain: admin-menu-manager
  * Domain Path: /languages
@@ -14,7 +14,7 @@
  */
 
 /**
- * Copyright (c) 2015 required+ (email : support@required.ch)
+ * Copyright (c) 2015 required (email : support@required.ch)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2 or, at
