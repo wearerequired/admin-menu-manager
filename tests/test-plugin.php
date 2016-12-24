@@ -6,8 +6,20 @@ class Admin_Menu_Manager_Test extends WP_UnitTestCase {
 	 */
 	protected $current_user;
 
+	public static function setUpBeforeClass(  ) {
+		parent::setUpBeforeClass();
+
+		require_once ABSPATH . '/wp-admin/menu.php';
+	}
+
 	public function setUp() {
 		parent::setUp();
+
+		global $hook_suffix, $_wp_submenu_nopriv;
+
+		$hook_suffix = '';
+		$_wp_submenu_nopriv = [];
+
 		$this->current_user = get_current_user_id();
 		wp_set_current_user( $this->factory->user->create( [ 'role' => 'administrator' ] ) );
 	}
@@ -23,15 +35,20 @@ class Admin_Menu_Manager_Test extends WP_UnitTestCase {
 		$this->assertEmpty( $menu_items );
 	}
 
-	public function test_add_admin_menu() {
-		global $hook_suffix;
-		$hook_suffix = '';
-
-		require_once ABSPATH . '/wp-admin/menu.php';
-
+	public function test_get_admin_menu() {
 		$menu_items = admin_menu_manager()->get_admin_menu();
 		$this->assertInternalType( 'array', $menu_items );
 		$this->assertNotEmpty( $menu_items );
+
+		$this->markTestIncomplete();
+	}
+
+	public function test_add_admin_menu() {
+		$menu_items = admin_menu_manager()->get_admin_menu();
+		$this->assertInternalType( 'array', $menu_items );
+		$this->assertNotEmpty( $menu_items );
+
+		$this->markTestIncomplete();
 	}
 
 	public function test_admin_enqueue_scripts() {
