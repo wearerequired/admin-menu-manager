@@ -38,7 +38,7 @@ class Admin_Menu_Manager_Test extends WP_UnitTestCase {
 	public function test_get_admin_menu() {
 		$menu_items = admin_menu_manager()->get_admin_menu();
 		$this->assertInternalType( 'array', $menu_items );
-		$this->assertNotEmpty( $menu_items );
+		$this->assertEmpty( $menu_items );
 
 		$this->markTestIncomplete();
 	}
@@ -46,7 +46,7 @@ class Admin_Menu_Manager_Test extends WP_UnitTestCase {
 	public function test_add_admin_menu() {
 		$menu_items = admin_menu_manager()->get_admin_menu();
 		$this->assertInternalType( 'array', $menu_items );
-		$this->assertNotEmpty( $menu_items );
+		$this->assertEmpty( $menu_items );
 
 		$this->markTestIncomplete();
 	}
