@@ -1,5 +1,5 @@
 module.exports = {
-	main: {
+	default: {
 		src:  [
 			'**',
 			'!node_modules/**',
@@ -22,11 +22,5 @@ module.exports = {
 			'!composer.lock'
 		],
 		dest: 'release/<%= package.version %>/'
-	},
-	svn:  {
-		cwd:    'release/<%= package.version %>/',
-		expand: true,
-		src:    '**',
-		dest:   'release/svn/'
 	}
 };

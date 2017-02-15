@@ -3,30 +3,19 @@ default:
 - 'checktextdomain'
 - 'replace:header'
 - 'replace:plugin'
+- 'js'
+- 'css'
+
+js:
 - 'jshint'
 - 'browserify'
 - 'uglify'
+
+css:
 - 'sass'
 - 'postcss'
-- 'clean:js'
 
 # Build task
 build:
 - 'default'
-- 'clean'
-- 'copy:main'
-- 'compress'
-
-# Prepare a WordPress.org release
-release:prepare:
-- 'build'
-- 'copy:svn'
-
-# Deploy out a WordPress.org release
-release:deploy:
-- 'wp_deploy'
-
-# WordPress.org release task
-release:
-- 'release:prepare'
-- 'release:deploy'
+- 'copy'
