@@ -21,7 +21,7 @@ class Admin_Menu_Manager_Test extends WP_UnitTestCase {
 		$_wp_submenu_nopriv = [];
 
 		$this->current_user = get_current_user_id();
-		wp_set_current_user( $this->factory->user->create( [ 'role' => 'administrator' ] ) );
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
 	}
 
 	public function tearDown() {
