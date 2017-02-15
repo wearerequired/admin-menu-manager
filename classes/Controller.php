@@ -232,27 +232,45 @@ class Controller {
 	}
 
 	/**
+	 * Determines whether a given file exists in the plugin directory but not in wp-admin.
+	 *
+	 * @param string $menu_file Menu file name.
+	 *
+	 * @return bool
+	 */
+	protected function is_plugin_file_but_not_admin_file( $menu_file ) {
+		return file_exists( WP_PLUGIN_DIR . "/$menu_file" ) &&
+		       ! file_exists( ABSPATH . "/wp-admin/$menu_file" );
+	}
+
+	/**
 	 * Get the children of a top-level menu item.
 	 *
 	 * @param array  $menu_item A single menu-item.
 	 * @param string $menu_file The parent menu item's slug.
 	 *
-	 * @return array
+	 * @return array The list of sub menu items.
 	 */
 	protected function get_admin_menu_sub_items( $menu_item, $menu_file ) {
 		global $submenu;
 
+		if ( empty( $submenu[ $menu_item[2] ] ) ) {
+			return [];
+		}
+
 		$children        = [];
 		$admin_is_parent = false;
-
-		if ( empty( $submenu[ $menu_item[2] ] ) ) {
-			return $children;
-		}
 
 		$submenu_items = array_values( $submenu[ $menu_item[2] ] );  // Re-index.
 		$menu_hook     = get_plugin_page_hook( $submenu_items[0][2], $menu_item[2] );
 
-		if ( ! empty( $menu_hook ) || ( ( 'index.php' !== $submenu_items[0][2] ) && file_exists( WP_PLUGIN_DIR . "/$menu_file" ) && ! file_exists( ABSPATH . "/wp-admin/$menu_file" ) ) ) {
+		if (
+			! empty( $menu_hook ) ||
+			(
+				'index.php' !== $submenu_items[0][2] &&
+				$this->is_plugin_file_but_not_admin_file( $menu_file )
+			)
+		) {
 			$admin_is_parent = true;
 		}
 
@@ -261,11 +279,25 @@ class Controller {
 
 			$menu_hook = get_plugin_page_hook( $sub_item[2], $menu_item[2] );
 
-			if ( ! empty( $menu_hook ) || ( ( 'index.php' !== $sub_item[2] ) && file_exists( WP_PLUGIN_DIR . "/$sub_file" ) && ! file_exists( ABSPATH . "/wp-admin/$sub_file" ) ) ) {
+			if (
+				(
+					! empty( $menu_hook ) ||
+					(
+						'index.php' !== $sub_item[2] &&
+						$this->is_plugin_file_but_not_admin_file( $sub_file )
+					)
+				) &&
 				// If admin.php is the current page or if the parent exists as a file in the plugins or admin dir.
-				if ( ( ! $admin_is_parent && file_exists( WP_PLUGIN_DIR . "/$menu_file" ) && ! is_dir( WP_PLUGIN_DIR . "/{$menu_item[2]}" ) ) || file_exists( $menu_file ) ) {
-					$sub_item['inherit_parent'] = true;
-				}
+				(
+					file_exists( $menu_file ) ||
+					(
+						! $admin_is_parent &&
+						file_exists( WP_PLUGIN_DIR . "/$menu_file" ) &&
+						! is_dir( WP_PLUGIN_DIR . "/{$menu_item[2]}" )
+					)
+				)
+			) {
+				$sub_item['inherit_parent'] = true;
 			}
 
 			$children[] = $sub_item;
@@ -294,10 +326,13 @@ class Controller {
 				foreach ( $submenu[ $menu_item[2] ] as $key => &$value ) {
 					if ( '' === $key && '' === $value[0] ) {
 						unset( $submenu[ $menu_item[2] ][ $key ] );
+
 						continue;
 					}
+
 					$value[] = $key;
 				}
+
 				$menu_item['children'] = array_values( $submenu[ $menu_item[2] ] );
 			}
 
