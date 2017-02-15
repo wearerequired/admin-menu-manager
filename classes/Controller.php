@@ -333,32 +333,32 @@ class Controller {
 	 * @return array
 	 */
 	protected function get_menu_data( $type ) {
-		$menu = [];
+		$menu_data = [];
 		switch ( $type ) {
 			case 'menu':
-				$menu = get_user_option( 'amm_menu' );
+				$menu_data = get_user_option( 'amm_menu' );
 
-				if ( ! $menu ) {
-					$menu = get_option( 'amm_menu', [] );
+				if ( ! $menu_data ) {
+					$menu_data = get_option( 'amm_menu', [] );
 				}
 				break;
 			case 'submenu':
-				$menu = get_user_option( 'amm_submenu' );
+				$menu_data = get_user_option( 'amm_submenu' );
 
-				if ( ! $menu ) {
-					$menu = get_option( 'amm_submenu', [] );
+				if ( ! $menu_data ) {
+					$menu_data = get_option( 'amm_submenu', [] );
 				}
 				break;
 			case 'trash_menu':
-				$menu = get_user_option( 'amm_trash_menu' );
+				$menu_data = get_user_option( 'amm_trash_menu' );
 				break;
 			case 'trash_submenu':
-				$menu = get_user_option( 'amm_trash_submenu' );
+				$menu_data = get_user_option( 'amm_trash_submenu' );
 				break;
 		}
 
-		if ( false === $menu ) {
-			$menu = [];
+		if ( false === $menu_data ) {
+			$menu_data = [];
 		}
 
 		/**
@@ -366,10 +366,10 @@ class Controller {
 		 *
 		 * @since 2.0.0
 		 *
-		 * @param array  $menu The menu data.
+		 * @param array  $menu_data The menu data.
 		 * @param string $type Either 'trash' or 'menu'.
 		 */
-		return (array) apply_filters( 'amm_menu_data', $menu, $type );
+		return (array) apply_filters( 'amm_menu_data', $menu_data, $type );
 	}
 
 	/**
