@@ -4,6 +4,7 @@
  *
  * @package Required\Admin_Menu_Manager
  */
+
 namespace Required\Admin_Menu_Manager;
 
 /**
@@ -75,10 +76,9 @@ class Ajax_Handler {
 	 * @return array An array containing top level and sub level menu items.
 	 */
 	protected function update_menu_loop( $menu ) {
-		$items   = [];
-		$submenu = [];
+		$items   = $submenu = [];
 
-		$separatorIndex = 1;
+		$separator_index = 1;
 		$last_separator = null;
 
 		foreach ( $menu as $item ) {
@@ -100,7 +100,7 @@ class Ajax_Handler {
 			];
 
 			if ( ! empty( $item['children'] ) ) {
-				// Todo: Ensure $item[2] is correct for things like 'edit.php?post_type=page'
+				// Todo: Ensure $item[2] is correct for things like 'edit.php?post_type=page'.
 				$submenu[ $item[2] ] = [];
 				foreach ( $item['children'] as $subitem ) {
 					if ( false !== strpos( $subitem[2], '=' ) ) {
@@ -124,7 +124,8 @@ class Ajax_Handler {
 
 			// Store separators in correct order.
 			if ( false !== strpos( $item[2], 'separator' ) ) {
-				$item           = [ '', 'read', 'separator' . $separatorIndex ++, '', 'wp-menu-separator' ];
+				$item = [ '', 'read', 'separator' . $separator_index ++, '', 'wp-menu-separator' ];
+
 				$last_separator = count( $items );
 			}
 

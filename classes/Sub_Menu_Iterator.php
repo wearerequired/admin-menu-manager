@@ -4,17 +4,49 @@
  *
  * @package Required\Admin_Menu_Manager
  */
+
 namespace Required\Admin_Menu_Manager;
 
 /**
  * Sub menu items iterator.
  */
 class Sub_Menu_Iterator extends Menu_Iterator {
+	/**
+	 * The new admin menu.
+	 *
+	 * @var array
+	 */
 	protected $new_menu;
+
+	/**
+	 * The old admin menu.
+	 *
+	 * @var array
+	 */
 	protected $old_menu;
+
+	/**
+	 * The new sub menu.
+	 *
+	 * @var array
+	 */
 	protected $new_submenu;
+
+	/**
+	 * The old sub menu.
+	 *
+	 * @var array
+	 */
 	protected $old_submenu;
 
+	/**
+	 * Sub menu iterator constructor.
+	 *
+	 * @param array $new_menu The new admin menu.
+	 * @param array $old_menu The old admin menu, passed by reference.
+	 * @param array $new_submenu The new sub menu.
+	 * @param array $old_submenu The old sub menu, passed by reference.
+	 */
 	public function __construct( array $new_menu, array &$old_menu, array $new_submenu, array &$old_submenu ) {
 		$this->new_menu    = $new_menu;
 		$this->old_menu = &$old_menu;
@@ -22,12 +54,14 @@ class Sub_Menu_Iterator extends Menu_Iterator {
 		$this->old_submenu = &$old_submenu;
 	}
 
-	public function maybe_match_menu_items() {
-		foreach ( $this->new_submenu as $parent_page => $page ) {
-			$this->maybe_match_submenu_item( $page, $parent_page );
-		}
-	}
-
+	/**
+	 * Determines whether an item is actually a top level menu item or not.
+	 *
+	 * @param array  $item        Menu item array.
+	 * @param string $parent_page The item's parent page.
+	 *
+	 * @return bool True if it's a top level menu item, false otherwise.
+	 */
 	protected function is_top_level_item( $item, $parent_page ) {
 		global $submenu;
 
@@ -82,6 +116,14 @@ class Sub_Menu_Iterator extends Menu_Iterator {
 		return false;
 	}
 
+	/**
+	 * Determines whether an item is really a sub menu item or not.
+	 *
+	 * @param array  $item        Menu item array.
+	 * @param string $parent_page The item's parent page.
+	 *
+	 * @return bool True if it's a sub menu item, false otherwise.
+	 */
 	protected function is_submenu_item( $item, $parent_page ) {
 		$item_slug = $this->get_menu_item_slug( $item );
 
@@ -117,6 +159,16 @@ class Sub_Menu_Iterator extends Menu_Iterator {
 		return false;
 	}
 
+	/**
+	 * Determines whether an item is a custom menu item or not.
+	 *
+	 * Custom items have 'custom-item' in their ID.
+	 *
+	 * @param array  $item        Menu item array.
+	 * @param string $parent_page The item's parent page.
+	 *
+	 * @return bool True if it's a custom menu item, false otherwise.
+	 */
 	protected function is_custom_menu_item( $item, $parent_page ) {
 		global $submenu;
 
@@ -136,7 +188,16 @@ class Sub_Menu_Iterator extends Menu_Iterator {
 	}
 
 	/**
-	 * Try to match a menu item with its original entry.
+	 * Tries to match menu items that are both in the new and the old sub menu.
+	 */
+	public function maybe_match_menu_items() {
+		foreach ( $this->new_submenu as $parent_page => $page ) {
+			$this->maybe_match_submenu_item( $page, $parent_page );
+		}
+	}
+
+	/**
+	 * Tries to match a menu item with its original entry.
 	 *
 	 * Checks submenu items first as this is the most likely case.
 	 *
