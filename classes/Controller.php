@@ -440,7 +440,7 @@ class Controller {
 			$items = array_values( $items );
 
 			if ( ! isset( $submenu[ $parent ] ) ) {
-				$submenu[ $parent ] = array();
+				$submenu[ $parent ] = [];
 			}
 
 			foreach ( $items as $s_item ) {
