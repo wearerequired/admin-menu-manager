@@ -82,7 +82,7 @@ class Parent_Menu_Iterator extends Menu_Iterator {
 			}
 
 			// We can't do a simple unset() as the key is likely not the same.
-			foreach( $this->old_menu as $old_key => $old_item ) {
+			foreach ( $this->old_menu as $old_key => $old_item ) {
 				if ( $item_slug === $old_item[2] ) {
 					unset( $this->old_menu[ $old_key ] );
 					break;
@@ -180,6 +180,9 @@ class Parent_Menu_Iterator extends Menu_Iterator {
 		return false;
 	}
 
+	/**
+	 * Tries to match menu items that are both in the new and the old menu.
+	 */
 	public function maybe_match_menu_items() {
 		// Iterate on the top level items.
 		foreach ( $this->new_menu as $priority => $item ) {
