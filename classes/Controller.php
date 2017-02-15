@@ -101,7 +101,7 @@ class Controller {
 	 * @return bool True if the textdomain was loaded successfully, false otherwise.
 	 */
 	public function load_textdomain() {
-		return load_plugin_textdomain( 'admin-menu-manager', false, $this->get_path() . 'languages' );
+		return load_plugin_textdomain( 'admin-menu-manager' );
 	}
 
 	/**
