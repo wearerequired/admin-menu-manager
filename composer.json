@@ -22,14 +22,7 @@
     "php":                                 ">=5.4",
     "wearerequired/wp-requirements-check": "dev-master"
   },
-  "require-dev":  {
-    "phpmd/phpmd":              "~2.4.0",
-    "wp-coding-standards/wpcs": "~0.10.0"
-  },
-  "scripts":      {
-    "post-install-cmd": "\"vendor/bin/phpcs\" --config-set installed_paths vendor/wp-coding-standards/wpcs",
-    "post-update-cmd":  "\"vendor/bin/phpcs\" --config-set installed_paths vendor/wp-coding-standards/wpcs"
-  },
+  "require-dev":  {},
   "autoload":     {
     "psr-4": {
       "Required\\Admin_Menu_Manager\\": "classes"
