@@ -78,24 +78,6 @@ class Controller {
 	}
 
 	/**
-	 * Returns the absolute path to the plugin directory (with trailing slash).
-	 *
-	 * @return string The absolute path to the plugin directory.
-	 */
-	public function get_path() {
-		return plugin_dir_path( $this->file );
-	}
-
-	/**
-	 * Returns the basename of the plugin.
-	 *
-	 * @return string The name of the plugin.
-	 */
-	public function get_basename() {
-		return plugin_basename( $this->file );
-	}
-
-	/**
 	 * Initializes the plugin, registers textdomain, etc.
 	 *
 	 * @return bool True if the textdomain was loaded successfully, false otherwise.
