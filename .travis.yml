@@ -59,12 +59,14 @@ before_script:
     composer global require phpmd/phpmd
     composer global require wp-coding-standards/wpcs
     phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
-  - npm install -g grunt-cli
-  - npm install
-  - node --version
-  - npm --version
-  - grunt --version
-  - composer install --no-interaction
+    composer install --no-interaction
+  - |
+    if [[ "$WP_TRAVISCI" == "travis:jshint" ]] ; then
+      npm install
+      node --version
+      npm --version
+      grunt --version
+    fi
 
 script:
   - |
