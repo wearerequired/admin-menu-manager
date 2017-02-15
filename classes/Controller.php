@@ -136,7 +136,7 @@ class Controller {
 			'backbone-undo',
 			$this->get_url() . 'js/vendor/backbone.undo.min.js',
 			[ 'backbone' ],
-			self::VERSION
+			'0.2'
 		);
 
 		wp_enqueue_script(
