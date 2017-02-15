@@ -126,7 +126,7 @@ class Controller {
 		}
 
 		// Use minified libraries if SCRIPT_DEBUG is turned off.
-		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
+		$suffix = SCRIPT_DEBUG ? '' : '.min';
 
 		wp_enqueue_style( 'admin-menu-manager', $this->get_url() . 'css/admin-menu-manager' . $suffix . '.css', [], self::VERSION );
 
