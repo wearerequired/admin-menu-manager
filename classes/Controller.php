@@ -443,8 +443,9 @@ class Controller {
 				$submenu[ $parent ] = array();
 			}
 
-			foreach( $items as $s_item ) {
-				$_registered_pages[get_plugin_page_hookname( $s_item[2], $parent )] = true;
+			foreach ( $items as $s_item ) {
+				$_registered_pages[ get_plugin_page_hookname( $s_item[2], $parent ) ] = true;
+
 				$submenu[ $parent ][] = $s_item;
 			}
 		}
