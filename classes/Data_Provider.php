@@ -59,7 +59,8 @@ class Data_Provider {
 					'buttonText'  => _x( 'Import', 'button text', 'admin-menu-manager' ),
 				],
 				'collapseButton'  => [
-					'label' => __( 'Collapse menu', 'admin-menu-manager' ),
+					'label'     => __( 'Collapse menu', 'admin-menu-manager' ),
+					'ariaLabel' => __( 'Collapse Main menu', 'admin-menu-manager' ),
 				],
 				'menuItemOptions' => [
 					'title'      => __( 'Edit item', 'admin-menu-manager' ),
