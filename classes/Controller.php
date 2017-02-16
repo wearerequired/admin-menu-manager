@@ -312,12 +312,8 @@ class Controller {
 	 * @return array
 	 */
 	public function get_admin_menu_trash() {
-		$menu    = get_user_option( 'amm_trash_menu' );
-		$submenu = get_user_option( 'amm_trash_submenu' );
-
-		if ( ! is_array( $menu ) ) {
-			$menu = [];
-		}
+		$menu    = $this->get_menu_data( 'amm_trash_menu' );
+		$submenu = $this->get_menu_data( 'amm_trash_submenu' );
 
 		$menu_items = [];
 
@@ -582,11 +578,7 @@ class Controller {
 	public function alter_admin_menu_order( $menu_order ) {
 		global $menu;
 
-		$amm_menu = get_user_option( 'amm_menu' );
-
-		if ( ! $amm_menu ) {
-			$amm_menu = get_option( 'amm_menu', false );
-		}
+		$amm_menu = $this->get_menu_data( 'amm_menu' );
 
 		if ( ! $amm_menu ) {
 			return $menu_order;
