@@ -10,7 +10,12 @@ namespace Required\Admin_Menu_Manager;
 /**
  * Base menu items iterator.
  */
-class Menu_Iterator {
+abstract class Menu_Iterator {
+	/**
+	 * Tries to match menu items that are both in the new and the old menu.
+	 */
+	public abstract function maybe_match_menu_items();
+
 	/**
 	 * Get all the filters hooked to an admin menu page.
 	 *
