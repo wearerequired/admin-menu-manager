@@ -24,7 +24,7 @@ class Ajax_Handler {
 
 		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 			$this->update_menu();
-		} else if ( 'DELETE' === $_SERVER['REQUEST_METHOD'] ) {
+		} elseif ( 'DELETE' === $_SERVER['REQUEST_METHOD'] ) {
 			$this->reset_menu();
 		}
 

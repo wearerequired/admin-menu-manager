@@ -4,6 +4,7 @@
  *
  * @package Required\Admin_Menu_Manager
  */
+
 namespace Required\Admin_Menu_Manager;
 
 /**
@@ -136,7 +137,7 @@ class Parent_Menu_Iterator extends Menu_Iterator {
 				$this->switch_menu_item_filters( $hook_name, $new_page );
 
 				// We can't do a simple unset() as the key is likely not the same.
-				foreach( $this->old_submenu[ $key ][ $sub_key ] as $old_key => $old_item ) {
+				foreach ( $this->old_submenu[ $key ][ $sub_key ] as $old_key => $old_item ) {
 					if ( $item_slug === $old_item[2] ) {
 						unset( $this->old_submenu[ $key ][ $sub_key ][ $old_key ] );
 						break;

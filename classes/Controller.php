@@ -24,11 +24,15 @@ class Controller {
 	protected $file;
 
 	/**
+	 * The data provider for wp_localize_script().
+	 *
 	 * @var \Required\Admin_Menu_Manager\Data_Provider
 	 */
 	protected $data_provider;
 
 	/**
+	 * The Ajax handler for saving and destroying the admin menu.
+	 *
 	 * @var \Required\Admin_Menu_Manager\Ajax_Handler
 	 */
 	protected $ajax_handler;

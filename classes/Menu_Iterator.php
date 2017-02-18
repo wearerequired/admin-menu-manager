@@ -4,6 +4,7 @@
  *
  * @package Required\Admin_Menu_Manager
  */
+
 namespace Required\Admin_Menu_Manager;
 
 /**
