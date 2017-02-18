@@ -148,7 +148,7 @@ var AppView = wp.Backbone.View.extend( {
 	 *
 	 * Toggles the jQuery UI Sortable disabled state.
 	 *
-	 * @param bool isActive Whether we are currently editing the menu or not.
+	 * @param {boolean} isActive Whether we are currently editing the menu or not.
 	 */
 	toggleSortable: function( isActive ) {
 		this.isEditing = isActive;
@@ -160,7 +160,7 @@ var AppView = wp.Backbone.View.extend( {
 	 *
 	 * This happens after each rendering, due to new elements being added.
 	 *
-	 * @param bool isEditing Whether we are currently editing the menu or not.
+	 * @param {boolean} isEditing Whether we are currently editing the menu or not.
 	 */
 	initSortable: function( isEditing ) {
 		// Default sortable options
@@ -224,8 +224,8 @@ var AppView = wp.Backbone.View.extend( {
 	/**
 	 * This is triggered after an element has been successfully sorted.
 	 *
-	 * @param event e
-	 * @param object ui
+	 * @param {event} e
+	 * @param {object} ui
 	 */
 	sortableUpdate: function( e, ui ) {
 		var itemId      = ui.item.attr( 'data-id' ),
@@ -234,7 +234,7 @@ var AppView = wp.Backbone.View.extend( {
 		// It's a submenu item
 		if ( ui.item.parent( '.wp-submenu' ).length > 0 ) {
 			newPosition[ 0 ]   = newPosition[ 0 ] > 0 ? --newPosition[ 0 ] : 0;
-			var parentPosition = jQuery( '#amm-adminmenu > li' ).index( ui.item.parents( 'li' ) );
+			var parentPosition = jQuery( '#amm-adminmenu').find('> li' ).index( ui.item.parents( 'li' ) );
 			newPosition.unshift( parentPosition );
 		}
 
@@ -301,7 +301,7 @@ var AppView = wp.Backbone.View.extend( {
 		 *
 		 * @see WordPres 4.1.0
 		 *
-		 * @param {jQuery} $menuItem The parent menu item containing the submenu.
+		 * @param {object} $menuItem The parent menu item containing the submenu.
 		 */
 		function adjustSubmenu( $menuItem ) {
 			var bottomOffset, pageHeight, adjustment, theFold, menutop, wintop, maxtop,
