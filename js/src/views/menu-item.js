@@ -1,5 +1,3 @@
-var MenuItemOptionsView = require( 'views/menu-item-options' );
-
 var MenuItemView = Backbone.View.extend( {
 	tagName:       'li',
 	template:      require( 'templates/menu-item' ),
@@ -30,30 +28,22 @@ var MenuItemView = Backbone.View.extend( {
 	},
 
 	events: {
-		'click a': 'toggleOptions'
+		'click a': 'editMenuItem'
 	},
 
-	toggleOptions: function( e ) {
+	editMenuItem: function( e ) {
 		if ( !this.parent.isEditing ) {
 			return;
 		}
 
-		e.preventDefault();
-
-		this.trigger( 'toggleOptions', this.model );
-
-		var model,
-		    $target = jQuery( e.target ).parents( '[data-id]' ).first(),
-		    slug    = $target.attr( 'data-id' ).replace( '&', '&#038;' );
-
-		if ( $target.find( '.amm-menu-item-options' ).length > 0 ) {
-			this.hideOptions();
-			return;
-		}
+		var $target = jQuery( e.target ).parents( '[data-id]' ).first(),
+		    slug    = $target.attr( 'data-id' ).replace( '&', '&#038;' ),
+		    model;
 
 		if ( this.model.get( 2 ) === slug ) {
 			model = this.model;
 		} else {
+			// It's a sub menu item.
 			model = _.find( this.model.children.models, function( el ) {
 				return el.get( 2 ) === slug;
 			} );
@@ -63,16 +53,10 @@ var MenuItemView = Backbone.View.extend( {
 			return;
 		}
 
-		this.optionsView = new MenuItemOptionsView( { model: model } );
-		this.listenTo( this.optionsView, 'save', function() {
-			$target.removeClass( 'amm-is-editing' );
-			this.render();
-		} );
+		e.preventDefault();
 
-		$target.addClass( 'amm-is-editing' );
-		$target.append( this.optionsView.render().$el );
-	}
-
+		Backbone.trigger( 'editItem', this, model );
+	},
 } );
 
 module.exports = MenuItemView;

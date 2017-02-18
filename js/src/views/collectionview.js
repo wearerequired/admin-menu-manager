@@ -36,7 +36,7 @@ var CollectionView = Backbone.View.extend( {
 	/**
 	 * Renders the collection.
 	 *
-	 * @returns {AdminMenu}
+	 * @returns {CollectionView}
 	 */
 	render: function() {
 		this.$el.empty();

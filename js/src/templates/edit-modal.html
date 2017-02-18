@@ -1,0 +1,32 @@
+<div id="amm-modal-content-wrap">
+	<button id="amm-modal-close" aria-label="<%- close %>">
+		<span class="dashicons dashicons-no"></span>
+	</button>
+
+	<div id="amm-modal-content">
+		<h1 id="amm-modal-title"><%- title %></h1>
+
+		<p>
+			<label for="amm-menu-item-option-name"><%- labelLabel %></label>
+			<input name="amm-menu-item-option-name" class="amm-menu-item-option" value="<%- model.label %>"/>
+		</p>
+		<p>
+			<label for="amm-menu-item-option-icon"><%- iconLabel %></label>
+			<input name="amm-menu-item-option-icon" class="amm-menu-item-option" id="amm-menu-item-option-icon" value="<%- model.icon %>"/>
+			<button class="dashicons-picker" data-target="#amm-menu-item-option-icon"><%- chooseIcon %></button>
+		</p>
+		<% if (model.id.indexOf('custom-item') > -1) { %>
+		<p>
+			<label for="amm-menu-item-option-href"><%- linkLabel %></label>
+			<input name="amm-menu-item-option-href" class="amm-menu-item-option" value="<%- model.href %>"/>
+		</p>
+		<% } %>
+	</div>
+
+	<div id="amm-modal-toolbar">
+		<button id="amm-modal-toolbar-button" class="button button-primary button-large">
+			<%- buttonText %>
+		</button>
+	</div>
+</div>
+<div id="amm-modal-backdrop"></div>

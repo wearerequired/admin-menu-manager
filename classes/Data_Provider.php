@@ -63,12 +63,13 @@ class Data_Provider {
 					'label'     => __( 'Collapse menu', 'admin-menu-manager' ),
 					'ariaLabel' => __( 'Collapse Main menu', 'admin-menu-manager' ),
 				],
-				'menuItemOptions' => [
+				'editModal' => [
 					'title'      => __( 'Edit item', 'admin-menu-manager' ),
 					'labelLabel' => __( 'Label:', 'admin-menu-manager' ),
 					'iconLabel'  => __( 'Icon:', 'admin-menu-manager' ),
 					'linkLabel'  => __( 'Link:', 'admin-menu-manager' ),
-					'save'       => __( 'Save', 'admin-menu-manager' ),
+					'buttonText' => __( 'Save', 'admin-menu-manager' ),
+					'chooseIcon' => __( 'Choose Icon', 'admin-menu-manager' ),
 				],
 			],
 			'parent_file'  => $parent_file,

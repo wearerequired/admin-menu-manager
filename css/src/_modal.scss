@@ -22,7 +22,7 @@
 	right: 0;
 	bottom: 0;
 	min-height: 360px;
-	background: #000;
+	background: #111;
 	opacity: 0.7;
 	z-index: 200;
 }
@@ -74,4 +74,9 @@
 
 #amm-modal-toolbar-button {
 	float: right;
+}
+
+.dashicon-picker-container {
+	z-index:9990;
+	border: 1px solid #eee;
 }

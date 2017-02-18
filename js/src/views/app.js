@@ -46,6 +46,18 @@ var AppView = wp.Backbone.View.extend( {
 			this.initSortable( false );
 		} );
 
+		// Editing a single menu item
+		Backbone.on( 'editItem', _.bind( function( view, model ) {
+			var EditModal = require( 'views/edit-modal' );
+			this.views.set( '#admin-menu-manager-modal-view', new EditModal( {
+				model: model
+			} ) );
+
+			this.listenTo( this.views.first( '#admin-menu-manager-modal-view' ), 'save', _.bind( function( data ) {
+				this.views.first( '#admin-menu-manager-menu' ).render();
+			}, this ) );
+		}, this ) );
+
 		// Listen to the export event
 		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'export', function( view ) {
 			var menu  = this.views.first( '#admin-menu-manager-menu' ).collection.toJSON();
