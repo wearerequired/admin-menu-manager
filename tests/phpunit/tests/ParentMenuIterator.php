@@ -10,7 +10,7 @@ class ParentMenuIterator_Test extends WP_UnitTestCase {
 		global $menu;
 
 		$new_menu = [
-			0 => [
+			[
 				0 => 'Lorem Ipsum',
 				1 => 'edit_options',
 				2 => 'lorem-ipsum',
@@ -19,7 +19,7 @@ class ParentMenuIterator_Test extends WP_UnitTestCase {
 				5 => 'toplevel_page_lorem',
 				6 => 'dashicons-dashboard',
 			],
-			10 => [
+			[
 				0 => 'Foo',
 				1 => 'edit_options',
 				2 => 'nomatch',
@@ -28,7 +28,7 @@ class ParentMenuIterator_Test extends WP_UnitTestCase {
 				5 => 'toplevel_page_foo',
 				6 => 'dashicons-random',
 			],
-			20 => [
+			[
 				0      => 'Bar <span>Baz</span>',
 				1      => 'install_plugins',
 				2      => 'bar',
@@ -38,10 +38,44 @@ class ParentMenuIterator_Test extends WP_UnitTestCase {
 				6      => 'dashicons-admin-tools',
 				'href' => 'themes.php?page=bar',
 			],
+			[
+				0 => '',
+				1 => 'read',
+				2 => 'separator1',
+				3 => '',
+				4 => 'wp-menu-separator',
+			],
+			[
+				0      => 'Custom Item',
+				1      => 'read',
+				2      => 'custom-item-123',
+				3      => '',
+				4      => 'wp-not-current-submenu menu-top toplevel_page_custom',
+				5      => 'custom-item-123',
+				6      => 'dashicons-dashboard',
+				'href' => 'https://wordpress.org',
+				'id'   => 'custom-item-123',
+			],
+			[
+				0 => '',
+				1 => 'read',
+				2 => 'separator2',
+				3 => '',
+				4 => 'wp-menu-separator',
+			],
+			[
+				0 => 'Editor',
+				1 => 'edit_themes',
+				2 => 'themes.php',
+				3 => 'Editor',
+				4 => 'menu-top menu-icon-appearance',
+				5 => 'toplevel_page_themes',
+				6 => 'dashicons-admin-appearance',
+			],
 		];
 
 		$old_menu = [
-			40 => [
+			[
 				0      => 'Bar <span>Baz</span>',
 				1      => 'install_plugins',
 				2      => 'bar',
@@ -51,7 +85,7 @@ class ParentMenuIterator_Test extends WP_UnitTestCase {
 				6      => 'dashicons-dashboard',
 				'href' => 'themes.php?page=bar',
 			],
-			80 => [
+			[
 				0 => 'Old Foo',
 				1 => 'edit_options',
 				2 => 'old-foo',
@@ -60,7 +94,7 @@ class ParentMenuIterator_Test extends WP_UnitTestCase {
 				5 => 'toplevel_page_foo',
 				6 => 'dashicons-admin-users',
 			],
-			0 => [
+			[
 				0 => 'WordPress',
 				1 => 'edit_options',
 				2 => 'lorem-ipsum',
@@ -71,12 +105,24 @@ class ParentMenuIterator_Test extends WP_UnitTestCase {
 			],
 		];
 
-		$old_submenu = [];
+		$old_submenu = [
+			'themes.php' => [
+				[
+					0 => 'Editor',
+					1 => 'edit_themes',
+					2 => 'themes.php',
+					3 => 'Editor',
+					4 => 'menu-top menu-icon-appearance',
+					5 => 'toplevel_page_themes',
+					6 => 'dashicons-admin-appearance',
+				],
+			],
+		];
 
 		$iterator = new \Required\Admin_Menu_Manager\Parent_Menu_Iterator( $new_menu, $old_menu, $old_submenu );
 		$iterator->maybe_match_menu_items();
-		$this->assertSame( [
-			0 => [
+		$this->assertEqualSets( [
+			[
 				0 => 'Lorem Ipsum',
 				1 => 'edit_options',
 				2 => 'lorem-ipsum',
@@ -85,7 +131,31 @@ class ParentMenuIterator_Test extends WP_UnitTestCase {
 				5 => 'toplevel_page_lorem-ipsum',
 				6 => 'dashicons-dashboard',
 			],
-			20 => [
+			[
+				0 => '',
+				1 => 'read',
+				2 => 'separator1',
+				3 => '',
+				4 => 'wp-menu-separator',
+			],
+			[
+				0 => '',
+				1 => 'read',
+				2 => 'separator2',
+				3 => '',
+				4 => 'wp-menu-separator',
+			],
+			[
+				0    => 'Custom Item',
+				1    => 'read',
+				2    => 'https://wordpress.org',
+				3    => '',
+				4    => 'wp-not-current-submenu menu-top toplevel_page_custom',
+				5    => 'custom-item-123',
+				6    => 'dashicons-dashboard',
+				'id' => 'custom-item-123',
+			],
+			[
 				0 => 'Bar <span>Baz</span>',
 				1 => 'install_plugins',
 				2 => 'bar',
@@ -93,6 +163,15 @@ class ParentMenuIterator_Test extends WP_UnitTestCase {
 				4 => 'menu-top toplevel_page_bar',
 				5 => 'toplevel_page_bar',
 				6 => 'dashicons-admin-tools',
+			],
+			[
+				0 => 'Editor',
+				1 => 'edit_themes',
+				2 => 'themes.php',
+				3 => 'Editor',
+				4 => 'menu-top toplevel_page_themes toplevel_page_themes',
+				5 => 'toplevel_page_themes',
+				6 => 'dashicons-admin-appearance',
 			],
 		], $menu );
 	}
