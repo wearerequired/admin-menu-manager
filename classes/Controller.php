@@ -110,7 +110,14 @@ class Controller {
 		// Use minified libraries if SCRIPT_DEBUG is turned off.
 		$suffix = SCRIPT_DEBUG ? '' : '.min';
 
-		wp_enqueue_style( 'admin-menu-manager', $this->get_url() . 'css/admin-menu-manager' . $suffix . '.css', [], self::VERSION );
+		wp_register_style(
+			'dashicons-picker',
+			$this->get_url() . 'css/vendor/dashicons-picker.css',
+			[],
+			'935c8be'
+		);
+
+		wp_enqueue_style( 'admin-menu-manager', $this->get_url() . 'css/admin-menu-manager' . $suffix . '.css', [ 'dashicons-picker' ], self::VERSION );
 
 		wp_add_inline_style( 'admin-menu-manager', $this->get_inline_style() );
 
@@ -121,6 +128,13 @@ class Controller {
 			'0.2'
 		);
 
+		wp_register_script(
+			'dashicons-picker',
+			$this->get_url() . 'js/vendor/dashicons-picker.js',
+			[ 'jquery' ],
+			'935c8be'
+		);
+
 		wp_enqueue_script(
 			'admin-menu-manager',
 			$this->get_url() . 'js/admin-menu-manager' . $suffix . '.js',
@@ -129,6 +143,7 @@ class Controller {
 				'jquery-ui-droppable',
 				'wp-backbone',
 				'backbone-undo',
+				'dashicons-picker',
 			],
 			self::VERSION
 		);
