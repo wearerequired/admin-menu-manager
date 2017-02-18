@@ -142,10 +142,10 @@ class Sub_Menu_Iterator extends Menu_Iterator {
 
 				$new_page = add_submenu_page(
 					$parent_page, // Parent Slug.
-					isset( $s_item[3] ) ? $s_item[3] : $s_item[0], // Page title.
-					$s_item[0], // Menu title.
-					$s_item[1], // Capability.
-					$s_item[2] // Slug.
+					isset( $item[3] ) ? $item[3] : $item[0], // Page title.
+					$item[0], // Menu title.
+					$item[1], // Capability.
+					$item[2] // Slug.
 				);
 
 				$this->switch_menu_item_filters( $hook_name, $new_page );

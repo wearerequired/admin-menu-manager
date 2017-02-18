@@ -67,12 +67,12 @@ class Parent_Menu_Iterator extends Menu_Iterator {
 				$menu[] = $m_item;
 			} else {
 				add_menu_page(
-					$m_item[3], // Page title.
-					$m_item[0], // Menu title.
-					$m_item[1], // Capability.
+					$item[3], // Page title.
+					$item[0], // Menu title.
+					$item[1], // Capability.
 					$item_slug, // Slug.
 					'', // Function.
-					$m_item[6], // Icon.
+					$item[6], // Icon.
 					$priority // Position.
 				);
 
