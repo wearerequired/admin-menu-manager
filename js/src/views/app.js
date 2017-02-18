@@ -132,6 +132,15 @@ var AppView = wp.Backbone.View.extend( {
 			this.views.first( '#admin-menu-manager-trash-view' ).render();
 			this.initSortable( this.isEditing );
 		} );
+
+		// Listen to the cancel event
+		this.listenTo( this.views.first( '#admin-menu-manager-edit' ), 'cancel', function() {
+			this.toggleSortable( false );
+
+			this.views.first( '#admin-menu-manager-menu' ).isEditing = false;
+			this.views.first( '#admin-menu-manager-menu' ).collection.reset( AdminMenuManager.menu );
+			this.views.first( '#admin-menu-manager-trash-view' ).collection.reset( AdminMenuManager.trash );
+		} );
 	},
 
 	/**

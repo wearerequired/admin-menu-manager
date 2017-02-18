@@ -11,7 +11,7 @@ var EditButton = Backbone.View.extend( {
 	},
 
 	events: {
-		'click [href=#edit]':                   'edit',
+		'click #amm-edit-menu':                 'edit',
 		'click #amm-edit-option-save':          'save',
 		'click #amm-edit-option-add':           'add',
 		'click #amm-edit-option-add-separator': 'addSeparator',
@@ -20,7 +20,8 @@ var EditButton = Backbone.View.extend( {
 		'click #amm-edit-option-add-export':    'export',
 		'click #amm-edit-option-undo':          'undo',
 		'click #amm-edit-option-redo':          'redo',
-		'click #amm-edit-option-reset':         'reset'
+		'click #amm-edit-option-reset':         'reset',
+		'click #amm-edit-option-cancel':        'cancel'
 	},
 
 	edit: function ( e ) {
@@ -90,8 +91,16 @@ var EditButton = Backbone.View.extend( {
 	reset: function ( e ) {
 		e.preventDefault();
 		this.trigger( 'reset' );
-	}
+	},
 
+	cancel: function ( e ) {
+		e.preventDefault();
+
+		this.isActive = false;
+
+		this.trigger( 'cancel' );
+		this.$el.toggleClass( 'active', this.isActive );
+	}
 } );
 
 module.exports = EditButton;

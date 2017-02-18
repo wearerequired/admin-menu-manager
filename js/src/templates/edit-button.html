@@ -1,50 +1,53 @@
-<a href="#edit" class="menu-top" title="<%= label %>">
+<button class="menu-top" id="amm-edit-menu">
 	<div class="wp-menu-image dashicons-before dashicons-edit"></div>
 	<div class="wp-menu-name"><%= label %></div>
-</a>
+</button>
 <ul class="amm-edit-options">
 	<li class="amm-edit-option">
-		<a href="#save" id="amm-edit-option-save" title="<%= options.save %>">
+		<button id="amm-edit-option-save">
 			<div class="wp-menu-image dashicons-before dashicons-yes"><br></div>
 			<div class="wp-menu-name screen-reader-text"><%= options.save %></div>
-		</a>
+		</button>
 	</li>
 	<li class="amm-edit-option">
-		<a href="#add" id="amm-edit-option-add" title="<%= options.add %>">
-			<div class="wp-menu-image dashicons-before dashicons-plus"><br></div>
+		<button id="amm-edit-option-add">
+			<div class="wp-menu-image dashicons-before dashicons-admin-settings"><br></div>
 			<div class="wp-menu-name screen-reader-text"><%= options.add %></div>
-		</a>
+		</button>
 		<ul class="amm-edit-option-choices hidden">
 			<li class="amm-edit-option-choice">
-				<a href="#add-separator" id="amm-edit-option-add-separator"><%= options.addSeparator %></a>
+				<button id="amm-edit-option-add-separator"><%= options.addSeparator %></button>
 			</li>
 			<li class="amm-edit-option-choice">
-				<a href="#add-custom-item" id="amm-edit-option-add-custom"><%= options.addCustomItem %></a>
+				<button id="amm-edit-option-add-custom"><%= options.addCustomItem %></button>
 			</li>
 			<li class="amm-edit-option-choice">
-				<a href="#add-import" id="amm-edit-option-add-import"><%= options.addImport %></a>
+				<button id="amm-edit-option-add-import"><%= options.addImport %></button>
 			</li>
 			<li class="amm-edit-option-choice">
-				<a href="#add-export" id="amm-edit-option-add-export"><%= options.addExport %></a>
+				<button id="amm-edit-option-add-export"><%= options.addExport %></button>
+			</li>
+			<li class="amm-edit-option-choice">
+				<button id="amm-edit-option-reset"><%= options.reset %></button>
 			</li>
 		</ul>
 	</li>
 	<li class="amm-edit-option">
-		<a href="#undo" id="amm-edit-option-undo" title="<%= options.undo %>">
+		<button id="amm-edit-option-undo">
 			<div class="wp-menu-image dashicons-before dashicons-undo"><br></div>
 			<div class="wp-menu-name screen-reader-text"><%= options.undo %></div>
-		</a>
-	</li>
-	<li class="amm-edit-option" title="<%= options.redo %>">
-		<a href="#redo" id="amm-edit-option-redo">
-			<div class="wp-menu-image dashicons-before dashicons-redo"><br></div>
-			<div class="wp-menu-name screen-reader-text"><%= options.redo %></div>
-		</a>
+		</button>
 	</li>
 	<li class="amm-edit-option">
-		<a href="#reset" id="amm-edit-option-reset" title="<%= options.reset %>">
+		<button id="amm-edit-option-redo">
+			<div class="wp-menu-image dashicons-before dashicons-redo"><br></div>
+			<div class="wp-menu-name screen-reader-text"><%= options.redo %></div>
+		</button>
+	</li>
+	<li class="amm-edit-option">
+		<button id="amm-edit-option-cancel">
 			<div class="wp-menu-image dashicons-before dashicons-dismiss"><br></div>
-			<div class="wp-menu-name screen-reader-text"><%= options.reset %></div>
-		</a>
+			<div class="wp-menu-name screen-reader-text"><%= options.cancel %></div>
+		</button>
 	</li>
 </ul>

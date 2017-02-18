@@ -1,9 +1,10 @@
 <div id="amm-modal-content-wrap">
-	<a id="amm-modal-close" href="#">
+	<button id="amm-modal-close" aria-label="<%- close %>">
+		<span class="dashicons dashicons-no"></span>
 		<span class="dashicons-before dashicons-no">
 			<span class="screen-reader-text"><%- close %></span>
 		</span>
-	</a>
+	</button>
 
 	<div id="amm-modal-content">
 		<h1 id="amm-modal-title"><%- title %></h1>
@@ -14,7 +15,7 @@
 	</div>
 
 	<div id="amm-modal-toolbar">
-		<button href="#" id="amm-modal-toolbar-button" class="button button-primary button-large" disabled="disabled">
+		<button id="amm-modal-toolbar-button" class="button button-primary button-large" disabled="disabled">
 			<%- buttonText %>
 		</button>
 	</div>
