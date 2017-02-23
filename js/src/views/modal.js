@@ -3,12 +3,12 @@ var Modal = Backbone.View.extend( {
 	template: require( 'templates/modal' ),
 	isActive: false,
 
-	initialize: function ( options ) {
+	initialize: function( options ) {
 		this.options = options;
 		_.bindAll( this, 'render' );
 	},
 
-	render: function () {
+	render: function() {
 		this.$el.html( this.template( this.options.templateData ) );
 		this.delegateEvents();
 		return this;
@@ -16,14 +16,58 @@ var Modal = Backbone.View.extend( {
 
 	events: {
 		'click #amm-modal-close': 'close',
+		'keydown':                'keydownHandler'
 	},
 
-	close: function ( e ) {
+	/**
+	 * Handle esc key presses.
+	 *
+	 * @param {Event} e Event object.
+	 */
+	keydownHandler: function( e ) {
+		if ( 27 === e.keyCode ) {
+			this.close( e );
+		} else if ( 9 === e.keyCode ) {
+			this.constrainTabbing( e );
+		}
+	},
+
+	/**
+	 * Constrain tabbing within the modal.
+	 *
+	 * @param {Event} e Event object.
+	 */
+	constrainTabbing: function( e ) {
+		var title         = this.$el.find( '#amm-modal-title' ),
+		    primaryButton = this.$el.find( '#amm-modal-toolbar-button' ),
+		    closeButton   = this.$el.find( '#amm-modal-close' );
+
+		if ( closeButton[ 0 ] === e.target ) {
+			if ( e.shiftKey ) {
+				primaryButton.focus();
+			} else {
+				title.focus();
+			}
+			e.preventDefault();
+		} else if ( title[ 0 ] === e.target && e.shiftKey ) {
+			closeButton.focus();
+			e.preventDefault();
+		} else if ( primaryButton[ 0 ] === e.target && !e.shiftKey ) {
+			closeButton.focus();
+			e.preventDefault();
+		}
+	},
+
+	/**
+	 * Closes the modal.
+	 *
+	 * @param {Event} e Event object.
+	 */
+	close: function( e ) {
 		e.preventDefault();
 
 		this.trigger( 'close', this );
 		this.remove();
-	},
 	}
 }, {
 	extend: function( protoProps, staticProps ) {

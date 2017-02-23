@@ -28,10 +28,9 @@ var EditModal = Modal.extend( {
 	},
 
 	close: function( e ) {
-		e.preventDefault();
+		this.$el.find( '.dashicons-picker' ).trigger( 'mouseup' );
 
-		this.trigger( 'close', this );
-		this.remove();
+		Modal.prototype.close.call(this);
 	},
 
 	save: function () {
