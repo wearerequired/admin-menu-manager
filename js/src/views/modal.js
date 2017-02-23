@@ -24,7 +24,19 @@ var Modal = Backbone.View.extend( {
 		this.trigger( 'close', this );
 		this.remove();
 	},
+	}
+}, {
+	extend: function( protoProps, staticProps ) {
+		var parent = this;
 
+		protoProps.events = _.extend(
+			{},
+			parent.prototype.events ? parent.prototype.events : {},
+			protoProps.events ? protoProps.events : {}
+		);
+
+		return Backbone.View.extend.apply( parent, arguments );
+	}
 } );
 
 module.exports = Modal;
