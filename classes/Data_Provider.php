@@ -64,6 +64,7 @@ class Data_Provider {
 					'ariaLabel' => __( 'Collapse Main menu', 'admin-menu-manager' ),
 				],
 				'editModal' => [
+					'close'      => __( 'Close modal', 'admin-menu-manager' ),
 					'title'      => __( 'Edit item', 'admin-menu-manager' ),
 					'labelLabel' => __( 'Label:', 'admin-menu-manager' ),
 					'iconLabel'  => __( 'Icon:', 'admin-menu-manager' ),
