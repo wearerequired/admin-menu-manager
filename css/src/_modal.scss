@@ -36,7 +36,7 @@
 	bottom: 0;
 	min-width: 300px;
 	min-height: 200px;
-	padding: 30px;
+	padding: 16px;
 	background: #fff;
 	z-index: 300;
 	box-sizing: border-box;
@@ -48,8 +48,10 @@
 
 #amm-modal-close {
 	position: absolute;
-	right: 30px;
-	top: 30px;
+	right: 0;
+	top: 0;
+	width: 50px;
+	height: 50px;
 
 	> span {
 		color: #666;
@@ -68,12 +70,22 @@
 }
 
 #amm-modal-toolbar {
-	overflow: hidden;
-	margin-top: 10px;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+
+	&:after {
+		clear: both;
+		display: block;
+		content: "";
+	}
 }
 
 #amm-modal-toolbar-button {
 	float: right;
+	display: inline-block;
+	margin: 0 16px 16px 0;
 }
 
 .dashicon-picker-container {

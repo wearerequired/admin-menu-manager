@@ -1,5 +1,5 @@
 <div id="amm-modal-content-wrap">
-	<button id="amm-modal-close" aria-label="<%- close %>">
+	<button class="button-link" id="amm-modal-close" aria-label="<%- close %>">
 		<span class="dashicons dashicons-no"></span>
 	</button>
 
@@ -13,7 +13,7 @@
 		<p>
 			<label for="amm-menu-item-option-icon"><%- iconLabel %></label>
 			<input name="amm-menu-item-option-icon" class="amm-menu-item-option" id="amm-menu-item-option-icon" value="<%- model.icon %>"/>
-			<button class="dashicons-picker" data-target="#amm-menu-item-option-icon"><%- chooseIcon %></button>
+			<button class="button dashicons-picker" data-target="#amm-menu-item-option-icon"><%- chooseIcon %></button>
 		</p>
 		<% if (model.id.indexOf('custom-item') > -1) { %>
 		<p>
