@@ -12,7 +12,7 @@ Manage the WordPress admin menu using a simple drag & drop interface.
 
 ## Description ##
 
-At [required+](http://required.ch/ "Team of experienced web professionals from Switzerland & Germany") we strive to create a great user experience. We thought about how to improve the WordPress admin and came to the conclusion that we need a better way to manage the core of the WordPress back-end: the admin menu.
+At [required](https://required.com/) we strive to create a great user experience. We thought about how to improve the WordPress admin and came to the conclusion that we need a better way to manage the core of the WordPress back-end: the admin menu.
 
 This is our take on a simple, lightweight and unobtrusive WordPress admin menu manager. It works like a charm, doesn’t get in your way and doesn’t even require yet another settings page. So if you want a custom tailored admin menu for you or your clients, this plugin is perfect.
 
@@ -77,7 +77,7 @@ This might get easier in the future or we just might create a little add-on for 
 
 If you would like to contribute to this plugin, report an issue or anything like that, please note that we develop this plugin on [GitHub](https://github.com/wearerequired/admin-menu-manager). Please submit pull requests to the `develop` branch.
 
-Developed by [required+](http://required.ch/ "Team of experienced web professionals from Switzerland & Germany").
+Developed by [required](https://required.com/).
 
 ## Changelog ##
 
@@ -89,16 +89,28 @@ Developed by [required+](http://required.ch/ "Team of experienced web profession
 * New: Edit existing menu items and their icons
 * New: Undo/Redo changes at will
 
-### 1.0.3 (2015-05-06) ###
+### 1.0.3 ###
+
+Date: May 6, 2015.
+
 * Fixed: Localized menu items were displayed in English under some conditions.
 
-### 1.0.2 (2015-05-04) ###
+### 1.0.2 ###
+
+Date: May 4, 2015.
+
 * Fixed: Localized sub menu items didn’t work properly due do wrongly translated strings.
 
-### 1.0.1 (2015-4-27) ###
+### 1.0.1 ###
+
+Date: April 27, 2015.
+
 * Fix JS URL that made the plugin un-usable
 
-### 1.0.0 (2015-4-27) ###
+### 1.0.0 ###
+
+Date: April 27, 2015.
+
 * First release
 
 ## Upgrade Notice ##
