@@ -2,7 +2,7 @@ import ModalTemplate from '../templates/modal.html';
 
 const Modal = Backbone.View.extend( {
 	id:       'admin-menu-manager-modal',
-	template: ModalTemplate,
+	template: _.template( ModalTemplate ),
 	isActive: false,
 
 	initialize: function ( options ) {

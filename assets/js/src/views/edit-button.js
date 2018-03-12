@@ -3,7 +3,7 @@ import EditButtonTemplate from '../templates/edit-button.html';
 const EditButton = Backbone.View.extend( {
 	id:       'admin-menu-manager-edit',
 	tagName:  'li',
-	template: EditButtonTemplate,
+	template: _.template( EditButtonTemplate ),
 	isActive: false,
 
 	render: function () {

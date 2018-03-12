@@ -2,7 +2,7 @@ import MenuItemOptionsTemplate from '../templates/menu-item-options.html';
 
 const MenuItemOptionsView = Backbone.View.extend( {
 	tagName:   'div',
-	template:  MenuItemOptionsTemplate,
+	template:  _.template( MenuItemOptionsTemplate ),
 	className: 'wp-submenu wp-submenu-wrap sub-open amm-menu-item-options',
 
 	render: function () {

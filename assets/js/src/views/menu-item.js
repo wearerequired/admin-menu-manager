@@ -2,7 +2,7 @@ import MenuItemTemplate from '../templates/menu-item.html';
 
 const MenuItemView = Backbone.View.extend( {
 	tagName:       'li',
-	template:      MenuItemTemplate,
+	template:      _.template( MenuItemTemplate ),
 	optionsActive: false,
 	attributes:    function() {
 		// Return model data

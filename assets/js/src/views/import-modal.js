@@ -2,7 +2,7 @@ import ModalTemplate from '../templates/modal.html';
 import Modal from './modal';
 
 const ImportModal = Modal.extend( {
-	template: ModalTemplate,
+	template: _.template( ModalTemplate ),
 	isActive: false,
 
 	initialize: function ( options ) {

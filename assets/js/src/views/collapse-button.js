@@ -2,7 +2,7 @@ import CollapsButtonTemplate from '../templates/collapse-button.html';
 
 const CollapseButton = Backbone.View.extend( {
 	tagName:    'li',
-	template:   CollapsButtonTemplate,
+	template:   _.template( CollapsButtonTemplate ),
 	attributes: function() {
 		return {
 			class: 'ui-sortable-handle',

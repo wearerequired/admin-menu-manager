@@ -12,7 +12,7 @@ import ImportModal from './import-modal';
 
 const AppView = wp.Backbone.View.extend( {
 	el:           '#adminmenuwrap',
-	template:     AppTemplate,
+	template:     _.template( AppTemplate ),
 	isEditing:    false,
 	dropReceiver: undefined,
 

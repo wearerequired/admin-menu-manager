@@ -2,7 +2,7 @@ import EditModalTemplate from '../templates/edit-modal.html';
 import Modal from './modal';
 
 const EditModal = Modal.extend( {
-	template: EditModalTemplate,
+	template: _.template( EditModalTemplate ),
 	isActive: false,
 
 	initialize: function( options ) {

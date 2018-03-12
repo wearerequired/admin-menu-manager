@@ -324,7 +324,7 @@ var AppTemplate = '<ul id="adminmenu">\n\t<div id="admin-menu-manager-menu"></di
 
 var AppView = wp.Backbone.View.extend({
 	el: '#adminmenuwrap',
-	template: AppTemplate,
+	template: _.template(AppTemplate),
 	isEditing: false,
 	dropReceiver: undefined,
 
@@ -695,7 +695,7 @@ var CollapsButtonTemplate = '<button type="button" id="collapse-button" aria-lab
 
 var CollapseButton = Backbone.View.extend({
 	tagName: 'li',
-	template: CollapsButtonTemplate,
+	template: _.template(CollapsButtonTemplate),
 	attributes: function attributes() {
 		return {
 			class: 'ui-sortable-handle',
@@ -826,7 +826,7 @@ var EditButtonTemplate = '<button class="menu-top" id="amm-edit-menu">\n\t<div c
 var EditButton = Backbone.View.extend({
 	id: 'admin-menu-manager-edit',
 	tagName: 'li',
-	template: EditButtonTemplate,
+	template: _.template(EditButtonTemplate),
 	isActive: false,
 
 	render: function render() {
@@ -947,7 +947,7 @@ var EditModalTemplate = '<div id="amm-modal-content-wrap">\n\t<button class="but
 
 
 var EditModal = _modal2.default.extend({
-	template: EditModalTemplate,
+	template: _.template(EditModalTemplate),
 	isActive: false,
 
 	initialize: function initialize(options) {
@@ -1009,7 +1009,7 @@ var ExportModalTemplate = '<div id="amm-modal-content-wrap">\n\t<button class="b
 
 
 var ExportModal = _modal2.default.extend({
-	template: ExportModalTemplate,
+	template: _.template(ExportModalTemplate),
 	isActive: false,
 
 	initialize: function initialize(options) {
@@ -1068,7 +1068,7 @@ var ModalTemplate = '<div id="amm-modal-content-wrap">\n\t<button class="button-
 
 
 var ImportModal = _modal2.default.extend({
-	template: ModalTemplate,
+	template: _.template(ModalTemplate),
 	isActive: false,
 
 	initialize: function initialize(options) {
@@ -1129,7 +1129,7 @@ var MenuItemTemplate = '<a href="<%- href %>" class="<%- classes %>" aria-haspop
 
 var MenuItemView = Backbone.View.extend({
 	tagName: 'li',
-	template: MenuItemTemplate,
+	template: _.template(MenuItemTemplate),
 	optionsActive: false,
 	attributes: function attributes() {
 		// Return model data
@@ -1201,7 +1201,7 @@ var ModalTemplate = '<div id="amm-modal-content-wrap">\n\t<button class="button-
 
 var Modal = Backbone.View.extend({
 	id: 'admin-menu-manager-modal',
-	template: ModalTemplate,
+	template: _.template(ModalTemplate),
 	isActive: false,
 
 	initialize: function initialize(options) {
