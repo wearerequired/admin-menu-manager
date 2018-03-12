@@ -246,9 +246,14 @@ exports.default = MenuItem;
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-var CollectionView = require("./../../../../assets/js/src/views/collectionview");
 
-var AdminMenu = CollectionView.extend({
+var _collectionview = require('./collectionview');
+
+var _collectionview2 = _interopRequireDefault(_collectionview);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var AdminMenu = _collectionview2.default.extend({
 	id: 'amm-adminmenu',
 	isEditing: false,
 
@@ -260,7 +265,7 @@ var AdminMenu = CollectionView.extend({
   * @constructs AdminMenu object
   */
 	initialize: function initialize(options) {
-		CollectionView.prototype.initialize.apply(this, [options]);
+		_collectionview2.default.prototype.initialize.apply(this, [options]);
 
 		this.collection.reset(AdminMenuManager.menu);
 	}
@@ -268,7 +273,7 @@ var AdminMenu = CollectionView.extend({
 
 exports.default = AdminMenu;
 
-},{"./../../../../assets/js/src/views/collectionview":7}],5:[function(require,module,exports){
+},{"./collectionview":7}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -298,6 +303,18 @@ var _menuItem2 = _interopRequireDefault(_menuItem);
 var _menu = require('../collections/menu');
 
 var _menu2 = _interopRequireDefault(_menu);
+
+var _editModal = require('./edit-modal');
+
+var _editModal2 = _interopRequireDefault(_editModal);
+
+var _exportModal = require('./export-modal');
+
+var _exportModal2 = _interopRequireDefault(_exportModal);
+
+var _importModal = require('./import-modal');
+
+var _importModal2 = _interopRequireDefault(_importModal);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -347,8 +364,7 @@ var AppView = wp.Backbone.View.extend({
 
 		// Editing a single menu item
 		Backbone.on('editItem', _.bind(function (view, model) {
-			var EditModal = require("./../../../../assets/js/src/views/edit-modal");
-			this.views.set('#admin-menu-manager-modal-view', new EditModal({
+			this.views.set('#admin-menu-manager-modal-view', new _editModal2.default({
 				model: model
 			}));
 
@@ -362,8 +378,7 @@ var AppView = wp.Backbone.View.extend({
 			var menu = this.views.first('#admin-menu-manager-menu').collection.toJSON();
 			var trash = this.views.first('#admin-menu-manager-trash-view').collection.toJSON();
 
-			var ExportModal = require("./../../../../assets/js/src/views/export-modal");
-			this.views.set('#admin-menu-manager-modal-view', new ExportModal({
+			this.views.set('#admin-menu-manager-modal-view', new _exportModal2.default({
 				content: JSON.stringify({ menu: menu, trash: trash })
 			}));
 
@@ -375,8 +390,7 @@ var AppView = wp.Backbone.View.extend({
 			var menu = this.views.first('#admin-menu-manager-menu').collection;
 			var trash = this.views.first('#admin-menu-manager-trash-view').collection;
 
-			var ImportModal = require("./../../../../assets/js/src/views/import-modal");
-			this.views.set('#admin-menu-manager-modal-view', new ImportModal());
+			this.views.set('#admin-menu-manager-modal-view', new _importModal2.default());
 
 			this.listenTo(this.views.first('#admin-menu-manager-modal-view'), 'import', function (data) {
 				data = JSON.parse(data);
@@ -670,7 +684,7 @@ var AppView = wp.Backbone.View.extend({
 
 exports.default = AppView;
 
-},{"../collections/menu":2,"../models/menu-item":3,"./../../../../assets/js/src/views/edit-modal":9,"./../../../../assets/js/src/views/export-modal":10,"./../../../../assets/js/src/views/import-modal":11,"./adminmenu":4,"./collapse-button":6,"./edit-button":8,"./trash":14}],6:[function(require,module,exports){
+},{"../collections/menu":2,"../models/menu-item":3,"./adminmenu":4,"./collapse-button":6,"./edit-button":8,"./edit-modal":9,"./export-modal":10,"./import-modal":11,"./trash":14}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
