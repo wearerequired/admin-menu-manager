@@ -1,0 +1,17 @@
+.distignore
+.DS_Store
+.editorconfig
+.git
+.gitignore
+.idea
+bin
+composer.json
+composer.lock
+grunt
+Gruntfile.js
+node_modules
+package.json
+package-lock.json
+phpunit.xml
+README.md
+tests

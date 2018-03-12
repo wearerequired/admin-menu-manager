@@ -1,39 +1,92 @@
 {
-  "name":            "admin-menu-manager",
-  "title":           "Admin Menu Manager",
-  "description":     "Manage the WordPress admin menu using a simple drag & drop interface.",
-  "version":         "2.0.0-alpha",
-  "homepage":        "https://required.com/services/wordpress-plugins/admin-menu-manager/",
-  "license":         "GPL-2.0+",
-  "author":          {
-    "name":  "required",
+  "name": "admin-menu-manager",
+  "title": "Admin Menu Manager",
+  "description": "Manage the WordPress admin menu using a simple drag & drop interface.",
+  "version": "2.0.0-alpha",
+  "homepage": "https://required.com/services/wordpress-plugins/admin-menu-manager/",
+  "license": "GPL-2.0+",
+  "keywords": [],
+  "author": {
+    "name": "required",
     "email": "support@required.ch",
-    "url":   "https://required.com"
+    "url": "https://required.com"
   },
-  "repository":      {
+  "repository": {
     "type": "git",
-    "url":  "https://github.com/wearerequired/admin-menu-manager"
+    "url": "https://github.com/wearerequired/admin-menu-manager"
   },
   "devDependencies": {
-    "autoprefixer":           "~6.7.0",
-    "bundle-collapser":       "~1.2.0",
-    "cssnano":                "~3.10.0",
-    "grunt":                  "~1.0.0",
-    "grunt-browserify":       "~5.0.0",
-    "grunt-checktextdomain":  "~1.0.0",
-    "grunt-contrib-clean":    "~1.0.0",
-    "grunt-contrib-compress": "~1.4.0",
-    "grunt-contrib-copy":     "~1.0.0",
-    "grunt-contrib-jshint":   "~1.1.0",
-    "grunt-contrib-sass":     "~1.0.0",
-    "grunt-contrib-uglify":   "~2.1.0",
-    "grunt-contrib-watch":    "~1.0.0",
-    "grunt-postcss":          "~0.8.0",
-    "grunt-text-replace":     "~0.4.0",
-    "load-grunt-config":      "~0.19.0",
-    "node-underscorify":      "~0.0.14",
-    "pkgify":                 "^1.0.0",
-    "time-grunt":             "^1.0.0"
+    "autoprefixer": "^7.1.4",
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.5.2",
+    "babelify": "^8.0.0",
+    "bundle-collapser": "~1.2.0",
+    "css-mqpacker": "^6.0.1",
+    "cssnano": "^3.10.0",
+    "eslint-config-wordpress": "^2.0.0",
+    "node-underscorify": "~0.0.14",
+    "nodemon": "^1.11.0",
+    "pkgify": "^1.0.0",
+    "postcss": "^6.0.2",
+    "postcss-cli": "^4.1.0",
+    "postcss-custom-properties": "^6.1.0",
+    "postcss-hexrgba": "^1.0.0",
+    "postcss-import": "^11.0.0",
+    "postcss-mixins": "^6.1.0",
+    "postcss-nested": "^2.1.2",
+    "postcss-utilities": "^0.7.0",
+    "rtlcss": "^2.2.0",
+    "uglify-js": "^3.0.18"
   },
-  "keywords":        []
+  "scripts": {
+    "uglifyjs": "find assets/js -type f -name '*.js' ! -name '*.min.js' -maxdepth 1 | while read FILE ; do uglifyjs \"${FILE}\" -o \"${FILE%.js}.min.js\" ; done",
+    "rtlcss": "rtlcss assets/css/style.css assets/css/style-rtl.css",
+    "build:css": "postcss assets/css/src/style.css -o assets/css/style.css && npm run rtlcss",
+    "build:js": "browserify assets/js/src/admin-menu-manager.js -o assets/js/admin-menu-manager.js && npm run uglifyjs",
+    "build": "npm run build:css && npm run build:js",
+    "lint": "eslint .",
+    "watch:css": "nodemon --watch assets/css/src -e css -x 'npm run build:css'",
+    "watch:js": "nodemon --watch assets/js/src -e js -x 'npm run build:js'",
+    "watch": "nodemon --watch assets/css/src --watch assets/js/src -e css,js -x 'npm run build'"
+  },
+  "browserify": {
+    "debug": true,
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            [
+              "env",
+              {
+                "targets": {
+                  "uglify": true
+                },
+                "browsers": [
+                  "last 2 versions"
+                ]
+              }
+            ]
+          ],
+          "sourceMaps": true
+        }
+      ],
+      "node-underscorify",
+      [
+        "pkgify",
+        {
+          "packages": {
+            "collections": "./assets/js/src/collections",
+            "models": "./assets/js/src/models",
+            "views": "./assets/js/src/views",
+            "templates": "./assets/js/src/templates"
+          }
+        }
+      ]
+    ],
+    "extensions": [
+      ".html"
+    ]
+  }
 }

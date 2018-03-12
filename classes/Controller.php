@@ -121,7 +121,8 @@ class Controller {
 			'935c8be'
 		);
 
-		wp_enqueue_style( 'admin-menu-manager', $this->get_url() . 'css/admin-menu-manager' . $suffix . '.css', [ 'dashicons-picker' ], self::VERSION );
+		wp_enqueue_style( 'admin-menu-manager', $this->get_url() . 'css/style' . $suffix . '.css', [ 'dashicons-picker' ], self::VERSION );
+		wp_style_add_data( 'repo_name-theme-style', 'rtl', 'replace' );
 
 		wp_add_inline_style( 'admin-menu-manager', $this->get_inline_style() );
 
