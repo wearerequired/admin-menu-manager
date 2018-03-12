@@ -116,7 +116,7 @@ class Controller {
 
 		wp_register_style(
 			'dashicons-picker',
-			$this->get_url() . 'css/vendor/dashicons-picker.css',
+			$this->get_url() . 'assets/css/vendor/dashicons-picker.css',
 			[],
 			'935c8be'
 		);
@@ -128,21 +128,21 @@ class Controller {
 
 		wp_register_script(
 			'backbone-undo',
-			$this->get_url() . 'js/vendor/backbone.undo.min.js',
+			$this->get_url() . 'assets/js/vendor/backbone.undo.min.js',
 			[ 'backbone' ],
 			'0.2'
 		);
 
 		wp_register_script(
 			'dashicons-picker',
-			$this->get_url() . 'js/vendor/dashicons-picker.js',
+			$this->get_url() . 'assets/js/vendor/dashicons-picker.js',
 			[ 'jquery' ],
 			'935c8be'
 		);
 
 		wp_enqueue_script(
 			'admin-menu-manager',
-			$this->get_url() . 'js/admin-menu-manager' . $suffix . '.js',
+			$this->get_url() . 'assets/js/admin-menu-manager' . $suffix . '.js',
 			[
 				'jquery-ui-sortable',
 				'jquery-ui-droppable',
