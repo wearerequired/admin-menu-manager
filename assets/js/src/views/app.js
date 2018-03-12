@@ -6,6 +6,9 @@ import EditButton from './edit-button';
 import Trash from './trash';
 import MenuItem from '../models/menu-item';
 import Menu from '../collections/menu';
+import EditModal from './edit-modal';
+import ExportModal from './export-modal';
+import ImportModal from './import-modal';
 
 const AppView = wp.Backbone.View.extend( {
 	el:           '#adminmenuwrap',
@@ -49,7 +52,6 @@ const AppView = wp.Backbone.View.extend( {
 
 		// Editing a single menu item
 		Backbone.on( 'editItem', _.bind( function ( view, model ) {
-			const EditModal = require( 'views/edit-modal' );
 			this.views.set( '#admin-menu-manager-modal-view', new EditModal( {
 				model: model
 			} ) );
@@ -64,7 +66,6 @@ const AppView = wp.Backbone.View.extend( {
 			const menu = this.views.first( '#admin-menu-manager-menu' ).collection.toJSON();
 			const trash = this.views.first( '#admin-menu-manager-trash-view' ).collection.toJSON();
 
-			const ExportModal = require( 'views/export-modal' );
 			this.views.set( '#admin-menu-manager-modal-view', new ExportModal( {
 				content: JSON.stringify( { menu: menu, trash: trash } )
 			} ) );
@@ -77,7 +78,6 @@ const AppView = wp.Backbone.View.extend( {
 			const menu = this.views.first( '#admin-menu-manager-menu' ).collection;
 			const trash = this.views.first( '#admin-menu-manager-trash-view' ).collection;
 
-			const ImportModal = require( 'views/import-modal' );
 			this.views.set( '#admin-menu-manager-modal-view', new ImportModal() );
 
 			this.listenTo( this.views.first( '#admin-menu-manager-modal-view' ), 'import', function ( data ) {

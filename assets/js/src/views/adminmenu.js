@@ -1,4 +1,4 @@
-const CollectionView = require( 'views/collectionview' );
+import CollectionView from './collectionview';
 
 const AdminMenu = CollectionView.extend( {
 	id:        'amm-adminmenu',
