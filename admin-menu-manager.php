@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Admin Menu Manager
- * Plugin URI:  https://github.com/wearerequired/admin-menu-manager/
+ * Plugin URI:  https://required.com/en/services/wordpress-plugins/admin-menu-manager/
  * Description: Manage the WordPress admin menu using a simple drag & drop interface.
  * Version:     2.0.0-alpha
  * Author:      required
