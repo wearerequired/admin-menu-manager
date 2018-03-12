@@ -1,7 +1,7 @@
 import ExportModalTemplate from '../templates/modal.html';
 import Modal from './modal';
 
-var ExportModal = Modal.extend( {
+const ExportModal = Modal.extend( {
 	template: ExportModalTemplate,
 	isActive: false,
 

@@ -12,5 +12,6 @@
 	  }
 	]
   ],
+  "plugins": ["transform-html-import-to-string"],
   "sourceMaps": true
 }

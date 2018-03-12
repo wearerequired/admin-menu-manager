@@ -19,6 +19,7 @@
     "autoprefixer": "^7.1.4",
     "babel-cli": "^6.24.1",
     "babel-core": "^6.26.0",
+    "babel-plugin-transform-html-import-to-string": "0.0.1",
     "babel-preset-env": "^1.5.2",
     "babelify": "^8.0.0",
     "bundle-collapser": "~1.2.0",

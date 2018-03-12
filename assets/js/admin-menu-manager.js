@@ -23,15 +23,23 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
                        * Licensed under the GPLv2+ license.
                        */
 
-},{"./views/app":11}],2:[function(require,module,exports){
+},{"./views/app":5}],2:[function(require,module,exports){
 'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var MenuItem = require("./../../../../assets/js/src/models/menu-item");
+var _menuItem = require('../models/menu-item');
+
+var _menuItem2 = _interopRequireDefault(_menuItem);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Menu = Backbone.Collection.extend({
-	model: MenuItem,
+	model: _menuItem2.default,
 
 	initialize: function initialize(models, options) {
 		this.options = this.options || options;
@@ -58,9 +66,9 @@ var Menu = Backbone.Collection.extend({
 	},
 
 	parseModel: function parseModel(model) {
-		var classes,
-		    self = location.pathname.split('/').pop(),
-		    slug = model.get('href') ? model.get('href') : model.get(2);
+		var classes = void 0,
+		    self = location.pathname.split('/').pop();
+		var slug = model.get('href') ? model.get('href') : model.get(2);
 
 		// If it's empty then we're most probably on the dashboard.
 		if ('' === self) {
@@ -93,8 +101,8 @@ var Menu = Backbone.Collection.extend({
 			classes.push('wp-has-submenu');
 
 			model.children.each(function (model) {
-				var slug = model.get(2),
-				    parentHref = this.parent.get('href') ? this.parent.get('href') : this.parent.get(2);
+				var slug = model.get(2);
+				var parentHref = this.parent.get('href') ? this.parent.get('href') : this.parent.get(2);
 
 				if (parentHref.search('\\?page=') > -1) {
 					parentHref = parentHref.substr(0, parentHref.search('\\?page='));
@@ -171,11 +179,14 @@ var Menu = Backbone.Collection.extend({
 	}
 });
 
-module.exports = Menu;
+exports.default = Menu;
 
-},{"./../../../../assets/js/src/models/menu-item":3}],3:[function(require,module,exports){
+},{"../models/menu-item":3}],3:[function(require,module,exports){
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 var MenuItem = Backbone.Model.extend({
 	defaults: {
 		0: '', // Menu title
@@ -227,167 +238,14 @@ var MenuItem = Backbone.Model.extend({
 	}
 });
 
-module.exports = MenuItem;
+exports.default = MenuItem;
 
 },{}],4:[function(require,module,exports){
-module.exports = function(obj){
-var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-with(obj||{}){
-__p+='<ul id="adminmenu">\n\t<div id="admin-menu-manager-menu"></div>\n\t<li id="admin-menu-manager-collapse"></li>\n\t<li id="admin-menu-manager-edit"></li>\n\t<li id="admin-menu-manager-trash-view"></li>\n\t<div id="admin-menu-manager-modal-view"></div>\n</ul>\n';
-}
-return __p;
-};
-
-},{}],5:[function(require,module,exports){
-module.exports = function(obj){
-var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-with(obj||{}){
-__p+='<button type="button" id="collapse-button" aria-label="'+
-((__t=( ariaLabel ))==null?'':_.escape(__t))+
-'" aria-expanded="true">\n\t<span class="collapse-button-icon" aria-hidden="true"></span>\n\t<span class="collapse-button-label">'+
-((__t=( label ))==null?'':_.escape(__t))+
-'</span>\n</button>\n';
-}
-return __p;
-};
-
-},{}],6:[function(require,module,exports){
-module.exports = function(obj){
-var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-with(obj||{}){
-__p+='<button class="menu-top" id="amm-edit-menu">\n\t<div class="wp-menu-image dashicons-before dashicons-edit"></div>\n\t<div class="wp-menu-name">'+
-((__t=( label ))==null?'':__t)+
-'</div>\n</button>\n<ul class="amm-edit-options">\n\t<li class="amm-edit-option">\n\t\t<button id="amm-edit-option-save">\n\t\t\t<div class="wp-menu-image dashicons-before dashicons-yes"><br></div>\n\t\t\t<div class="wp-menu-name screen-reader-text">'+
-((__t=( options.save ))==null?'':__t)+
-'</div>\n\t\t</button>\n\t</li>\n\t<li class="amm-edit-option">\n\t\t<button id="amm-edit-option-add">\n\t\t\t<div class="wp-menu-image dashicons-before dashicons-admin-settings"><br></div>\n\t\t\t<div class="wp-menu-name screen-reader-text">'+
-((__t=( options.add ))==null?'':__t)+
-'</div>\n\t\t</button>\n\t\t<ul class="amm-edit-option-choices hidden">\n\t\t\t<li class="amm-edit-option-choice">\n\t\t\t\t<button id="amm-edit-option-add-separator">'+
-((__t=( options.addSeparator ))==null?'':__t)+
-'</button>\n\t\t\t</li>\n\t\t\t<li class="amm-edit-option-choice">\n\t\t\t\t<button id="amm-edit-option-add-custom">'+
-((__t=( options.addCustomItem ))==null?'':__t)+
-'</button>\n\t\t\t</li>\n\t\t\t<li class="amm-edit-option-choice">\n\t\t\t\t<button id="amm-edit-option-add-import">'+
-((__t=( options.addImport ))==null?'':__t)+
-'</button>\n\t\t\t</li>\n\t\t\t<li class="amm-edit-option-choice">\n\t\t\t\t<button id="amm-edit-option-add-export">'+
-((__t=( options.addExport ))==null?'':__t)+
-'</button>\n\t\t\t</li>\n\t\t\t<li class="amm-edit-option-choice">\n\t\t\t\t<button id="amm-edit-option-reset">'+
-((__t=( options.reset ))==null?'':__t)+
-'</button>\n\t\t\t</li>\n\t\t</ul>\n\t</li>\n\t<li class="amm-edit-option">\n\t\t<button id="amm-edit-option-undo">\n\t\t\t<div class="wp-menu-image dashicons-before dashicons-undo"><br></div>\n\t\t\t<div class="wp-menu-name screen-reader-text">'+
-((__t=( options.undo ))==null?'':__t)+
-'</div>\n\t\t</button>\n\t</li>\n\t<li class="amm-edit-option">\n\t\t<button id="amm-edit-option-redo">\n\t\t\t<div class="wp-menu-image dashicons-before dashicons-redo"><br></div>\n\t\t\t<div class="wp-menu-name screen-reader-text">'+
-((__t=( options.redo ))==null?'':__t)+
-'</div>\n\t\t</button>\n\t</li>\n\t<li class="amm-edit-option">\n\t\t<button id="amm-edit-option-cancel">\n\t\t\t<div class="wp-menu-image dashicons-before dashicons-dismiss"><br></div>\n\t\t\t<div class="wp-menu-name screen-reader-text">'+
-((__t=( options.cancel ))==null?'':__t)+
-'</div>\n\t\t</button>\n\t</li>\n</ul>\n';
-}
-return __p;
-};
-
-},{}],7:[function(require,module,exports){
-module.exports = function(obj){
-var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-with(obj||{}){
-__p+='<div id="amm-modal-content-wrap">\n\t<button class="button-link" id="amm-modal-close" aria-label="'+
-((__t=( close ))==null?'':_.escape(__t))+
-'">\n\t\t<span class="dashicons dashicons-no"></span>\n\t</button>\n\n\t<div id="amm-modal-content">\n\t\t<h1 id="amm-modal-title">'+
-((__t=( title ))==null?'':_.escape(__t))+
-'</h1>\n\n\t\t<p>\n\t\t\t<label for="amm-menu-item-option-name">'+
-((__t=( labelLabel ))==null?'':_.escape(__t))+
-'</label>\n\t\t\t<input name="amm-menu-item-option-name" class="amm-menu-item-option" value="'+
-((__t=( model.label ))==null?'':_.escape(__t))+
-'"/>\n\t\t</p>\n\t\t<p>\n\t\t\t<label for="amm-menu-item-option-icon">'+
-((__t=( iconLabel ))==null?'':_.escape(__t))+
-'</label>\n\t\t\t<input name="amm-menu-item-option-icon" class="amm-menu-item-option" id="amm-menu-item-option-icon" value="'+
-((__t=( model.icon ))==null?'':_.escape(__t))+
-'"/>\n\t\t\t<button class="button dashicons-picker" data-target="#amm-menu-item-option-icon">'+
-((__t=( chooseIcon ))==null?'':_.escape(__t))+
-'</button>\n\t\t</p>\n\t\t';
- if (model.id.indexOf('custom-item') > -1) { 
-__p+='\n\t\t<p>\n\t\t\t<label for="amm-menu-item-option-href">'+
-((__t=( linkLabel ))==null?'':_.escape(__t))+
-'</label>\n\t\t\t<input name="amm-menu-item-option-href" class="amm-menu-item-option" value="'+
-((__t=( model.href ))==null?'':_.escape(__t))+
-'"/>\n\t\t</p>\n\t\t';
- } 
-__p+='\n\t</div>\n\n\t<div id="amm-modal-toolbar">\n\t\t<button id="amm-modal-toolbar-button" class="button button-primary button-large">\n\t\t\t'+
-((__t=( buttonText ))==null?'':_.escape(__t))+
-'\n\t\t</button>\n\t</div>\n</div>\n<div id="amm-modal-backdrop"></div>\n';
-}
-return __p;
-};
-
-},{}],8:[function(require,module,exports){
-module.exports = function(obj){
-var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-with(obj||{}){
-__p+='<a href="'+
-((__t=( href ))==null?'':_.escape(__t))+
-'" class="'+
-((__t=( classes ))==null?'':_.escape(__t))+
-'" aria-haspopup="'+
-((__t=( children ? true: false ))==null?'':__t)+
-'">\n\t<div class="wp-menu-arrow">\n\t\t<div></div>\n\t</div>\n\t';
- if ( icon.indexOf('dashicons') > -1 ) { 
-__p+='\n\t<div class=\'wp-menu-image dashicons-before '+
-((__t=( icon ))==null?'':_.escape(__t))+
-'\'><br/></div>\n\t';
- } else if ( icon.indexOf('image/svg') > -1 || icon.indexOf('http') > -1 ) { 
-__p+='\n\t<div class="wp-menu-image svg" style="background-image:url(\''+
-((__t=( icon ))==null?'':__t)+
-'\') !important;"><br/></div>\n\t';
- } else if ('div' === icon || 'none' === icon) { 
-__p+='\n\t<div class="wp-menu-image dashicons-before"><br/></div>\n\t';
- } else { 
-__p+='\n\t<div class="wp-menu-image dashicons-before dashicons-admin-settings"><br/></div>\n\t';
- } 
-__p+='\n\t<div class="wp-menu-name">'+
-((__t=( label ))==null?'':__t)+
-'</div>\n</a>\n<ul class="wp-submenu wp-submenu-wrap">\n\t<li class="wp-submenu-head">'+
-((__t=( label ))==null?'':__t)+
-'</li>\n\t';
- _.each(children, function(child, index) {
-	if ( index===0 ) { child.classes += ' wp-first-item'; }
-	var classes = _.filter(child.classes.split(' '), function(c){return c==='current' || c==='wp-first-item'}).join(' '); 
-__p+='\n\t<li class="'+
-((__t=( classes ))==null?'':__t)+
-'" data-id="'+
-((__t=( child.id ))==null?'':__t)+
-'">\n\t\t<a href="'+
-((__t=( child.href ))==null?'':_.escape(__t))+
-'" class="'+
-((__t=( classes ))==null?'':__t)+
-'">'+
-((__t=( child.label ))==null?'':__t)+
-'</a>\n\t</li>\n\t';
- }); 
-__p+='\n</ul>\n';
-}
-return __p;
-};
-
-},{}],9:[function(require,module,exports){
-module.exports = function(obj){
-var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-with(obj||{}){
-__p+='<div id="amm-modal-content-wrap">\n\t<button class="button-link" id="amm-modal-close" aria-label="'+
-((__t=( close ))==null?'':_.escape(__t))+
-'">\n\t\t<span class="dashicons dashicons-no"></span>\n\t</button>\n\n\t<div id="amm-modal-content">\n\t\t<h1 id="amm-modal-title">'+
-((__t=( title ))==null?'':_.escape(__t))+
-'</h1>\n\n\t\t<p>'+
-((__t=( description ))==null?'':_.escape(__t))+
-'</p>\n\t\t<label for="amm-modal-textarea" class="screen-reader-text">'+
-((__t=( formLabel ))==null?'':_.escape(__t))+
-'</label>\n\t\t<textarea id="amm-modal-textarea" name="amm-modal-textarea">'+
-((__t=( content ))==null?'':_.escape(__t))+
-'</textarea>\n\t</div>\n\n\t<div id="amm-modal-toolbar">\n\t\t<button id="amm-modal-toolbar-button" class="button button-primary button-large" disabled="disabled">\n\t\t\t'+
-((__t=( buttonText ))==null?'':_.escape(__t))+
-'\n\t\t</button>\n\t</div>\n</div>\n<div id="amm-modal-backdrop"></div>\n';
-}
-return __p;
-};
-
-},{}],10:[function(require,module,exports){
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 var CollectionView = require("./../../../../assets/js/src/views/collectionview");
 
 var AdminMenu = CollectionView.extend({
@@ -408,18 +266,14 @@ var AdminMenu = CollectionView.extend({
 	}
 });
 
-module.exports = AdminMenu;
+exports.default = AdminMenu;
 
-},{"./../../../../assets/js/src/views/collectionview":13}],11:[function(require,module,exports){
+},{"./../../../../assets/js/src/views/collectionview":7}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-
-var _app = require('../templates/app.html');
-
-var _app2 = _interopRequireDefault(_app);
 
 var _adminmenu = require('./adminmenu');
 
@@ -447,9 +301,13 @@ var _menu2 = _interopRequireDefault(_menu);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// Create the view for the admin bar
+var AppTemplate = '<ul id="adminmenu">\n\t<div id="admin-menu-manager-menu"></div>\n\t<li id="admin-menu-manager-collapse"></li>\n\t<li id="admin-menu-manager-edit"></li>\n\t<li id="admin-menu-manager-trash-view"></li>\n\t<div id="admin-menu-manager-modal-view"></div>\n</ul>\n';
+
+
 var AppView = wp.Backbone.View.extend({
 	el: '#adminmenuwrap',
-	template: _app2.default,
+	template: AppTemplate,
 	isEditing: false,
 	dropReceiver: undefined,
 
@@ -808,25 +666,22 @@ var AppView = wp.Backbone.View.extend({
 			interval: 90
 		});
 	}
-}); // Create the view for the admin bar
+});
+
 exports.default = AppView;
 
-},{"../collections/menu":2,"../models/menu-item":3,"../templates/app.html":4,"./../../../../assets/js/src/views/edit-modal":15,"./../../../../assets/js/src/views/export-modal":16,"./../../../../assets/js/src/views/import-modal":17,"./adminmenu":10,"./collapse-button":12,"./edit-button":14,"./trash":20}],12:[function(require,module,exports){
+},{"../collections/menu":2,"../models/menu-item":3,"./../../../../assets/js/src/views/edit-modal":9,"./../../../../assets/js/src/views/export-modal":10,"./../../../../assets/js/src/views/import-modal":11,"./adminmenu":4,"./collapse-button":6,"./edit-button":8,"./trash":14}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+var CollapsButtonTemplate = '<button type="button" id="collapse-button" aria-label="<%- ariaLabel %>" aria-expanded="true">\n\t<span class="collapse-button-icon" aria-hidden="true"></span>\n\t<span class="collapse-button-label"><%- label %></span>\n</button>\n';
 
-var _collapseButton = require('../templates/collapse-button.html');
-
-var _collapseButton2 = _interopRequireDefault(_collapseButton);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var CollapseButton = Backbone.View.extend({
 	tagName: 'li',
-	template: _collapseButton2.default,
+	template: CollapsButtonTemplate,
 	attributes: function attributes() {
 		return {
 			class: 'ui-sortable-handle',
@@ -851,10 +706,18 @@ var CollapseButton = Backbone.View.extend({
 
 exports.default = CollapseButton;
 
-},{"../templates/collapse-button.html":5}],13:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
-var MenuItemView = require("./../../../../assets/js/src/views/menu-item");
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _menuItem = require('./menu-item');
+
+var _menuItem2 = _interopRequireDefault(_menuItem);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var CollectionView = Backbone.View.extend({
 	// Can't be named views because wp.Backbone would think it's a wp.Backbone subview.
@@ -912,7 +775,7 @@ var CollectionView = Backbone.View.extend({
   * @param {MenuItem} model
   */
 	add: function add(model) {
-		var menuItemView = new MenuItemView({
+		var menuItemView = new _menuItem2.default({
 			model: model,
 			parent: this
 		});
@@ -935,21 +798,21 @@ var CollectionView = Backbone.View.extend({
 	}
 });
 
-module.exports = CollectionView;
+exports.default = CollectionView;
 
-},{"./../../../../assets/js/src/views/menu-item":18}],14:[function(require,module,exports){
+},{"./menu-item":12}],8:[function(require,module,exports){
 'use strict';
 
-var _editButton = require('../templates/edit-button.html');
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var EditButtonTemplate = '<button class="menu-top" id="amm-edit-menu">\n\t<div class="wp-menu-image dashicons-before dashicons-edit"></div>\n\t<div class="wp-menu-name"><%= label %></div>\n</button>\n<ul class="amm-edit-options">\n\t<li class="amm-edit-option">\n\t\t<button id="amm-edit-option-save">\n\t\t\t<div class="wp-menu-image dashicons-before dashicons-yes"><br></div>\n\t\t\t<div class="wp-menu-name screen-reader-text"><%= options.save %></div>\n\t\t</button>\n\t</li>\n\t<li class="amm-edit-option">\n\t\t<button id="amm-edit-option-add">\n\t\t\t<div class="wp-menu-image dashicons-before dashicons-admin-settings"><br></div>\n\t\t\t<div class="wp-menu-name screen-reader-text"><%= options.add %></div>\n\t\t</button>\n\t\t<ul class="amm-edit-option-choices hidden">\n\t\t\t<li class="amm-edit-option-choice">\n\t\t\t\t<button id="amm-edit-option-add-separator"><%= options.addSeparator %></button>\n\t\t\t</li>\n\t\t\t<li class="amm-edit-option-choice">\n\t\t\t\t<button id="amm-edit-option-add-custom"><%= options.addCustomItem %></button>\n\t\t\t</li>\n\t\t\t<li class="amm-edit-option-choice">\n\t\t\t\t<button id="amm-edit-option-add-import"><%= options.addImport %></button>\n\t\t\t</li>\n\t\t\t<li class="amm-edit-option-choice">\n\t\t\t\t<button id="amm-edit-option-add-export"><%= options.addExport %></button>\n\t\t\t</li>\n\t\t\t<li class="amm-edit-option-choice">\n\t\t\t\t<button id="amm-edit-option-reset"><%= options.reset %></button>\n\t\t\t</li>\n\t\t</ul>\n\t</li>\n\t<li class="amm-edit-option">\n\t\t<button id="amm-edit-option-undo">\n\t\t\t<div class="wp-menu-image dashicons-before dashicons-undo"><br></div>\n\t\t\t<div class="wp-menu-name screen-reader-text"><%= options.undo %></div>\n\t\t</button>\n\t</li>\n\t<li class="amm-edit-option">\n\t\t<button id="amm-edit-option-redo">\n\t\t\t<div class="wp-menu-image dashicons-before dashicons-redo"><br></div>\n\t\t\t<div class="wp-menu-name screen-reader-text"><%= options.redo %></div>\n\t\t</button>\n\t</li>\n\t<li class="amm-edit-option">\n\t\t<button id="amm-edit-option-cancel">\n\t\t\t<div class="wp-menu-image dashicons-before dashicons-dismiss"><br></div>\n\t\t\t<div class="wp-menu-name screen-reader-text"><%= options.cancel %></div>\n\t\t</button>\n\t</li>\n</ul>\n';
 
-var _editButton2 = _interopRequireDefault(_editButton);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EditButton = Backbone.View.extend({
 	id: 'admin-menu-manager-edit',
 	tagName: 'li',
-	template: _editButton2.default,
+	template: EditButtonTemplate,
 	isActive: false,
 
 	render: function render() {
@@ -1051,18 +914,14 @@ var EditButton = Backbone.View.extend({
 	}
 });
 
-module.exports = EditButton;
+exports.default = EditButton;
 
-},{"../templates/edit-button.html":6}],15:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-
-var _editModal = require('../templates/edit-modal.html');
-
-var _editModal2 = _interopRequireDefault(_editModal);
 
 var _modal = require('./modal');
 
@@ -1070,8 +929,11 @@ var _modal2 = _interopRequireDefault(_modal);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var EditModalTemplate = '<div id="amm-modal-content-wrap">\n\t<button class="button-link" id="amm-modal-close" aria-label="<%- close %>">\n\t\t<span class="dashicons dashicons-no"></span>\n\t</button>\n\n\t<div id="amm-modal-content">\n\t\t<h1 id="amm-modal-title"><%- title %></h1>\n\n\t\t<p>\n\t\t\t<label for="amm-menu-item-option-name"><%- labelLabel %></label>\n\t\t\t<input name="amm-menu-item-option-name" class="amm-menu-item-option" value="<%- model.label %>"/>\n\t\t</p>\n\t\t<p>\n\t\t\t<label for="amm-menu-item-option-icon"><%- iconLabel %></label>\n\t\t\t<input name="amm-menu-item-option-icon" class="amm-menu-item-option" id="amm-menu-item-option-icon" value="<%- model.icon %>"/>\n\t\t\t<button class="button dashicons-picker" data-target="#amm-menu-item-option-icon"><%- chooseIcon %></button>\n\t\t</p>\n\t\t<% if (model.id.indexOf(\'custom-item\') > -1) { %>\n\t\t<p>\n\t\t\t<label for="amm-menu-item-option-href"><%- linkLabel %></label>\n\t\t\t<input name="amm-menu-item-option-href" class="amm-menu-item-option" value="<%- model.href %>"/>\n\t\t</p>\n\t\t<% } %>\n\t</div>\n\n\t<div id="amm-modal-toolbar">\n\t\t<button id="amm-modal-toolbar-button" class="button button-primary button-large">\n\t\t\t<%- buttonText %>\n\t\t</button>\n\t</div>\n</div>\n<div id="amm-modal-backdrop"></div>\n';
+
+
 var EditModal = _modal2.default.extend({
-	template: _editModal2.default,
+	template: EditModalTemplate,
 	isActive: false,
 
 	initialize: function initialize(options) {
@@ -1116,25 +978,24 @@ var EditModal = _modal2.default.extend({
 
 exports.default = EditModal;
 
-},{"../templates/edit-modal.html":7,"./modal":19}],16:[function(require,module,exports){
+},{"./modal":13}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
-var _modal = require('../templates/modal.html');
+var _modal = require('./modal');
 
 var _modal2 = _interopRequireDefault(_modal);
 
-var _modal3 = require('./modal');
-
-var _modal4 = _interopRequireDefault(_modal3);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var ExportModal = _modal4.default.extend({
-	template: _modal2.default,
+var ExportModalTemplate = '<div id="amm-modal-content-wrap">\n\t<button class="button-link" id="amm-modal-close" aria-label="<%- close %>">\n\t\t<span class="dashicons dashicons-no"></span>\n\t</button>\n\n\t<div id="amm-modal-content">\n\t\t<h1 id="amm-modal-title"><%- title %></h1>\n\n\t\t<p><%- description %></p>\n\t\t<label for="amm-modal-textarea" class="screen-reader-text"><%- formLabel %></label>\n\t\t<textarea id="amm-modal-textarea" name="amm-modal-textarea"><%- content %></textarea>\n\t</div>\n\n\t<div id="amm-modal-toolbar">\n\t\t<button id="amm-modal-toolbar-button" class="button button-primary button-large" disabled="disabled">\n\t\t\t<%- buttonText %>\n\t\t</button>\n\t</div>\n</div>\n<div id="amm-modal-backdrop"></div>\n';
+
+
+var ExportModal = _modal2.default.extend({
+	template: ExportModalTemplate,
 	isActive: false,
 
 	initialize: function initialize(options) {
@@ -1176,25 +1037,24 @@ var ExportModal = _modal4.default.extend({
 
 exports.default = ExportModal;
 
-},{"../templates/modal.html":9,"./modal":19}],17:[function(require,module,exports){
+},{"./modal":13}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
-var _modal = require('../templates/modal.html');
+var _modal = require('./modal');
 
 var _modal2 = _interopRequireDefault(_modal);
 
-var _modal3 = require('./modal');
-
-var _modal4 = _interopRequireDefault(_modal3);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var ImportModal = _modal4.default.extend({
-	template: _modal2.default,
+var ModalTemplate = '<div id="amm-modal-content-wrap">\n\t<button class="button-link" id="amm-modal-close" aria-label="<%- close %>">\n\t\t<span class="dashicons dashicons-no"></span>\n\t</button>\n\n\t<div id="amm-modal-content">\n\t\t<h1 id="amm-modal-title"><%- title %></h1>\n\n\t\t<p><%- description %></p>\n\t\t<label for="amm-modal-textarea" class="screen-reader-text"><%- formLabel %></label>\n\t\t<textarea id="amm-modal-textarea" name="amm-modal-textarea"><%- content %></textarea>\n\t</div>\n\n\t<div id="amm-modal-toolbar">\n\t\t<button id="amm-modal-toolbar-button" class="button button-primary button-large" disabled="disabled">\n\t\t\t<%- buttonText %>\n\t\t</button>\n\t</div>\n</div>\n<div id="amm-modal-backdrop"></div>\n';
+
+
+var ImportModal = _modal2.default.extend({
+	template: ModalTemplate,
 	isActive: false,
 
 	initialize: function initialize(options) {
@@ -1244,22 +1104,18 @@ var ImportModal = _modal4.default.extend({
 
 exports.default = ImportModal;
 
-},{"../templates/modal.html":9,"./modal":19}],18:[function(require,module,exports){
+},{"./modal":13}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+var MenuItemTemplate = '<a href="<%- href %>" class="<%- classes %>" aria-haspopup="<%= children ? true: false %>">\n\t<div class="wp-menu-arrow">\n\t\t<div></div>\n\t</div>\n\t<% if ( icon.indexOf(\'dashicons\') > -1 ) { %>\n\t<div class=\'wp-menu-image dashicons-before <%- icon %>\'><br/></div>\n\t<% } else if ( icon.indexOf(\'image/svg\') > -1 || icon.indexOf(\'http\') > -1 ) { %>\n\t<div class="wp-menu-image svg" style="background-image:url(\'<%= icon %>\') !important;"><br/></div>\n\t<% } else if (\'div\' === icon || \'none\' === icon) { %>\n\t<div class="wp-menu-image dashicons-before"><br/></div>\n\t<% } else { %>\n\t<div class="wp-menu-image dashicons-before dashicons-admin-settings"><br/></div>\n\t<% } %>\n\t<div class="wp-menu-name"><%= label %></div>\n</a>\n<ul class="wp-submenu wp-submenu-wrap">\n\t<li class="wp-submenu-head"><%= label %></li>\n\t<% _.each(children, function(child, index) {\n\tif ( index===0 ) { child.classes += \' wp-first-item\'; }\n\tvar classes = _.filter(child.classes.split(\' \'), function(c){return c===\'current\' || c===\'wp-first-item\'}).join(\' \'); %>\n\t<li class="<%= classes %>" data-id="<%= child.id %>">\n\t\t<a href="<%- child.href %>" class="<%= classes %>"><%= child.label %></a>\n\t</li>\n\t<% }); %>\n</ul>\n';
 
-var _menuItem = require('../templates/menu-item.html');
-
-var _menuItem2 = _interopRequireDefault(_menuItem);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var MenuItemView = Backbone.View.extend({
 	tagName: 'li',
-	template: _menuItem2.default,
+	template: MenuItemTemplate,
 	optionsActive: false,
 	attributes: function attributes() {
 		// Return model data
@@ -1320,18 +1176,18 @@ var MenuItemView = Backbone.View.extend({
 
 exports.default = MenuItemView;
 
-},{"../templates/menu-item.html":8}],19:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
-var _modal = require('../templates/modal.html');
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var ModalTemplate = '<div id="amm-modal-content-wrap">\n\t<button class="button-link" id="amm-modal-close" aria-label="<%- close %>">\n\t\t<span class="dashicons dashicons-no"></span>\n\t</button>\n\n\t<div id="amm-modal-content">\n\t\t<h1 id="amm-modal-title"><%- title %></h1>\n\n\t\t<p><%- description %></p>\n\t\t<label for="amm-modal-textarea" class="screen-reader-text"><%- formLabel %></label>\n\t\t<textarea id="amm-modal-textarea" name="amm-modal-textarea"><%- content %></textarea>\n\t</div>\n\n\t<div id="amm-modal-toolbar">\n\t\t<button id="amm-modal-toolbar-button" class="button button-primary button-large" disabled="disabled">\n\t\t\t<%- buttonText %>\n\t\t</button>\n\t</div>\n</div>\n<div id="amm-modal-backdrop"></div>\n';
 
-var _modal2 = _interopRequireDefault(_modal);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Modal = Backbone.View.extend({
 	id: 'admin-menu-manager-modal',
-	template: _modal2.default,
+	template: ModalTemplate,
 	isActive: false,
 
 	initialize: function initialize(options) {
@@ -1410,9 +1266,9 @@ var Modal = Backbone.View.extend({
 	}
 });
 
-module.exports = Modal;
+exports.default = Modal;
 
-},{"../templates/modal.html":9}],20:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1447,4 +1303,4 @@ var Trash = _collectionview2.default.extend({
 
 exports.default = Trash;
 
-},{"./collectionview":13}]},{},[1]);
+},{"./collectionview":7}]},{},[1]);

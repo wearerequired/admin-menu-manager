@@ -1,4 +1,4 @@
-var MenuItem = Backbone.Model.extend( {
+const MenuItem = Backbone.Model.extend( {
 	defaults: {
 		0: '', // Menu title
 		1: 'read', // Capability
@@ -20,7 +20,7 @@ var MenuItem = Backbone.Model.extend( {
 	},
 
 	toJSON: function ( options ) {
-		var children = [];
+		let children = [];
 
 		if ( this.children ) {
 			children = _.map( this.children.models, function ( model ) {
@@ -49,4 +49,4 @@ var MenuItem = Backbone.Model.extend( {
 	}
 } );
 
-module.exports = MenuItem;
+export default MenuItem;

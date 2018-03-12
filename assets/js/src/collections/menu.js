@@ -1,4 +1,4 @@
-const MenuItem = require( '../models/menu-item' );
+import MenuItem from '../models/menu-item';
 
 const Menu = Backbone.Collection.extend( {
 	model: MenuItem,

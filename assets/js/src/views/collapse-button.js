@@ -1,6 +1,6 @@
 import CollapsButtonTemplate from '../templates/collapse-button.html';
 
-var CollapseButton = Backbone.View.extend( {
+const CollapseButton = Backbone.View.extend( {
 	tagName:    'li',
 	template:   CollapsButtonTemplate,
 	attributes: function() {
