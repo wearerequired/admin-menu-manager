@@ -72,11 +72,12 @@ class Parent_Menu_Iterator extends Menu_Iterator {
 					$item[0], // Menu title.
 					$item[1], // Capability.
 					$item_slug, // Slug.
-					'', // Function.
+					'', // Callback Function.
 					$item[6], // Icon.
 					$priority // Position.
 				);
 
+				// Todo: Get submenu somehow.
 				if ( isset( $amm_submenu[ $m_item[2] ] ) ) {
 					$amm_submenu[ $item_slug ] = $amm_submenu[ $m_item[2] ];
 				}
@@ -126,7 +127,7 @@ class Parent_Menu_Iterator extends Menu_Iterator {
 					$sub_item[0], // Menu title.
 					$sub_item[1], // Capability.
 					$sub_item[2], // Slug.
-					'', // Function.
+					'', // Callback Function.
 					$item[6], // Icon.
 					$priority // Position.
 				);
