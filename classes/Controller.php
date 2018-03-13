@@ -259,8 +259,7 @@ class Controller {
 	 * @return bool
 	 */
 	protected function is_plugin_file_but_not_admin_file( $menu_file ) {
-		return file_exists( WP_PLUGIN_DIR . "/$menu_file" ) &&
-		       ! file_exists( ABSPATH . "/wp-admin/$menu_file" );
+		return file_exists( WP_PLUGIN_DIR . "/$menu_file" ) && ! file_exists( ABSPATH . "/wp-admin/$menu_file" );
 	}
 
 	/**
@@ -431,7 +430,8 @@ class Controller {
 		$temp_submenu = $submenu;
 		$temp_hooks   = $admin_page_hooks;
 
-		$menu = $submenu = $_registered_pages = null;
+		// Will be set again by the menu iterators.
+		unset( $menu, $submenu, $_registered_pages );
 
 		$menu_iterator = new Parent_Menu_Iterator( $amm_menu, $temp_menu, $temp_submenu );
 		$menu_iterator->maybe_match_menu_items();
@@ -444,6 +444,8 @@ class Controller {
 
 		$this->trash_menu_items( $amm_trash_menu );
 		$this->trash_submenu_items( $amm_trash_submenu );
+
+		global $menu;
 
 		/*
 		 * Append elements that haven't been added to a menu yet.

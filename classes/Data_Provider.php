@@ -28,7 +28,7 @@ class Data_Provider {
 
 		return [
 			'templates'    => [
-				'editButton'      => [
+				'editButton'     => [
 					'label'       => __( 'Edit Menu', 'admin-menu-manager' ),
 					'labelSaving' => __( 'Saving&hellip;', 'admin-menu-manager' ),
 					'labelSaved'  => __( 'Saved!', 'admin-menu-manager' ),
@@ -45,25 +45,25 @@ class Data_Provider {
 						'cancel'        => __( 'Cancel editing', 'admin-menu-manager' ),
 					],
 				],
-				'exportModal'     => [
+				'exportModal'    => [
 					'close'       => __( 'Close export modal', 'admin-menu-manager' ),
 					'title'       => __( 'Export', 'admin-menu-manager' ),
 					'description' => __( 'Export your menu data to another site. Copy the text below:', 'admin-menu-manager' ),
 					'formLabel'   => _x( 'Menu data', 'form label', 'admin-menu-manager' ),
 					'buttonText'  => _x( 'Done', 'button text', 'admin-menu-manager' ),
 				],
-				'importModal'     => [
+				'importModal'    => [
 					'close'       => __( 'Close import modal', 'admin-menu-manager' ),
 					'title'       => __( 'Import', 'admin-menu-manager' ),
 					'description' => __( 'Import your menu data from another site. Insert the data here:', 'admin-menu-manager' ),
 					'formLabel'   => _x( 'Menu data', 'form label', 'admin-menu-manager' ),
 					'buttonText'  => _x( 'Import', 'button text', 'admin-menu-manager' ),
 				],
-				'collapseButton'  => [
+				'collapseButton' => [
 					'label'     => __( 'Collapse menu', 'admin-menu-manager' ),
 					'ariaLabel' => __( 'Collapse Main menu', 'admin-menu-manager' ),
 				],
-				'editModal' => [
+				'editModal'      => [
 					'close'      => __( 'Close modal', 'admin-menu-manager' ),
 					'title'      => __( 'Edit item', 'admin-menu-manager' ),
 					'labelLabel' => __( 'Label:', 'admin-menu-manager' ),
