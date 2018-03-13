@@ -11,16 +11,10 @@
       "role":     "Developer"
     }
   ],
-  "repositories": [
-    {
-      "type": "vcs",
-      "url":  "https://github.com/wearerequired/wp-requirements-check"
-    }
-  ],
   "require":      {
     "php":                                 ">=5.4",
     "composer/installers":                 "~1.0",
-    "wearerequired/wp-requirements-check": "dev-master"
+    "wearerequired/wp-requirements-check": "^1.0"
   },
   "require-dev":  {},
   "autoload":     {
