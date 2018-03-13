@@ -9,13 +9,6 @@
 	width: 100%;
 }
 
-#admin-menu-manager-edit button,
-#admin-menu-manager-edit .menu-top {
-	background: transparent !important;
-	font-size: 13px !important;
-	cursor: pointer !important;
-}
-
 .folded #adminmenu #admin-menu-manager-edit .wp-menu-name {
 	display: none !important;
 }
@@ -25,10 +18,21 @@
 		width: 100%;
 	}
 
+	> button,
+	.amm-edit-option > button {
+		padding: 0 !important;
+	}
+
+	button,
+	.menu-top {
+		background: transparent !important;
+		font-size: 13px !important;
+		cursor: pointer !important;
+	}
+
 	button {
 		background: transparent;
 		border: none;
-		padding: 0 !important;
 		color: #eee;
 
 		&:hover {
@@ -109,7 +113,11 @@
 }
 
 .amm-edit-option-choice {
-	padding: 5px 20px 5px 15px !important;
+	padding: 0 !important;
+
+	button {
+		padding: 5px 20px 5px 15px !important;
+	}
 }
 
 #admin-menu-manager-edit.active > .menu-top {
