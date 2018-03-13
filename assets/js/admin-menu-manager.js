@@ -976,7 +976,7 @@ var EditModal = _modal2.default.extend({
 		'click #amm-modal-toolbar-button': 'save'
 	},
 
-	close: function close(e) {
+	close: function close() {
 		this.$el.find('.dashicons-picker').trigger('mouseup');
 
 		_modal2.default.prototype.close.call(this);
@@ -1097,9 +1097,7 @@ var ImportModal = _modal2.default.extend({
 		'input #amm-modal-textarea': 'enableButton'
 	},
 
-	close: function close(e) {
-		e.preventDefault();
-
+	close: function close() {
 		this.trigger('close', this);
 		this.remove();
 	},
@@ -1264,12 +1262,8 @@ var Modal = Backbone.View.extend({
 
 	/**
   * Closes the modal.
-  *
-  * @param {Event} e Event object.
   */
-	close: function close(e) {
-		e.preventDefault();
-
+	close: function close() {
 		this.trigger('close', this);
 		this.remove();
 	}

@@ -62,12 +62,8 @@ const Modal = Backbone.View.extend( {
 
 	/**
 	 * Closes the modal.
-	 *
-	 * @param {Event} e Event object.
 	 */
-	close: function ( e ) {
-		e.preventDefault();
-
+	close: function () {
 		this.trigger( 'close', this );
 		this.remove();
 	}

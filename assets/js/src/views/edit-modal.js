@@ -28,7 +28,7 @@ const EditModal = Modal.extend( {
 		'click #amm-modal-toolbar-button': 'save'
 	},
 
-	close: function( e ) {
+	close: function() {
 		this.$el.find( '.dashicons-picker' ).trigger( 'mouseup' );
 
 		Modal.prototype.close.call(this);

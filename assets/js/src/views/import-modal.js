@@ -28,9 +28,7 @@ const ImportModal = Modal.extend( {
 		'input #amm-modal-textarea':       'enableButton',
 	},
 
-	close: function ( e ) {
-		e.preventDefault();
-
+	close: function () {
 		this.trigger( 'close', this );
 		this.remove();
 	},
