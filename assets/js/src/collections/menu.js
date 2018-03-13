@@ -28,9 +28,9 @@ const Menu = Backbone.Collection.extend( {
 	},
 
 	parseModel: function ( model ) {
-		let classes,
-			self   = location.pathname.split( '/' ).pop();
-		const slug = model.get( 'href' ) ? model.get( 'href' ) : model.get( 2 );
+		let self    = location.pathname.split( '/' ).pop();
+		let classes = model.get( 4 ).split( ' ' );
+		const slug  = model.get( 'href' ) ? model.get( 'href' ) : model.get( 2 );
 
 		// If it's empty then we're most probably on the dashboard.
 		if ( '' === self ) {
@@ -41,7 +41,6 @@ const Menu = Backbone.Collection.extend( {
 			return;
 		}
 
-		classes = model.get( 4 ).split( ' ' );
 		classes.push( 'menu-top' );
 
 		if ( (AdminMenuManager.parent_file && slug === AdminMenuManager.parent_file) ||
@@ -64,42 +63,53 @@ const Menu = Backbone.Collection.extend( {
 		if ( model.children.length ) {
 			classes.push( 'wp-has-submenu' );
 
-			model.children.each( function ( model ) {
-				const slug     = model.get( 2 );
+			model.children.each( function ( child ) {
+				const slug     = child.get( 2 );
 				let parentHref = this.parent.get( 'href' ) ? this.parent.get( 'href' ) : this.parent.get( 2 );
 
 				if ( parentHref.search( '\\?page=' ) > -1 ) {
 					parentHref = parentHref.substr( 0, parentHref.search( '\\?page=' ) );
 				}
 
-				if ( (AdminMenuManager.submenu_file && slug === AdminMenuManager.submenu_file) ||
-					(!AdminMenuManager.plugin_page && self === slug) ||
-					(AdminMenuManager.plugin_page && AdminMenuManager.plugin_page === slug &&
-						(this.parent.get( 2 ) === self + '?post_type=' + window.typenow || parentHref === self || 'admin.php' === self))
+				if (
+					(AdminMenuManager.submenu_file && slug === AdminMenuManager.submenu_file) ||
+					(!AdminMenuManager.plugin_page && self === slug && ! window.typenow) ||
+					(
+						AdminMenuManager.plugin_page && AdminMenuManager.plugin_page === slug &&
+						(
+							this.parent.get( 2 ) === self + '?post_type=' + window.typenow ||
+							parentHref === self ||
+							'admin.php' === self
+						)
+					)
 				) {
-					model.set( 4, model.get( 4 ) + ' current' );
+					child.set( 4, child.get( 4 ) + ' current' );
 
 					// Mark parent as active if child is the current item.
-					if ( !_.contains( classes, 'wp-has-current-submenu' ) && !_.contains( classes, 'wp-not-current-submenu' ) ) {
+					if ( !_.contains( classes, 'wp-has-current-submenu' ) ) {
 						classes.push( 'wp-has-current-submenu' );
 						classes.push( 'wp-menu-open' );
 					}
 				}
 
 				if ( slug.indexOf( 'http' ) >= 0 ) {
-					model.set( 'href', slug );
-				} else if ( !!model.get( 'inherit_parent' ) ) {
-					model.set( 'href', parentHref + '?page=' + slug );
+					child.set( 'href', slug );
+				} else if ( !!child.get( 'inherit_parent' ) ) {
+					child.set( 'href', parentHref + '?page=' + slug );
 				} else if ( slug.indexOf( '#' ) >= 0 ) {
-					model.set( 'href', slug );
+					child.set( 'href', slug );
 				} else if ( slug.indexOf( 'custom-item' ) >= 0 ) {
-					model.set( 'href', '#' + slug );
+					child.set( 'href', '#' + slug );
 				} else if ( slug.indexOf( '.php' ) >= 0 ) {
-					model.set( 'href', slug );
+					child.set( 'href', slug );
 				} else {
-					model.set( 'href', 'admin.php?page=' + slug );
+					child.set( 'href', 'admin.php?page=' + slug );
 				}
 			}, { parent: model } );
+		}
+
+		if ( _.contains( classes, 'wp-has-current-submenu' ) ) {
+			classes = _.without( classes, 'wp-not-current-submenu' );
 		}
 
 		model.set( 4, _.uniq( classes ).join( ' ' ) );
