@@ -1,16 +1,16 @@
 import ModalTemplate from '../templates/modal.html';
 
-const Modal = Backbone.View.extend( {
-	id:       'admin-menu-manager-modal',
+const Modal = Backbone.View.extend({
+	id: 'admin-menu-manager-modal',
 	template: _.template( ModalTemplate ),
 	isActive: false,
 
-	initialize: function ( options ) {
+	initialize: function( options ) {
 		this.options = options;
 		_.bindAll( this, 'render' );
 	},
 
-	render: function () {
+	render: function() {
 		this.$el.html( this.template( this.options.templateData ) );
 		this.delegateEvents();
 		return this;
@@ -18,7 +18,7 @@ const Modal = Backbone.View.extend( {
 
 	events: {
 		'click #amm-modal-close': 'close',
-		'keydown':                'keydownHandler'
+		'keydown': 'keydownHandler'
 	},
 
 	/**
@@ -26,7 +26,7 @@ const Modal = Backbone.View.extend( {
 	 *
 	 * @param {Event} e Event object.
 	 */
-	keydownHandler: function ( e ) {
+	keydownHandler: function( e ) {
 		if ( 27 === e.keyCode ) {
 			this.close( e );
 		} else if ( 9 === e.keyCode ) {
@@ -39,10 +39,10 @@ const Modal = Backbone.View.extend( {
 	 *
 	 * @param {Event} e Event object.
 	 */
-	constrainTabbing: function ( e ) {
-		const title         = this.$el.find( '#amm-modal-title' ),
-			  primaryButton = this.$el.find( '#amm-modal-toolbar-button' ),
-			  closeButton   = this.$el.find( '#amm-modal-close' );
+	constrainTabbing: function( e ) {
+		const title         = this.$el.find( '#amm-modal-title' );
+		const primaryButton = this.$el.find( '#amm-modal-toolbar-button' );
+		const closeButton   = this.$el.find( '#amm-modal-close' );
 
 		if ( closeButton[ 0 ] === e.target ) {
 			if ( e.shiftKey ) {
@@ -54,7 +54,7 @@ const Modal = Backbone.View.extend( {
 		} else if ( title[ 0 ] === e.target && e.shiftKey ) {
 			closeButton.focus();
 			e.preventDefault();
-		} else if ( primaryButton[ 0 ] === e.target && !e.shiftKey ) {
+		} else if ( primaryButton[ 0 ] === e.target && ! e.shiftKey ) {
 			closeButton.focus();
 			e.preventDefault();
 		}
@@ -63,12 +63,12 @@ const Modal = Backbone.View.extend( {
 	/**
 	 * Closes the modal.
 	 */
-	close: function () {
+	close: function() {
 		this.trigger( 'close', this );
 		this.remove();
 	}
 }, {
-	extend: function ( protoProps, staticProps ) {
+	extend: function( protoProps, staticProps ) {
 		const parent = this;
 
 		protoProps.events = _.extend(
@@ -79,6 +79,6 @@ const Modal = Backbone.View.extend( {
 
 		return Backbone.View.extend.apply( parent, arguments );
 	}
-} );
+});
 
 export default Modal;

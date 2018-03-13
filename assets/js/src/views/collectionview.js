@@ -1,6 +1,7 @@
 import MenuItemView from './menu-item';
 
-const CollectionView = Backbone.View.extend( {
+const CollectionView = Backbone.View.extend({
+
 	// Can't be named views because wp.Backbone would think it's a wp.Backbone subview.
 	_views: [],
 
@@ -19,7 +20,7 @@ const CollectionView = Backbone.View.extend( {
 	 *
 	 * @param {Array} options
 	 */
-	initialize: function ( options ) {
+	initialize: function( options ) {
 		this.options = options;
 
 		// Ensure our methods keep the `this` reference to the view itself
@@ -38,10 +39,10 @@ const CollectionView = Backbone.View.extend( {
 	 *
 	 * @returns {CollectionView}
 	 */
-	render: function () {
+	render: function() {
 		this.$el.empty();
 
-		_.each( this._views, function ( view ) {
+		_.each( this._views, function( view ) {
 			this.$el.append( view.render().el );
 		}, this );
 
@@ -55,11 +56,11 @@ const CollectionView = Backbone.View.extend( {
 	 *
 	 * @param {MenuItem} model
 	 */
-	add: function ( model ) {
-		const menuItemView = new MenuItemView( {
-			model:  model,
+	add: function( model ) {
+		const menuItemView = new MenuItemView({
+			model: model,
 			parent: this
-		} );
+		});
 
 		this._views.push( menuItemView );
 
@@ -69,7 +70,7 @@ const CollectionView = Backbone.View.extend( {
 	/**
 	 * Resets the whole collection view.
 	 */
-	reset: function () {
+	reset: function() {
 		this._views = [];
 
 		this.collection.each( this.add );
@@ -77,6 +78,6 @@ const CollectionView = Backbone.View.extend( {
 
 		return this;
 	}
-} );
+});
 
 export default CollectionView;

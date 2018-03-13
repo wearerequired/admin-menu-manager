@@ -1,11 +1,11 @@
 import MenuItemOptionsTemplate from '../templates/menu-item-options.html';
 
-const MenuItemOptionsView = Backbone.View.extend( {
-	tagName:   'div',
-	template:  _.template( MenuItemOptionsTemplate ),
+const MenuItemOptionsView = Backbone.View.extend({
+	tagName: 'div',
+	template: _.template( MenuItemOptionsTemplate ),
 	className: 'wp-submenu wp-submenu-wrap sub-open amm-menu-item-options',
 
-	render: function () {
+	render: function() {
 		let options   = AdminMenuManager.templates.menuItemOptions;
 		options.model = this.model.toJSON();
 
@@ -17,7 +17,7 @@ const MenuItemOptionsView = Backbone.View.extend( {
 		'click .amm-menu-item-options-save': 'save'
 	},
 
-	save: function () {
+	save: function() {
 		this.model.set( 0, this.$el.find( 'input[name=amm-menu-item-option-name]' ).val() );
 		this.model.set( 6, this.$el.find( 'input[name=amm-menu-item-option-icon]' ).val() );
 		this.model.set( 'href', this.$el.find( 'input[name=amm-menu-item-option-href]' ).val() );
@@ -27,6 +27,6 @@ const MenuItemOptionsView = Backbone.View.extend( {
 		this.trigger( 'save' );
 	}
 
-} );
+});
 
 export default MenuItemOptionsView;

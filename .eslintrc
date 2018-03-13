@@ -6,5 +6,8 @@
   "env": {
 	"browser": false,
 	"es6": true
+  },
+  "parserOptions": {
+	"sourceType": "module"
   }
 }

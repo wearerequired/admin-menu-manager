@@ -1,3 +1,4 @@
 node_modules
 /*.js
-assets/js/*.js
+/assets/js/*.js
+/assets/js/vendor/*.js

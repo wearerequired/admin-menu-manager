@@ -1,16 +1,17 @@
 import MenuItemTemplate from '../templates/menu-item.html';
 
-const MenuItemView = Backbone.View.extend( {
-	tagName:       'li',
-	template:      _.template( MenuItemTemplate ),
+const MenuItemView = Backbone.View.extend({
+	tagName: 'li',
+	template: _.template( MenuItemTemplate ),
 	optionsActive: false,
-	attributes:    function() {
+	attributes: function() {
+
 		// Return model data
 		return {
-			class:         this.model.get( 4 ),
-			id:            this.model.get( 5 ),
-			'aria-hidden': this.model.get( 4 ).indexOf( 'wp-menu-separator' ) > -1,
-			'data-id':     this.model.id
+			class: this.model.get( 4 ),
+			id: this.model.get( 5 ),
+			'aria-hidden': -1 < this.model.get( 4 ).indexOf( 'wp-menu-separator' ),
+			'data-id': this.model.id
 		};
 	},
 
@@ -19,7 +20,7 @@ const MenuItemView = Backbone.View.extend( {
 	},
 
 	render: function() {
-		if ( this.model.get( 4 ).indexOf( 'wp-menu-separator' ) > -1 ) {
+		if ( -1 < this.model.get( 4 ).indexOf( 'wp-menu-separator' ) ) {
 			this.template = _.template( '<div class="separator"></div>' );
 		}
 
@@ -34,7 +35,7 @@ const MenuItemView = Backbone.View.extend( {
 	},
 
 	editMenuItem: function( e ) {
-		if ( !this.parent.isEditing ) {
+		if ( ! this.parent.isEditing ) {
 			return;
 		}
 
@@ -45,20 +46,21 @@ const MenuItemView = Backbone.View.extend( {
 		if ( this.model.get( 2 ) === slug ) {
 			model = this.model;
 		} else {
+
 			// It's a sub menu item.
 			model = _.find( this.model.children.models, function( el ) {
 				return el.get( 2 ) === slug;
-			} );
+			});
 		}
 
-		if ( !model ) {
+		if ( ! model ) {
 			return;
 		}
 
 		e.preventDefault();
 
 		Backbone.trigger( 'editItem', this, model );
-	},
-} );
+	}
+});
 
 export default MenuItemView;

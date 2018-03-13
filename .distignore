@@ -1,6 +1,8 @@
 .distignore
 .DS_Store
 .editorconfig
+.eslintignore
+.eslintrc
 .git
 .gitignore
 .idea

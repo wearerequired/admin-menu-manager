@@ -1,7 +1,7 @@
 import CollectionView from './collectionview';
 
-const AdminMenu = CollectionView.extend( {
-	id:        'amm-adminmenu',
+const AdminMenu = CollectionView.extend({
+	id: 'amm-adminmenu',
 	isEditing: false,
 
 	/**
@@ -11,11 +11,11 @@ const AdminMenu = CollectionView.extend( {
 	 * @augments Backbone.View
 	 * @constructs AdminMenu object
 	 */
-	initialize: function ( options ) {
-		CollectionView.prototype.initialize.apply( this, [ options ] );
+	initialize: function( options ) {
+		CollectionView.prototype.initialize.apply( this, [ options ]);
 
 		this.collection.reset( AdminMenuManager.menu );
 	}
-} );
+});
 
 export default AdminMenu;
