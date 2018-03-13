@@ -507,6 +507,12 @@ var AppView = wp.Backbone.View.extend({
 			stop: this.sortableStop
 		};
 
+		// Make sure all submenus are visible when editing
+		if (isEditing) {
+			// Hide empty submenus
+			this.$el.find('.wp-submenu.hidden').removeClass('hidden');
+		}
+
 		// Main admin menu
 		this.$el.find('#amm-adminmenu').sortable(_.extend(options, { connectWith: '.wp-submenu, #admin-menu-manager-trash' })).sortable('refresh');
 
@@ -525,6 +531,9 @@ var AppView = wp.Backbone.View.extend({
 		if (!isEditing) {
 			// somehow it doesn't apply this class even if it's initially disabled
 			this.$el.find('.ui-sortable').addClass('ui-sortable-disabled');
+
+			// Hide empty submenus
+			this.$el.find('.wp-submenu .wp-submenu-head:only-child').parent().addClass('hidden');
 		}
 
 		// Trigger the WordPress admin menu resize event
@@ -1125,7 +1134,7 @@ exports.default = ImportModal;
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-var MenuItemTemplate = '<a href="<%- href %>" class="<%- classes %>" aria-haspopup="<%= children ? true: false %>">\n\t<div class="wp-menu-arrow">\n\t\t<div></div>\n\t</div>\n\t<% if ( icon.indexOf(\'dashicons\') > -1 ) { %>\n\t<div class=\'wp-menu-image dashicons-before <%- icon %>\'><br/></div>\n\t<% } else if ( icon.indexOf(\'image/svg\') > -1 || icon.indexOf(\'http\') > -1 ) { %>\n\t<div class="wp-menu-image svg" style="background-image:url(\'<%= icon %>\') !important;"><br/></div>\n\t<% } else if (\'div\' === icon || \'none\' === icon) { %>\n\t<div class="wp-menu-image dashicons-before"><br/></div>\n\t<% } else { %>\n\t<div class="wp-menu-image dashicons-before dashicons-admin-settings"><br/></div>\n\t<% } %>\n\t<div class="wp-menu-name"><%= label %></div>\n</a>\n<ul class="wp-submenu wp-submenu-wrap">\n\t<li class="wp-submenu-head"><%= label %></li>\n\t<% _.each(children, function(child, index) {\n\tif ( index===0 ) { child.classes += \' wp-first-item\'; }\n\tvar classes = _.filter(child.classes.split(\' \'), function(c){return c===\'current\' || c===\'wp-first-item\'}).join(\' \'); %>\n\t<li class="<%= classes %>" data-id="<%= child.id %>">\n\t\t<a href="<%- child.href %>" class="<%= classes %>"><%= child.label %></a>\n\t</li>\n\t<% }); %>\n</ul>\n';
+var MenuItemTemplate = '<a href="<%- href %>" class="<%- classes %>" aria-haspopup="<%= children.length > 0 ? true : false %>">\n\t<div class="wp-menu-arrow">\n\t\t<div></div>\n\t</div>\n\t<% if ( icon.indexOf(\'dashicons\') > -1 ) { %>\n\t<div class=\'wp-menu-image dashicons-before <%- icon %>\'><br/></div>\n\t<% } else if ( icon.indexOf(\'image/svg\') > -1 || icon.indexOf(\'http\') > -1 ) { %>\n\t<div class="wp-menu-image svg" style="background-image:url(\'<%= icon %>\') !important;"><br/></div>\n\t<% } else if (\'div\' === icon || \'none\' === icon) { %>\n\t<div class="wp-menu-image dashicons-before"><br/></div>\n\t<% } else { %>\n\t<div class="wp-menu-image dashicons-before dashicons-admin-settings"><br/></div>\n\t<% } %>\n\t<div class="wp-menu-name"><%= label %></div>\n</a>\n<ul class="wp-submenu wp-submenu-wrap<%= children.length > 0 ? \'\' : \' hidden\' %>">\n\t<li class="wp-submenu-head"><%= label %></li>\n\t<% _.each(children, function(child, index) {\n\tif ( index===0 ) { child.classes += \' wp-first-item\'; }\n\tvar classes = _.filter(child.classes.split(\' \'), function(c){return c===\'current\' || c===\'wp-first-item\'}).join(\' \'); %>\n\t<li class="<%= classes %>" data-id="<%= child.id %>">\n\t\t<a href="<%- child.href %>" class="<%= classes %>"><%= child.label %></a>\n\t</li>\n\t<% }); %>\n</ul>\n';
 
 
 var MenuItemView = Backbone.View.extend({

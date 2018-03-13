@@ -1,4 +1,4 @@
-<a href="<%- href %>" class="<%- classes %>" aria-haspopup="<%= children ? true: false %>">
+<a href="<%- href %>" class="<%- classes %>" aria-haspopup="<%= children.length > 0 ? true : false %>">
 	<div class="wp-menu-arrow">
 		<div></div>
 	</div>
@@ -13,7 +13,7 @@
 	<% } %>
 	<div class="wp-menu-name"><%= label %></div>
 </a>
-<ul class="wp-submenu wp-submenu-wrap">
+<ul class="wp-submenu wp-submenu-wrap<%= children.length > 0 ? '' : ' hidden' %>">
 	<li class="wp-submenu-head"><%= label %></li>
 	<% _.each(children, function(child, index) {
 	if ( index===0 ) { child.classes += ' wp-first-item'; }

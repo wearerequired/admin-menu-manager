@@ -195,6 +195,12 @@ const AppView = wp.Backbone.View.extend( {
 			stop:        this.sortableStop
 		};
 
+		// Make sure all submenus are visible when editing
+		if ( isEditing ) {
+			// Hide empty submenus
+			this.$el.find( '.wp-submenu.hidden' ).removeClass( 'hidden' );
+		}
+
 		// Main admin menu
 		this.$el.find( '#amm-adminmenu' )
 			.sortable( _.extend( options, { connectWith: '.wp-submenu, #admin-menu-manager-trash' } ) )
@@ -217,6 +223,9 @@ const AppView = wp.Backbone.View.extend( {
 		if ( !isEditing ) {
 			// somehow it doesn't apply this class even if it's initially disabled
 			this.$el.find( '.ui-sortable' ).addClass( 'ui-sortable-disabled' );
+
+			// Hide empty submenus
+			this.$el.find( '.wp-submenu .wp-submenu-head:only-child' ).parent().addClass( 'hidden' );
 		}
 
 		// Trigger the WordPress admin menu resize event
