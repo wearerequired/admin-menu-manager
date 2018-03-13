@@ -1,18 +1,18 @@
 {
   "verbose": false,
   "ignore": [
-    "node_modules",
-    "__tests__"
+    ".git",
+    "node_modules/**/node_modules"
   ],
   "env": {
     "BABEL_DISABLE_CACHE": 1
   },
   "execMap": {
-    "js": "babel-node"
+    "js": "babel"
   },
   "ext": ".js,.json,.html",
   "watch": [
-    "./assets/css/src",
-    "./assets/js/src"
+    "assets/css/src/",
+    "assets/js/src/"
   ]
 }
