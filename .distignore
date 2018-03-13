@@ -11,7 +11,7 @@ grunt
 node_modules
 nodemon.json
 package.json
-package-lock.json
 phpunit.xml
 README.md
+yarn.lock
 tests

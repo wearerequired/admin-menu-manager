@@ -16,13 +16,12 @@
     "url": "https://github.com/wearerequired/admin-menu-manager"
   },
   "devDependencies": {
-    "autoprefixer": "^7.1.4",
+    "autoprefixer": "^8.1.0",
     "babel-cli": "^6.24.1",
     "babel-core": "^6.26.0",
     "babel-plugin-transform-html-import-to-string": "0.0.1",
     "babel-preset-env": "^1.5.2",
     "babelify": "^8.0.0",
-    "bundle-collapser": "~1.2.0",
     "css-mqpacker": "^6.0.1",
     "cssnano": "^3.10.0",
     "eslint-config-wordpress": "^2.0.0",
@@ -30,13 +29,13 @@
     "nodemon": "^1.11.0",
     "pkgify": "^1.0.0",
     "postcss": "^6.0.2",
-    "postcss-cli": "^4.1.0",
-    "postcss-custom-properties": "^6.1.0",
+    "postcss-cli": "^5.0.0",
+    "postcss-custom-properties": "^7.0.0",
     "postcss-hexrgba": "^1.0.0",
     "postcss-import": "^11.0.0",
     "postcss-mixins": "^6.1.0",
-    "postcss-nested": "^2.1.2",
-    "postcss-utilities": "^0.7.0",
+    "postcss-nested": "^3.0.0",
+    "postcss-utilities": "^0.8.0",
     "rtlcss": "^2.2.0",
     "uglify-js": "^3.0.18"
   },
@@ -54,25 +53,7 @@
   "browserify": {
     "debug": true,
     "transform": [
-      [
-        "babelify",
-        {
-          "presets": [
-            [
-              "env",
-              {
-                "targets": {
-                  "uglify": true
-                },
-                "browsers": [
-                  "last 2 versions"
-                ]
-              }
-            ]
-          ],
-          "sourceMaps": true
-        }
-      ],
+      "babelify",
       "node-underscorify",
       [
         "pkgify",

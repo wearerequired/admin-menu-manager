@@ -9,5 +9,8 @@
 /.travis.yml export-ignore
 /Grutfile.js export-ignore
 /nodemon.json export-ignore
+/package.json export-ignore
 /phpcs.ruleset.xml export-ignore
 /phpunit.xml export-ignore
+/yarn.lock export-ignore
+
