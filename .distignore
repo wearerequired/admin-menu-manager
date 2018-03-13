@@ -9,6 +9,7 @@ composer.json
 composer.lock
 grunt
 node_modules
+nodemon.json
 package.json
 package-lock.json
 phpunit.xml

@@ -7,5 +7,6 @@
 /.jshintrc export-ignore
 /.travis.yml export-ignore
 /Grutfile.js export-ignore
+/nodemon.json
 /phpcs.ruleset.xml export-ignore
 /phpunit.xml export-ignore
