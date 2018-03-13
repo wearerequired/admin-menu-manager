@@ -65,15 +65,13 @@ before_script:
       npm install
       node --version
       npm --version
-      grunt --version
     fi
 
 script:
   - |
     if [[ "$WP_TRAVISCI" == "travis:phpvalidate" ]] ; then
-      grunt checktextdomain
       phpmd classes text codesize,naming,unusedcode
-      phpcs --standard=phpcs.ruleset.xml $(find . -name '*.php')
+      phpcs .
     fi
   - |
     if [[ "$WP_TRAVISCI" == "travis:codecoverage" ]] ; then
@@ -83,7 +81,7 @@ script:
     fi
   - |
    if [[ "$WP_TRAVISCI" == "travis:eslint" ]] ; then
-     eslint .
+     ./node_modules/.bin/eslint .
    fi
 
 after_script:
