@@ -40,8 +40,8 @@ class Parent_Menu_Iterator extends Menu_Iterator {
 	 * @param array $old_submenu The old sub menu, passed by reference.
 	 */
 	public function __construct( array $new_menu, array &$old_menu, array &$old_submenu ) {
-		$this->new_menu = $new_menu;
-		$this->old_menu = &$old_menu;
+		$this->new_menu    = $new_menu;
+		$this->old_menu    = &$old_menu;
 		$this->old_submenu = &$old_submenu;
 	}
 

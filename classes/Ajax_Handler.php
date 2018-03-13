@@ -76,10 +76,11 @@ class Ajax_Handler {
 	 * @return array An array containing top level and sub level menu items.
 	 */
 	protected function update_menu_loop( $menu ) {
-		$items   = $submenu = [];
+		$items   = [];
+		$submenu = [];
 
 		$separator_index = 1;
-		$last_separator = null;
+		$last_separator  = null;
 
 		foreach ( $menu as $item ) {
 			if ( false !== strpos( $item[2], '=' ) ) {

@@ -49,7 +49,7 @@ class Sub_Menu_Iterator extends Menu_Iterator {
 	 */
 	public function __construct( array $new_menu, array &$old_menu, array $new_submenu, array &$old_submenu ) {
 		$this->new_menu    = $new_menu;
-		$this->old_menu = &$old_menu;
+		$this->old_menu    = &$old_menu;
 		$this->new_submenu = $new_submenu;
 		$this->old_submenu = &$old_submenu;
 	}
