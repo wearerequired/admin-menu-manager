@@ -19,7 +19,7 @@ matrix:
   - php: 7.2
     env: WP_TRAVISCI=travis:codecoverage
   - php: 7.2
-    env: WP_TRAVISCI=travis:jshint
+    env: WP_TRAVISCI=travis:eslint
   - php: 7.2
     env: WP_TRAVISCI=travis:phpunit WP_VERSION=nightly
   - php: 7.1
@@ -61,7 +61,7 @@ before_script:
     phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
     composer install --no-interaction
   - |
-    if [[ "$WP_TRAVISCI" == "travis:jshint" ]] ; then
+    if [[ "$WP_TRAVISCI" == "travis:eslint" ]] ; then
       npm install
       node --version
       npm --version
@@ -82,8 +82,8 @@ script:
       phpunit
     fi
   - |
-   if [[ "$WP_TRAVISCI" == "travis:jshint" ]] ; then
-     grunt jshint
+   if [[ "$WP_TRAVISCI" == "travis:eslint" ]] ; then
+     eslint .
    fi
 
 after_script:
