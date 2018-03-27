@@ -600,7 +600,7 @@ class Controller {
 	public function alter_admin_menu_order( $menu_order ) {
 		global $menu;
 
-		$amm_menu = $this->get_menu_data( 'amm_menu' );
+		$amm_menu = $this->get_menu_data( 'menu' );
 
 		if ( ! $amm_menu ) {
 			return $menu_order;
