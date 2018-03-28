@@ -150,7 +150,7 @@ class Sub_Menu_Iterator extends Menu_Iterator {
 					$item[2] // Slug.
 				);
 
-				if ( isset( $item['href'] ) ) {
+				if ( isset( $item['href'], $item['id'] ) && $item['href'] === $item['id'] ) {
 					end( $submenu[ $parent_page ] );
 					$newly_inserted_item    = &$submenu[ $parent_page ][ key( $submenu[ $parent_page ] ) ];
 					$newly_inserted_item[2] = $item['href'];
