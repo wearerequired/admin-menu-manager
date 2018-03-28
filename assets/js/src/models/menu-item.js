@@ -28,23 +28,32 @@ const MenuItem = Backbone.Model.extend({
 			});
 		}
 
+		const capability = this.attributes[ 1 ];
+		const classes    = this.attributes[ 4 ];
+		const href       = this.attributes.href ? this.attributes.href : this.attributes[ 2 ];
+		const icon       = this.attributes[ 6 ];
+		const id         = this.attributes.id ? this.attributes.id : this.id;
+		const label      = this.attributes[ 0 ];
+		const pageTitle  = this.attributes[ 3 ];
+		const slug       = this.attributes[ 2 ];
+
 		return {
-			'0': this.attributes[ 0 ], // label
-			'3': this.attributes[ 3 ], // page title
-			'4': this.attributes[ 4 ], // classes
-			'2': this.attributes[ 2 ], // slug
-			'href': this.attributes.href ? this.attributes.href : this.attributes[ 2 ], // href
-			'5': this.attributes[ 5 ], // id
-			'6': this.attributes[ 6 ], // icon
-			'1': this.attributes[ 1 ], // capability
-			children: children,
-			label: this.attributes[ 0 ],
-			pageTitle: this.attributes[ 3 ],
-			classes: this.attributes[ 4 ],
-			slug: this.attributes[ 2 ],
-			id: this.id,
-			icon: this.attributes[ 6 ],
-			capability: this.attributes[ 1 ]
+			'0': label,
+			'3': pageTitle,
+			'4': classes,
+			'2': slug,
+			'5': id,
+			'6': icon,
+			'1': capability,
+			href,
+			children,
+			label,
+			pageTitle,
+			classes,
+			slug,
+			id,
+			icon,
+			capability
 		};
 	}
 });

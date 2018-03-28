@@ -1,7 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-"use strict";
+'use strict';
 
-var _app = require("./views/app");
+var _app = require('./views/app');
 
 var _app2 = _interopRequireDefault(_app);
 
@@ -50,7 +50,7 @@ var Menu = Backbone.Collection.extend({
 	},
 
 	onReset: function onReset() {
-		if (this.length === 0) {
+		if (0 === this.length) {
 			return;
 		}
 
@@ -75,7 +75,7 @@ var Menu = Backbone.Collection.extend({
 			self = 'index.php';
 		}
 
-		if (slug.indexOf('separator') === 0) {
+		if (0 === slug.indexOf('separator')) {
 			return;
 		}
 
@@ -92,7 +92,7 @@ var Menu = Backbone.Collection.extend({
 			classes.push('wp-not-current-submenu');
 		}
 
-		if (!!model.get('is_plugin_item') || slug.indexOf('#') === -1 && slug.indexOf('.php') === -1 && slug.indexOf('http') === -1) {
+		if (!!model.get('is_plugin_item') || -1 === slug.indexOf('#') && -1 === slug.indexOf('.php') && -1 === slug.indexOf('http')) {
 			model.set('href', 'admin.php?page=' + slug);
 		}
 
@@ -103,7 +103,7 @@ var Menu = Backbone.Collection.extend({
 				var slug = child.get(2);
 				var parentHref = this.parent.get('href') ? this.parent.get('href') : this.parent.get(2);
 
-				if (parentHref.search('\\?page=') > -1) {
+				if (-1 < parentHref.search('\\?page=')) {
 					parentHref = parentHref.substr(0, parentHref.search('\\?page='));
 				}
 
@@ -117,15 +117,15 @@ var Menu = Backbone.Collection.extend({
 					}
 				}
 
-				if (slug.indexOf('http') >= 0) {
+				if (0 <= slug.indexOf('http')) {
 					child.set('href', slug);
 				} else if (!!child.get('inherit_parent')) {
 					child.set('href', parentHref + '?page=' + slug);
-				} else if (slug.indexOf('#') >= 0) {
+				} else if (0 <= slug.indexOf('#')) {
 					child.set('href', slug);
-				} else if (slug.indexOf('custom-item') >= 0) {
+				} else if (0 <= slug.indexOf('custom-item')) {
 					child.set('href', '#' + slug);
-				} else if (slug.indexOf('.php') >= 0) {
+				} else if (0 <= slug.indexOf('.php')) {
 					child.set('href', slug);
 				} else {
 					child.set('href', 'admin.php?page=' + slug);
@@ -220,23 +220,32 @@ var MenuItem = Backbone.Model.extend({
 			});
 		}
 
+		var capability = this.attributes[1];
+		var classes = this.attributes[4];
+		var href = this.attributes.href ? this.attributes.href : this.attributes[2];
+		var icon = this.attributes[6];
+		var id = this.attributes.id ? this.attributes.id : this.id;
+		var label = this.attributes[0];
+		var pageTitle = this.attributes[3];
+		var slug = this.attributes[2];
+
 		return {
-			'0': this.attributes[0], // label
-			'3': this.attributes[3], // page title
-			'4': this.attributes[4], // classes
-			'2': this.attributes[2], // slug
-			'href': this.attributes['href'] ? this.attributes['href'] : this.attributes[2], // href
-			'5': this.attributes[5], // id
-			'6': this.attributes[6], // icon
-			'1': this.attributes[1], // capability
+			'0': label,
+			'3': pageTitle,
+			'4': classes,
+			'2': slug,
+			'5': id,
+			'6': icon,
+			'1': capability,
+			href: href,
 			children: children,
-			label: this.attributes[0],
-			pageTitle: this.attributes[3],
-			classes: this.attributes[4],
-			slug: this.attributes[2],
-			id: this.id,
-			icon: this.attributes[6],
-			capability: this.attributes[1]
+			label: label,
+			pageTitle: pageTitle,
+			classes: classes,
+			slug: slug,
+			id: id,
+			icon: icon,
+			capability: capability
 		};
 	}
 });
@@ -488,20 +497,28 @@ var AppView = wp.Backbone.View.extend({
   * @param {boolean} isEditing Whether we are currently editing the menu or not.
   */
 	initSortable: function initSortable(isEditing) {
+
 		// Default sortable options
 		var options = {
+
 			// If defined, the items can be dragged only horizontally or vertically. Possible values: "x", "y".
 			axis: 'y',
+
 			// Disables the sortable if set to true.
 			disabled: !isEditing,
+
 			// Specifies which items inside the element should be sortable.
 			items: '> li, .wp-submenu > li:not(.wp-first-item)',
+
 			// Prevents sorting if you start on elements matching the selector.
 			cancel: '#collapse-menu, #admin-menu-manager-edit, .amm-edit-options, .amm-is-editing',
+
 			// A selector of other sortable elements that the items from this list should be connected to.
 			connectWith: '#amm-adminmenu ul',
+
 			// A class name that gets applied to the otherwise white space.
 			placeholder: 'menu-top',
+
 			// This event is triggered when the user stopped sorting and the DOM position has changed.
 			update: this.sortableUpdate,
 			stop: this.sortableStop
@@ -509,6 +526,7 @@ var AppView = wp.Backbone.View.extend({
 
 		// Make sure all submenus are visible when editing
 		if (isEditing) {
+
 			// Hide empty submenus
 			this.$el.find('.wp-submenu.hidden').removeClass('hidden');
 		}
@@ -529,6 +547,7 @@ var AppView = wp.Backbone.View.extend({
 		this.$el.find('#admin-menu-manager-trash').sortable(_.extend(options, { connectWith: '#amm-adminmenu, .wp-submenu' })).sortable('refresh');
 
 		if (!isEditing) {
+
 			// somehow it doesn't apply this class even if it's initially disabled
 			this.$el.find('.ui-sortable').addClass('ui-sortable-disabled');
 
@@ -558,17 +577,17 @@ var AppView = wp.Backbone.View.extend({
   * @param {object} ui
   */
 	sortableUpdate: function sortableUpdate(e, ui) {
-		var itemId = ui.item.attr('data-id'),
-		    newPosition = [ui.item.index()];
+		var itemId = ui.item.attr('data-id');
+		var newPosition = [ui.item.index()];
 
 		// It's a submenu item
-		if (ui.item.parent('.wp-submenu').length > 0) {
-			newPosition[0] = newPosition[0] > 0 ? --newPosition[0] : 0;
+		if (0 < ui.item.parent('.wp-submenu').length) {
+			newPosition[0] = 0 < newPosition[0] ? --newPosition[0] : 0;
 			var parentPosition = jQuery('#amm-adminmenu').find('> li').index(ui.item.parents('li'));
 			newPosition.unshift(parentPosition);
 		}
 
-		if (newPosition[0] === -1) {
+		if (-1 === newPosition[0]) {
 			return;
 		}
 
@@ -587,13 +606,16 @@ var AppView = wp.Backbone.View.extend({
 		item.collection.remove(item);
 
 		// Move it to the new position
-		if (ui.item.parent('#admin-menu-manager-trash').length > 0) {
+		if (0 < ui.item.parent('#admin-menu-manager-trash').length) {
+
 			// Item was trashed
 			this.views.first('#admin-menu-manager-trash-view').collection.add(item, { at: newPosition[0] });
-		} else if (newPosition.length === 1) {
+		} else if (1 === newPosition.length) {
+
 			// Item was moved to the top level
 			this.views.first('#admin-menu-manager-menu').collection.add(item, { at: newPosition[0] });
-		} else if (newPosition.length === 2) {
+		} else if (2 === newPosition.length) {
+
 			// Item was moved to a submenu
 			this.views.first('#admin-menu-manager-menu').collection.at(newPosition[0]).children.add(item, { at: newPosition[1] });
 
@@ -622,6 +644,7 @@ var AppView = wp.Backbone.View.extend({
   * @see /wp-admin/js/common.js for the source of this.
   */
 	hoverIntent: function hoverIntent() {
+
 		/**
    * Ensure an admin submenu is within the visual viewport.
    *
@@ -649,7 +672,7 @@ var AppView = wp.Backbone.View.extend({
 				adjustment = maxtop;
 			}
 
-			if (adjustment > 1) {
+			if (1 < adjustment) {
 				$submenu.css('margin-top', '-' + adjustment + 'px');
 			} else {
 				$submenu.css('margin-top', '');
@@ -663,12 +686,13 @@ var AppView = wp.Backbone.View.extend({
 				var $submenu = $menuItem.find('.wp-submenu');
 				var top = parseInt($submenu.css('top'), 10);
 
-				if (isNaN(top) || top > -5) {
+				if (isNaN(top) || -5 < top) {
 					// the submenu is visible
 					return;
 				}
 
 				if ($adminmenu.data('wp-responsive')) {
+
 					// The menu is in responsive mode, bail
 					return;
 				}
@@ -680,6 +704,7 @@ var AppView = wp.Backbone.View.extend({
 
 			out: function out() {
 				if ($adminmenu.data('wp-responsive')) {
+
 					// The menu is in responsive mode, bail
 					return;
 				}
@@ -746,6 +771,7 @@ var _menuItem2 = _interopRequireDefault(_menuItem);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var CollectionView = Backbone.View.extend({
+
 	// Can't be named views because wp.Backbone would think it's a wp.Backbone subview.
 	_views: [],
 
@@ -1142,11 +1168,12 @@ var MenuItemView = Backbone.View.extend({
 	template: _.template(MenuItemTemplate),
 	optionsActive: false,
 	attributes: function attributes() {
+
 		// Return model data
 		return {
 			class: this.model.get(4),
 			id: this.model.get(5),
-			'aria-hidden': this.model.get(4).indexOf('wp-menu-separator') > -1,
+			'aria-hidden': -1 < this.model.get(4).indexOf('wp-menu-separator'),
 			'data-id': this.model.id
 		};
 	},
@@ -1156,7 +1183,7 @@ var MenuItemView = Backbone.View.extend({
 	},
 
 	render: function render() {
-		if (this.model.get(4).indexOf('wp-menu-separator') > -1) {
+		if (-1 < this.model.get(4).indexOf('wp-menu-separator')) {
 			this.template = _.template('<div class="separator"></div>');
 		}
 
@@ -1182,6 +1209,7 @@ var MenuItemView = Backbone.View.extend({
 		if (this.model.get(2) === slug) {
 			model = this.model;
 		} else {
+
 			// It's a sub menu item.
 			model = _.find(this.model.children.models, function (el) {
 				return el.get(2) === slug;
@@ -1249,9 +1277,9 @@ var Modal = Backbone.View.extend({
   * @param {Event} e Event object.
   */
 	constrainTabbing: function constrainTabbing(e) {
-		var title = this.$el.find('#amm-modal-title'),
-		    primaryButton = this.$el.find('#amm-modal-toolbar-button'),
-		    closeButton = this.$el.find('#amm-modal-close');
+		var title = this.$el.find('#amm-modal-title');
+		var primaryButton = this.$el.find('#amm-modal-toolbar-button');
+		var closeButton = this.$el.find('#amm-modal-close');
 
 		if (closeButton[0] === e.target) {
 			if (e.shiftKey) {
