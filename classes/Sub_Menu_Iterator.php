@@ -125,6 +125,8 @@ class Sub_Menu_Iterator extends Menu_Iterator {
 	 * @return bool True if it's a sub menu item, false otherwise.
 	 */
 	protected function is_submenu_item( $item, $parent_page ) {
+		global $submenu;
+
 		$item_slug = $this->get_menu_item_slug( $item );
 
 		// Iterate on original submenu items.
@@ -147,6 +149,12 @@ class Sub_Menu_Iterator extends Menu_Iterator {
 					$item[1], // Capability.
 					$item[2] // Slug.
 				);
+
+				if ( isset( $item['href'] ) ) {
+					end( $submenu[ $parent_page ] );
+					$newly_inserted_item    = &$submenu[ $parent_page ][ key( $submenu[ $parent_page ] ) ];
+					$newly_inserted_item[2] = $item['href'];
+				}
 
 				$this->switch_menu_item_filters( $hook_name, $new_page );
 
