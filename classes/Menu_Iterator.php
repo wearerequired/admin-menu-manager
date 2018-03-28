@@ -76,7 +76,7 @@ abstract class Menu_Iterator {
 		if ( isset( $item['href'] ) ) {
 			$item_slug = $item['href'];
 
-			preg_match( '/page=([a-z_0-9]*)/', $item['href'], $matches );
+			preg_match( '/page=([a-z_\-0-9]*)/', $item['href'], $matches );
 			if ( isset( $matches[1] ) ) {
 				$item_slug = $matches[1];
 			}
