@@ -430,8 +430,14 @@ class Controller {
 		$temp_submenu = $submenu;
 		$temp_hooks   = $admin_page_hooks;
 
-		// Will be set again by the menu iterators.
-		unset( $menu, $submenu, $_registered_pages );
+		/*
+		 * These will be set again by the menu iterators.
+		 *
+		 * Note: cannot use unset() because these are globals.
+		 */
+		$menu              = null;
+		$submenu           = null;
+		$_registered_pages = null;
 
 		$menu_iterator = new Parent_Menu_Iterator( $amm_menu, $temp_menu, $temp_submenu );
 		$menu_iterator->maybe_match_menu_items();
