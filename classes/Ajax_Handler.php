@@ -95,7 +95,7 @@ class Ajax_Handler {
 				4          => $item[4],
 				5          => $item[5],
 				6          => $item[6],
-				'children' => isset( $item['children'] ) ? $item['children'] : [],
+				'children' => ! empty( $item['children'] ) ? $item['children'] : [],
 				'href'     => $item['href'],
 				'id'       => $item['id'],
 			];
@@ -120,8 +120,9 @@ class Ajax_Handler {
 
 					$submenu[ $item[2] ][] = $subitem;
 				}
-				unset( $item['children'] );
 			}
+
+			unset( $item['children'] );
 
 			// Store separators in correct order.
 			if ( false !== strpos( $item[2], 'separator' ) ) {
