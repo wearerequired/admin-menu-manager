@@ -84,8 +84,8 @@ class Sub_Menu_Iterator extends Menu_Iterator {
 			);
 
 			// Don't loose grand children.
-			if ( isset( $temp_submenu[ $m_item[2] ] ) ) {
-				foreach ( $temp_submenu[ $m_item[2] ] as $s_item ) {
+			if ( isset( $this->old_submenu[ $m_item[2] ] ) ) {
+				foreach ( $this->old_submenu[ $m_item[2] ] as $s_item ) {
 					$hook_name = get_plugin_page_hookname( $s_item[2], $m_item[2] );
 
 					$new_page = add_submenu_page(
