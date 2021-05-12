@@ -29,7 +29,7 @@
     "node-underscorify": "~0.0.14",
     "nodemon": "^1.11.0",
     "pkgify": "^1.0.0",
-    "postcss": "^7.0.0",
+    "postcss": "^8.2.10",
     "postcss-cli": "^6.1.0",
     "postcss-custom-properties": "^7.0.0",
     "postcss-hexrgba": "^1.0.2",
